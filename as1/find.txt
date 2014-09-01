@@ -1,0 +1,4 @@
+find -name '*.o' ! -size -5k -exec ls -l '{}' \;
+find2perl -name '*.o' ! -size -5k -exec ls -l '{}' \; > findBigO.pl
+perl findBigO.pl
+
