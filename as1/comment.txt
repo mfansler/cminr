@@ -1,0 +1,17 @@
+/* ===================================== Commentary ======================================= */
+
+The find2perl command uses the File::Find Perl method to search the directory the find command
+would have been executed in.  The generated Perl code includes two subroutines: `wanted` and 
+`doexec'.  The former consists of a translation of the filters (e.g., '-name ...') to a chain
+of Boolean tests.  '-name' is translated to a regex test; '-size' translates to a pair, the
+first of which extracts generic info on the file object, and the second tests specifically the
+value of the size property, after converting it to an int type.  At the end of the chain of 
+Boolean tests is a call to the `doexec` subroutine, which executes the `ls -l` command and
+prints the result.
+
+This utility would be useful for saving common operations as on-demand executable scripts.
+Another application would be a quick and dirty way of generating specific subroutines in a 
+larger Perl script you are writing, especially if you already know how to carry out the
+operation via `find`.
+
+MMF

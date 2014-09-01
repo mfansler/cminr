@@ -1,0 +1,17 @@
+E -> E + T | T
+
+E -> T { + T }
+
+T -> T * F | F
+
+F -> int   | ( E )
+
+
+
+start  --->  sexpr '$'
+sexpr  --->  alphanum   |   '('    tail
+tail   --->  ')'        |   sexpr  tail
+
+S     -> sexpr $
+sexpr -> alphanum | '(' { sexpr } ')'
+

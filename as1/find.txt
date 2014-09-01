@@ -2,3 +2,10 @@ find -name '*.o' ! -size -5k -exec ls -l '{}' \;
 find2perl -name '*.o' ! -size -5k -exec ls -l '{}' \; > findBigO.pl
 perl findBigO.pl
 
+
+// the above is too imprecise
+// files whose size in KB rounds up to 5KB still get included
+find -name '*.o' -size +5119c -exec ls -l '{}' \;
+find2perl -name '*.o' -size +5119c -exec ls -l '{}' \; > findBigO.pl
+perl findBigO.pl
+
