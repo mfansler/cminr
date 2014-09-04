@@ -1,0 +1,33 @@
+Script started on Thu 04 Sep 2014 07:27:27 PM EDT
+]0;mmfansler@lovelace:~/csprojects/csci435/as2[mmfansler@lovelace as2]$ man -w grep
+/usr/share/man/man1/grep.1.gz
+]0;mmfansler@lovelace:~/csprojects/csci435/as2[mmfansler@lovelace as2]$ file -z /usr/share/man/man1/grep.1.gz
+/usr/share/man/man1/grep.1.gz: troff or preprocessor input, ASCII text (gzip compressed data, max compression, from Unix)
+]0;mmfansler@lovelace:~/csprojects/csci435/as2[mmfansler@lovelace as2]$ man -t grep > grep.1.ps
+]0;mmfansler@lovelace:~/csprojects/csci435/as2[mmfansler@lovelace as2]$ ps2pdf grep.1.ps
+]0;mmfansler@lovelace:~/csprojects/csci435/as2[mmfansler@lovelace as2]$ ls -l
+total 108
+-rw-r--r-- 1 mmfansler students     0 Sep  4 19:27 as2-mmf.script
+-rw-r--r-- 1 mmfansler students 36186 Sep  4 19:28 grep.1.pdf
+-rw-r--r-- 1 mmfansler students 65422 Sep  4 19:28 grep.1.ps
+-rw-r--r-- 1 mmfansler students   131 Sep  4 19:25 notes.txt
+]0;mmfansler@lovelace:~/csprojects/csci435/as2[mmfansler@lovelace as2]$ head -n 15 grep.1.ps
+%!PS-Adobe-3.0
+%%Creator: groff version 1.22.2
+%%CreationDate: Thu Sep  4 19:28:06 2014
+%%DocumentNeededResources: font Times-Roman
+%%+ font Times-Bold
+%%+ font Times-Italic
+%%DocumentSuppliedResources: procset grops 1.22 2
+%%Pages: 9
+%%PageOrder: Ascend
+%%DocumentMedia: Default 595 842 0 () ()
+%%Orientation: Portrait
+%%EndComments
+%%BeginDefaults
+%%PageMedia: Default
+%%EndDefaults
+]0;mmfansler@lovelace:~/csprojects/csci435/as2[mmfansler@lovelace as2]$ exit
+exit
+
+Script done on Thu 04 Sep 2014 07:28:41 PM EDT

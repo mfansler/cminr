@@ -1,7 +1,7 @@
-/usr/share/man/man1/grep.1.gz
+> man -w grep
+> file -z /usr/share/man/man1/grep.1.gz
+> man -t grep > grep.1.ps
+> ps2pdf grep.1.ps
+> ls -l
+> head -n 15 grep.1.ps
 
-> man -l -Tdvi /usr/share/man/man1/grep.1.gz > grep.1.dvi
-
-> dvips grep.1.dvi
-
-ps2pdf
