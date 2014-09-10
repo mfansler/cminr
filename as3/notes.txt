@@ -1,0 +1,25 @@
+//#1
+grep -icE quid /usr/share/dict/words
+
+// #2
+grep -icE '^(.).*\1$|^.$' /usr/share/dict/words
+
+//#3
+
+grep -icE '(.{4}).*\1'
+
+//#4
+grep -icE '(.)\1{2}'
+
+//#5
+grep -icE '[[:alpha:]]{20,}'
+
+
+//#6
+grep -icE '[[:alpha:]]{16,20}'
+
+//#7
+grep -vicE '^([^a]*|[^e]*|[^i]*|[^o]*|[^u]*)$'
+
+//#8
+grep 
