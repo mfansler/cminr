@@ -14,12 +14,17 @@ grep -icE '(.)\1{2}'
 //#5
 grep -icE '[[:alpha:]]{20,}'
 
-
 //#6
-grep -icE '[[:alpha:]]{16,20}'
+grep -xicE '.{16,20}'
 
 //#7
-grep -vicE '^([^a]*|[^e]*|[^i]*|[^o]*|[^u]*)$'
+grep -xvicE '[^a]*|[^e]*|[^i]*|[^o]*|[^u]*'
 
 //#8
-grep 
+grep -xicE '[^aeiou]*' /usr/share/dict/words
+
+//#9
+grep -xicE '[^-]*-[^-]*' /usr/share/dict/words
+
+//#10
+grep -icE 'a[^aeiou]*e[^aeiou]*i[^aeiou]*o[^aeiou]*u' /usr/share/dict/words
