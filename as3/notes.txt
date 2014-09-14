@@ -2,23 +2,23 @@
 grep -icE quid /usr/share/dict/words
 
 // #2
-grep -icE '^(.).*\1$|^.$' /usr/share/dict/words
+grep -icE '^([a-z]).*\1$|^[a-z]$' /usr/share/dict/words
 
 //#3
 
-grep -icE '(.{4}).*\1'
+grep -cE '(.{4}).*\1' /usr/share/dict/words
 
 //#4
-grep -icE '(.)\1{2}'
+grep -icE '([a-z])\1{2}' /usr/share/dict/words
 
 //#5
-grep -icE '[[:alpha:]]{20,}'
+grep -icE '([a-z][^a-z]*){20,}' /usr/share/dict/words
 
 //#6
-grep -xicE '.{16,20}'
+grep -xicE '.{16,20}' /usr/share/dict/words
 
 //#7
-grep -xvicE '[^a]*|[^e]*|[^i]*|[^o]*|[^u]*'
+grep -xvicE '[^a]*|[^e]*|[^i]*|[^o]*|[^u]*' /usr/share/dict/words
 
 //#8
 grep -xicE '[^aeiou]*' /usr/share/dict/words
