@@ -1,0 +1,45 @@
+Script started on Sun 14 Sep 2014 07:32:38 PM EDT
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ grep -icE 'quid' /usr/share/dict/words
+33
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ grep -icE '^([a-z]).*\1$|^[a-z]$' /usr/share/dict/words
+8975
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ grep -cE '(.{4}).*\1' /usr/share/dict/words
+54
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ grep -icE '([a-z])\1{2}' /usr/share/dict/words
+24
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ grep -icE '([a-z][^a-z]*){20,}' /usr/share/dict/words
+27
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ grep -xicE '.{16,20}' /usr/share/dict/words
+1208
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ grep -xvicE '[^a]*|[^e]*|[^i]*|[^o]*|[^u]*' /usr/share/dict/words
+904
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ grep -xicE '[^aeiou]*' /usr/share/dict/words
+818
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ grep -xicE '[^-]*-[^-]*' /usr/share/dict/words
+0
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ grep -icE 'a[^aeiou]*e[^aeiou]*i[^aeiou]*o[^aeiou]*u' /usr/share/dict/words
+8
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ 
+_mmfansler@lovelace:~/csprojects/csci435/as3\[mmfansler@lovelace as3]$ exit
+exit
+
+Script done on Sun 14 Sep 2014 07:40:32 PM EDT
