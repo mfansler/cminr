@@ -1,3 +1,6 @@
+#ifndef __CMINTOKENS_HPP_INCLUDED__
+#define __CMINTOKENS_HPP_INCLUDED__
+
 enum TokenType
 {
   ERROR = 1,
@@ -12,3 +15,5 @@ enum TokenType
 
   ID, NUM
 };
+
+#endif

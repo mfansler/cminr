@@ -32,6 +32,7 @@ LDLIBS   := -lfl
 	flex --nounput -o $@ $<
 
 PascalDriver : PascalDriver.o PascalLexer.o
+CMinLexerDriver : CMinLexerDriver.o CMinParser.o
 
 #############################################################
 
@@ -40,6 +41,7 @@ clean :
 	$(RM) a.out core
 	$(RM) *.o *.d *~
 	$(RM) LineCount PascalDriver Username \
-		WordCount WordCount1Line WordCountOrig
+		WordCount WordCount1Line WordCountOrig \
+		CMinParser CMinLexerDriver
 
 #############################################################

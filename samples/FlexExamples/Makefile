@@ -1,32 +1,45 @@
-##
-# Dr. Zoppetti
-# Makefile
-##
+########################################################
+# GMZ: Generic Makefile
+########################################################
+# Variables
 
-# Compiler
-CXX      = g++44      
+# C++ compiler
+#CXX      := clang++
+CXX      := g++
 
-# Extra flags for C++ compiler
-CXXFLAGS = -g  
+# C++ compiler flags
+CXXFLAGS := -g -Wall -std=c++11
 
-# $(CC) is used for linking
-CC       = g++44 
+# Linker; for C++ should be $(CXX)
+LINK     := $(CXX)
 
-##
+# Linker flags
+LDFLAGS  := 
 
-WordCount : WordCount.cc -lfl
+# Libraries we're using, prefaced with "-l"
+LDLIBS   := -lfl
 
-WordCount.cc : WordCount.l
-	flex -o$@ $<
+#############################################################
+# Rules
 
-PascalDriver : PascalDriver.o PascalLexer.o -lfl
+% : %.o
+	$(LINK) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
-PascalLexer.cc : PascalLexer.l
-	flex -o$@ $<
+%.o : %.cc
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-##
+%.cc : %.l
+	flex --nounput -o $@ $<
 
-# Return source dir. to clean slate (remove generated files)
-.PHONY: clean
-clean:
-	-rm WordCount WordCount.cc PascalDriver PascalLexer.cc
+PascalDriver : PascalDriver.o PascalLexer.o
+
+#############################################################
+
+.PHONY : clean
+clean :
+	$(RM) a.out core
+	$(RM) *.o *.d *~
+	$(RM) LineCount PascalDriver Username \
+		WordCount WordCount1Line WordCountOrig
+
+#############################################################

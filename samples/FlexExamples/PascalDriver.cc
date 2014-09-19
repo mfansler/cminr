@@ -7,7 +7,9 @@
 
 extern FILE* yyin;
 
-int  yylex ();
+extern "C"
+int
+yylex ();
 
 //**
 

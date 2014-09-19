@@ -10,6 +10,8 @@
   using std::endl;
 
   #define IF 10
+
+  extern "C" int yylex ();
 %}
 
 DIGIT    [0-9]
@@ -19,13 +21,13 @@ ID       [a-z][a-z0-9]*
 %%
 
 {DIGIT}+    {
-              cout << "An integer: " << yytext << '(' << atoi (yytext)
-		   << ')' << endl;
+              cout << "An integer: " << yytext << " (" << atoi (yytext)
+		   << ")" << endl;
             }
 
 {DIGIT}+"."{DIGIT}* {
-                      cout << "A float: " << yytext << '(' << atof (yytext)
-			   << ')' << endl;
+                      cout << "A float: " << yytext << " (" << atof (yytext)
+			   << ")" << endl;
                     }
 
 if                  { return IF; }

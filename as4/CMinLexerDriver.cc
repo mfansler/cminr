@@ -1,4 +1,4 @@
-/*
+/*A
   Filename   : CMinLexerDriver.cc
   Author     : Merv Fansler
   Course     : CSCI 435
@@ -16,7 +16,7 @@
 
 // Local Includes
 
-#include <CMinTokens.hpp>
+#include "CMinTokens.hpp"
 
 //**
 
@@ -32,7 +32,7 @@ yylex ();
 int
 main (int argc, char* argv[])
 {
-  ++argv, argc;
+  ++argv, --argc;
   if (argc > 0)
   {
     yyin = fopen (argv[0], "r");
@@ -42,11 +42,46 @@ main (int argc, char* argv[])
     yyin = stdin;
   }
 
-  TokenType result;  // <- this is totally wrong; probably should be an object
+  std::cout << IF;
+
+  int result;  // CHECK: Make sure this is correct; maybe retun a
+               // freakn' token straight away
   do
   {
     result = yylex ();
-    // TODO: recognize and printout
+    switch (result)
+    { // TODO: fill out cases
+      case ERROR:
+        printf("TokenError: Unrecognized character sequence");
+        break;
+      case IF:
+        printf("IF\n");
+        break;
+      case ELSE:
+        printf("ELSE\n");
+        break;
+      case INT:
+        printf("INT\n");
+        break;
+      case VOID:
+        printf("VOID\n");
+        break;
+      case RETURN:
+        printf("RETURN\n");
+        break;
+      case WHILE:
+        printf("WHILE\n");
+        break;
+      case FOR:
+        printf("FOR\n");
+        break;
+      case PLUS:
+        printf("PLUS\n");
+        break;
+      default:
+        printf("Token number %i",result);
+    }
+    // TODO: figure out how to print the lexeme string and value
   } while (result != 0);
 
   return EXIT_SUCCESS;
