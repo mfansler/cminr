@@ -54,100 +54,100 @@ main (int argc, char* argv[])
     switch (result)
     { // TODO: DISPLAY LEXEMES AND VALUES; FORMAT
       case ERROR:
-        printf("TokenError: Unrecognized character sequence");
+        printf ("ERROR\t'%s'\tLine: %i\tColumn: %i\n", yytext, lineCount, colCount);
         break;
       case IF:
-        printf("IF\n");
+        printf ("IF\n");
         break;
       case ELSE:
-        printf("ELSE\n");
+        printf ("ELSE\n");
         break;
       case INT:
-        printf("INT\n");
+        printf ("INT\n");
         break;
       case VOID:
-        printf("VOID\n");
+        printf ("VOID\n");
         break;
       case RETURN:
-        printf("RETURN\n");
+        printf ("RETURN\n");
         break;
       case WHILE:
-        printf("WHILE\n");
+        printf ("WHILE\n");
         break;
       case FOR:
-        printf("FOR\n");
+        printf ("FOR\n");
         break;
       case PLUS:
-        printf("PLUS\n");
+        printf ("PLUS\n");
         break;
       case MINUS:
-        printf("MINUS\n");
+        printf ("MINUS\n");
         break;
       case TIMES:
-        printf("TIMES\n");
+        printf ("TIMES\n");
         break;
       case DIVIDE:
-        printf("DIVIDE\n");
+        printf ("DIVIDE\n");
         break;
       case LT:
-        printf("LT\n");
+        printf ("LT\n");
         break;
       case LTE:
-        printf("LTE\n");
+        printf ("LTE\n");
         break;
       case GT:
-        printf("GT\n");
+        printf ("GT\n");
         break;
       case GTE:
-        printf("GTE\n");
+        printf ("GTE\n");
         break;
       case EQ:
-        printf("EQ\n");
+        printf ("EQ\n");
         break;
       case NEQ:
-        printf("NEQ\n");
+        printf ("NEQ\n");
         break;
       case INCREMENT:
-        printf("INCREMENT\n");
+        printf ("INCREMENT\n");
         break;
       case DECREMENT:
-        printf("DECREMENT\n");
+        printf ("DECREMENT\n");
         break;
       case ASSIGN:
-        printf("ASSIGN\n");
+        printf ("ASSIGN\n");
         break;
       case SEMI:
-        printf("SEMI\n");
+        printf ("SEMI\n");
         break;
       case COMMA:
-        printf("COMMA\n");
+        printf ("COMMA\n");
         break;
       case LPAREN:
-        printf("LPAREN\n");
+        printf ("LPAREN\n");
         break;
       case RPAREN:
-        printf("RPAREN\n");
+        printf ("RPAREN\n");
         break;
       case LBRACK:
-        printf("LBRACK\n");
+        printf ("LBRACK\n");
         break;
       case RBRACK:
-        printf("RBRACK\n");
+        printf ("RBRACK\n");
         break;
       case LBRACE:
-        printf("LBRACE\n");
+        printf ("LBRACE\n");
         break;
       case RBRACE:
-        printf("RBRACE\n");
+        printf ("RBRACE\n");
         break;
       case ID:
-        printf("ID\n");
+        printf ("ID\t'%s'\n", yytext);
         break;
       case NUM:
-        printf("NUM\n");
+        printf ("NUM\t'%s'\t%i\n", yytext, std::stoi (yytext));
         break;
       default:
-        printf("Token number %i",result);
+        printf ("Token number %i",result);
     }
     // TODO: figure out how to print the lexeme string and value
   } while (result != 0);
