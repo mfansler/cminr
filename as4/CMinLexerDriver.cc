@@ -10,6 +10,8 @@
 // System Includes
 
 #include <iostream>
+#include <map>
+#include <string>
 
 #include <cstdio>
 #include <cstdlib>
@@ -33,6 +35,104 @@ extern int colCount;
 
 //**
 
+std::map<int, std::string> tokenNames = 
+  {
+    {
+      ERROR, "ERROR"
+    },
+    {
+      IF, "IF"
+    },
+    {
+      ELSE, "ELSE"
+    },
+    {
+      INT, "INT"
+    },
+    {
+      VOID, "VOID"
+    },
+    {
+      RETURN, "RETURN"
+    },
+    {
+      WHILE, "WHILE"
+    },
+    {
+      FOR, "FOR"
+    },
+    {
+      PLUS, "PLUS"
+    },
+    {
+      MINUS, "MINUS"
+    },
+    {
+      TIMES, "TIMES"
+    },
+    {
+      DIVIDE, "DIVIDE"
+    },
+    {
+      LT, "LT"
+    },
+    {
+      LTE, "LTE"
+    },
+    {
+      GT, "GT"
+    },
+    {
+      GTE, "GTE"
+    },
+    {
+      EQ, "EQ"
+    },
+    {
+      NEQ, "NEQ"
+    },
+    {
+      INCREMENT, "INCREMENT"
+    },
+    {
+      DECREMENT, "DECREMENT"
+    },
+    {
+      ASSIGN, "ASSIGN"
+    },
+    {
+      SEMI, "SEMI"
+    },
+    {
+      COMMA, "COMMA"
+    },
+    {
+      LPAREN, "LPAREN"
+    },
+    {
+      RPAREN, "RPAREN"
+    },
+    {
+      LBRACK, "LBRACK"
+    },
+    {
+      RBRACK, "RBRACK"
+    },
+    {
+      LBRACE, "LBRACE"
+    },
+    {
+      RBRACE, "RBRACE"
+    },
+    {
+      ID, "ID"
+    },
+    {
+      NUM, "NUM"
+    } 
+  };
+
+
 int
 main (int argc, char* argv[])
 {
@@ -52,102 +152,23 @@ main (int argc, char* argv[])
   do
   {
     result = yylex ();
-    switch (result)
-    { // TODO: DISPLAY LEXEMES AND VALUES; FORMAT
-      case ERROR:
-        printf ("ERROR\t'%s'\tLine: %i\tColumn: %i\n", yytext, lineCount, colCount);
-        break;
-      case IF:
-        printf ("IF\n");
-        break;
-      case ELSE:
-        printf ("ELSE\n");
-        break;
-      case INT:
-        printf ("INT\n");
-        break;
-      case VOID:
-        printf ("VOID\n");
-        break;
-      case RETURN:
-        printf ("RETURN\n");
-        break;
-      case WHILE:
-        printf ("WHILE\n");
-        break;
-      case FOR:
-        printf ("FOR\n");
-        break;
-      case PLUS:
-        printf ("PLUS\n");
-        break;
-      case MINUS:
-        printf ("MINUS\n");
-        break;
-      case TIMES:
-        printf ("TIMES\n");
-        break;
-      case DIVIDE:
-        printf ("DIVIDE\n");
-        break;
-      case LT:
-        printf ("LT\n");
-        break;
-      case LTE:
-        printf ("LTE\n");
-        break;
-      case GT:
-        printf ("GT\n");
-        break;
-      case GTE:
-        printf ("GTE\n");
-        break;
-      case EQ:
-        printf ("EQ\n");
-        break;
-      case NEQ:
-        printf ("NEQ\n");
-        break;
-      case INCREMENT:
-        printf ("INCREMENT\n");
-        break;
-      case DECREMENT:
-        printf ("DECREMENT\n");
-        break;
-      case ASSIGN:
-        printf ("ASSIGN\n");
-        break;
-      case SEMI:
-        printf ("SEMI\n");
-        break;
-      case COMMA:
-        printf ("COMMA\n");
-        break;
-      case LPAREN:
-        printf ("LPAREN\n");
-        break;
-      case RPAREN:
-        printf ("RPAREN\n");
-        break;
-      case LBRACK:
-        printf ("LBRACK\n");
-        break;
-      case RBRACK:
-        printf ("RBRACK\n");
-        break;
-      case LBRACE:
-        printf ("LBRACE\n");
-        break;
-      case RBRACE:
-        printf ("RBRACE\n");
-        break;
-      case ID:
-        printf ("ID\t'%s'\n", yytext);
-        break;
-      case NUM:
-        printf ("NUM\t'%s'\t%i\n", yytext, std::stoi (yytext));
-        break;
+    std::cout << tokenNames[result] << "\t\"" << yytext << '"'; 
+
+    if (result == NUM)
+    {
+      printf ("\t%i", std::stoi (yytext));
     }
+    else if (result == ID)
+    {
+      printf ("\t\"%s\"", yytext);
+    }
+    else if (result == ERROR)
+    {
+      printf ("Line: %i\tColumn: %i", lineCount, colCount);
+    }
+
+    printf ("\n");
+
   } while (result != 0);
 
   return EXIT_SUCCESS;
