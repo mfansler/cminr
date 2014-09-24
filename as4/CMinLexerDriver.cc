@@ -10,17 +10,23 @@
 // System Includes
 
 #include <iostream>
+#include <iomanip>
 #include <map>
 #include <string>
-
-#include <cstdio>
-#include <cstdlib>
 
 // Local Includes
 
 #include "CMinTokens.hpp"
 
 //**
+
+// Namespace declarations
+
+using std::cout;
+using std::endl;
+using std::setw;
+
+// External references
 
 extern "C"
 int
@@ -145,29 +151,37 @@ main (int argc, char* argv[])
   {
     yyin = stdin;
   }
-
+  
   int result;
-
-  printf ("TOKEN\tLEXEME\tVALUE\n=====\t======\t=====\n");
+  
+  cout << std::left
+       << setw (18) << "TOKEN" << setw (18) << "LEXEME" << "VALUE" << endl
+       << setw (18) << "=====" << setw (18) << "======" << "=====" << endl;
+  
   do
   {
     result = yylex ();
-    std::cout << tokenNames[result] << "\t\"" << yytext << '"'; 
+    
+    if (result != 0)
+    {
+      cout << setw (18) << tokenNames[result] 
+           << setw (18) << '"' + std::string (yytext) + '"'; 
+    }
 
     if (result == NUM)
     {
-      printf ("\t%i", std::stoi (yytext));
+      cout << std::stoi (yytext);
     }
     else if (result == ID)
     {
-      printf ("\t\"%s\"", yytext);
+      cout << '"' <<  yytext << '"';
     }
     else if (result == ERROR)
     {
-      printf ("Line: %i\tColumn: %i", lineCount, colCount);
+      cout << "Line: " << lineCount << "\tColumn: " << colCount;
     }
 
-    printf ("\n");
+    cout << std::endl;
 
   } while (result != 0);
 
