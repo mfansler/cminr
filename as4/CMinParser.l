@@ -19,9 +19,6 @@
 
 DIGIT     [0-9]
 IDENT     [[:alpha:]][[:alnum:]]*
-LCOM      "/*"
-RCOM      "*/"
-COMMENT   {LCOM}[^{RCOM}]*{RCOM}
 
 %%
 
@@ -175,8 +172,59 @@ for          {
                return NUM;
              }
 
-{COMMENT}    {
-               colCount += yyleng;
+"/*"         {
+               bool foundAsterisk = false;
+               bool foundCloseComment = false;
+               char c;
+               
+               int openLine = lineCount;
+
+               colCount += 2;
+
+               while (!foundCloseComment)
+               { 
+                 while(!foundAsterisk)
+                 {
+                   c = yyinput ();
+                   ++colCount;
+
+                   if (c == '*')
+                   {
+                     foundAsterisk = true;
+                   }
+                   else if (c == '\n')
+                   {
+                     ++lineCount;
+                     colCount = 0;
+                   }
+                   else if (c == EOF)
+                   {
+                     printf ("Unbalanced open comment (Line %i)\n", openLine);
+                     yyterminate ();
+                   }
+                 }
+                 
+                 c = yyinput ();
+                 ++colCount;
+                 
+                 switch (c)
+                 {
+                   case '/':
+                     foundCloseComment = true;
+                     break;
+
+                   case '*':
+                     break;
+
+                   case EOF:
+                     printf ("Unbalanced open comment (Line %i)\n", openLine);
+                     yyterminate ();
+
+                   default:
+                     foundAsterisk = false;
+                     break;
+                 }
+               }
              }
 
 \n           {
@@ -194,4 +242,3 @@ for          {
              }
 
 %%
-/* Functions section */

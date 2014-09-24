@@ -148,7 +148,6 @@ main (int argc, char* argv[])
         printf ("NUM\t'%s'\t%i\n", yytext, std::stoi (yytext));
         break;
     }
-    // TODO: figure out how to print the lexeme string and value
   } while (result != 0);
 
   return EXIT_SUCCESS;
