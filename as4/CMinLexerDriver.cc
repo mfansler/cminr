@@ -48,6 +48,7 @@ main (int argc, char* argv[])
 
   int result;
 
+  printf ("TOKEN\tLEXEME\tVALUE\n=====\t======\t=====\n");
   do
   {
     result = yylex ();
@@ -146,8 +147,6 @@ main (int argc, char* argv[])
       case NUM:
         printf ("NUM\t'%s'\t%i\n", yytext, std::stoi (yytext));
         break;
-      default:
-        printf ("Token number %i",result);
     }
     // TODO: figure out how to print the lexeme string and value
   } while (result != 0);

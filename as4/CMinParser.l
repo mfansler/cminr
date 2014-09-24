@@ -184,7 +184,9 @@ for          {
                colCount = 0;
              } 
 
-[ \t]+       // consume whitespace
+[ \t]+       { // consume whitespace
+               colCount += yyleng;
+             }
 
 .            {
                ++colCount;
