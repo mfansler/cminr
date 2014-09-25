@@ -1,3 +1,11 @@
+/* 
+   Filename    : CMinTokens.hpp
+   Author      : Merv Fansler
+   Course      : CSCI 435
+   Assignment  : Assignment 4, Lex Luthor vs C-
+   Description : Defines Tokens for C- Language
+*/
+
 #ifndef __CMINTOKENS_HPP_INCLUDED__
 #define __CMINTOKENS_HPP_INCLUDED__
 

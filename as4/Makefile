@@ -1,5 +1,10 @@
-########################################################
-# MMF: Assignment 4 Makefile
+#######################OA###################A##############
+#  Filename    : Makefile
+#  Author      : Merv Fansler
+#  Course      : CSCI 435
+#  Assignment  : Assignment 4, Lex Luthor vs C-
+#  Description : Build and clean commands for C- lexer
+#  Reference   : Modeled after example from G. Zoppetti 
 ########################################################
 # Variables
 
@@ -31,8 +36,7 @@ LDLIBS   := -lfl
 %.cc : %.l
 	flex --nounput -o $@ $<
 
-PascalDriver : PascalDriver.o PascalLexer.o
-CMinLexerDriver : CMinLexerDriver.o CMinParser.o
+CMinLexer : CMinLexerDriver.o CMinLexer.o
 
 #############################################################
 
@@ -40,8 +44,6 @@ CMinLexerDriver : CMinLexerDriver.o CMinParser.o
 clean :
 	$(RM) a.out core
 	$(RM) *.o *.d *~
-	$(RM) LineCount PascalDriver Username \
-		WordCount WordCount1Line WordCountOrig \
-		CMinParser CMinLexerDriver
+	$(RM) CMinLexer CMinLexerDriver
 
 #############################################################

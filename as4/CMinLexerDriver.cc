@@ -1,12 +1,13 @@
-/*A
+/*
   Filename   : CMinLexerDriver.cc
   Author     : Merv Fansler
   Course     : CSCI 435
   Assignment : Assignment 4, Lex Luthor vs C-
-  Description: Driver for C- lexer that accepts an C- source input and outputs
+  Description: Driver for C- lexer that accepts a C- source input and outputs
                  a list of the resulting tokens
 */
 
+/******************************************************************************/
 // System Includes
 
 #include <iostream>
@@ -14,18 +15,19 @@
 #include <map>
 #include <string>
 
+/******************************************************************************/
 // Local Includes
 
 #include "CMinTokens.hpp"
 
-//**
-
+/******************************************************************************/
 // Namespace declarations
 
 using std::cout;
 using std::endl;
 using std::setw;
 
+/******************************************************************************/
 // External references
 
 extern "C"
@@ -39,7 +41,8 @@ extern char* yytext;
 extern int lineCount;
 extern int colCount;
 
-//**
+/******************************************************************************/
+// Global vars
 
 std::map<int, std::string> tokenNames = 
   {
@@ -138,6 +141,7 @@ std::map<int, std::string> tokenNames =
     } 
   };
 
+/******************************************************************************/
 
 int
 main (int argc, char* argv[])
@@ -155,8 +159,8 @@ main (int argc, char* argv[])
   int result;
   
   cout << std::left
-       << setw (18) << "TOKEN" << setw (18) << "LEXEME" << "VALUE" << endl
-       << setw (18) << "=====" << setw (18) << "======" << "=====" << endl;
+       << setw (20) << "TOKEN" << setw (22) << "LEXEME" << "VALUE" << endl
+       << setw (20) << "=====" << setw (22) << "======" << "=====" << endl;
   
   do
   {
@@ -164,8 +168,8 @@ main (int argc, char* argv[])
     
     if (result != 0)
     {
-      cout << setw (18) << tokenNames[result] 
-           << setw (18) << '"' + std::string (yytext) + '"'; 
+      cout << setw (20) << tokenNames[result] 
+           << setw (22) << '"' + std::string (yytext) + '"'; 
     }
 
     if (result == NUM)
@@ -178,10 +182,10 @@ main (int argc, char* argv[])
     }
     else if (result == ERROR)
     {
-      cout << "Line: " << lineCount << "\tColumn: " << colCount;
+      cout << "Line: " << lineCount << "; Column: " << colCount;
     }
 
-    cout << std::endl;
+    cout << endl;
 
   } while (result != 0);
 

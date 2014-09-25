@@ -1,0 +1,16 @@
+/* A file to test an unbalanced
+   comment error * /
+
+int
+main (void)
+{
+  int someVar;
+  int anotherVar = 0;
+
+  for (someVar = 0; some < 10; ++some)
+  {
+    anotherVar = anotherVar + someVar;
+  }
+
+  return 0;
+}
