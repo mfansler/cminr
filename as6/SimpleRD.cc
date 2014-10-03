@@ -1,21 +1,39 @@
 /* 
- * Filename: SimpleRD.cc
- * Author  : Merv Fansler
-
+  Filename   : SimpleRD.cc
+  Author     : Merv Fansler
+  Course     : CSCI 435
+	Assignment : #6 - The Character Language
+	Description: Implements a predictive recursive descent parser for
+							   the language given by the following grammar; parser
+								 either accepts input string or returns parse error
   Grammar:
-    M -> {S} $
-    S -> I | W | A | P | C | G
-    I -> '[' E ? {S} : {S} ']' | '[' E ? {S} ']'
-    
+    M   -> { S } $
+		S   -> I | W | A | P | C | G
+		I   -> '[' E ? { S } : { S } ']' | '[' E ? { S } ']'
+		W   -> '{' E ? { S } '}'
+		A   -> id = E ;
+		P   -> '<' E ;
+		C   -> '<' ( 'B' | 'T' | 'N' ) ;
+		G   -> '>' id ;
+		E   -> E + T | E - T | T
+		T   -> T * U | T / U | T % U | U
+		U   -> F ^ U | F
+		F   -> '(' E ')' | id | num
+		id  -> lowercaseLetter
+		num -> digit
 */
+
+/****************************************************/
+// System includes 
 
 #include <cstdio>
 #include <cstdlib>
 #include <cctype>
 
 /****************************************************/
+// Function declarations
 
-bool
+void
 M ();
 
 void
@@ -52,7 +70,7 @@ void
 F ();
 
 void
-match (char token);
+match (char token, const char* callee);
 
 void
 error (const char* error);
@@ -61,6 +79,7 @@ char
 getToken ();
 
 /****************************************************/
+// global vars
 
 char g_token;
 
@@ -70,20 +89,18 @@ int
 main ()
 {
   g_token = getToken ();
-  bool result = M ();
+  M ();
   if (g_token != '$')
     error("main");
   else
-    {
-      printf ("String accepted\n");
-    }
+		printf ("String accepted\n");
 
   return EXIT_SUCCESS;
 }
 
 /****************************************************/
 
-bool
+void
 M ()
 {
   // to handle production
@@ -93,7 +110,6 @@ M ()
   {
     S ();
   }
-  return true;
 }
 
 /****************************************************/
@@ -105,37 +121,40 @@ S ()
   // S --> I | W | A | P | C | G
 
   if (g_token == '[')
-    {
-      I ();
-    }
+	{
+		I ();
+	}
   else if (g_token == '{')
-    {
-      W ();
-    }
+	{
+		W ();
+	}
   else if (islower (g_token))
-    {
-      A ();
-    }
+	{
+		A ();
+	}
   else if (g_token == '>')
-    {
-      G ();
-    }
-  else
-    {
-      match ('<');
-      // check case C lookaheads
-      if (g_token == 'B')
-        match ('B');
-      else if (g_token == 'T')
-        match ('T');
-      else if (g_token == 'N')
-        match ('N');
-      else 
-        { // must be case P
-          E ();
-        }
-      match (';');
-    }
+	{
+		G ();
+	}
+  else if (g_token == '<')
+	{ // either C or P
+		match ('<', "S");
+		// check case C lookaheads
+		if (g_token == 'B')
+			match ('B', "S");
+		else if (g_token == 'T')
+			match ('T', "S");
+		else if (g_token == 'N')
+			match ('N', "S");
+		else
+	  { // must be case P
+				E ();
+		}
+		match (';', "S");
+	} else
+	{
+	  error ("S");
+	}
 }
 
 /****************************************************/
@@ -146,20 +165,20 @@ I ()
   // to handle production
   // I -> '[' E ? { S } : { S } ']' | '[' E ? { S } ']'
 
-  match ('[');
+  match ('[', "I");
   E ();
-  match ('?');
+  match ('?', "I");
   while (g_token != ':' && g_token != ']')
     S ();
   if (g_token == ':')
-    {
-      match (':');
-      while (g_token != ']')
-        S ();
-      match (']');
-    }
+	{
+		match (':', "I");
+		while (g_token != ']')
+			S ();
+		match (']', "I");
+	}
   else
-    match (']');
+    match (']', "I");
 }
 
 /****************************************************/
@@ -170,12 +189,12 @@ W ()
   // to handle production
   // W --> '{' E ? { S } '}'
 
-  match ('{');
+  match ('{', "W");
   E ();
-  match ('?');
+  match ('?', "W");
   while (g_token != '}')
     S ();
-  match ('}');
+  match ('}', "W");
 }
 
 /****************************************************/
@@ -191,9 +210,9 @@ A ()
   else 
     error ("A, missing identifier");
 
-  match ('=');
+  match ('=', "A");
   E ();
-  match (';');
+  match (';', "A");
 }
 
 /****************************************************/
@@ -204,9 +223,9 @@ P ()
   // to handle production
   // P --> '<' E ;
 
-  match ('<');
+  match ('<', "P");
   E ();
-  match (';');
+  match (';', "P");
 }
 
 /****************************************************/
@@ -217,17 +236,17 @@ C ()
   // to handle production
   // C --> '<' ( 'B' | 'T' | 'N' ) ;
 
-  match ('<');
+  match ('<', "C");
   if (g_token == 'B')
-    match ('B');
+    match ('B', "C");
   else if (g_token == 'T')
-    match ('T');
+    match ('T', "C");
   else if (g_token == 'N')
-    match ('N');
+    match ('N', "C");
   else
     error ("C");
 
-  match (';');
+  match (';', "C");
 }
 
 /****************************************************/
@@ -238,12 +257,12 @@ G ()
   // to handle production
   // G --> '>' id ;
 
-  match ('>');
+  match ('>', "G");
   if (islower (g_token))
     g_token = getToken ();
   else
     error ("G, missing identifier");
-  match (';');
+  match (';', "G");
 }
 
 /****************************************************/
@@ -256,10 +275,10 @@ E ()
   
   T ();
   while (g_token == '+' || g_token == '-')
-    {
-      g_token = getToken ();
-      T ();
-    }
+	{
+		g_token = getToken ();
+		T ();
+	}
 }
 
 /****************************************************/
@@ -272,10 +291,10 @@ T ()
 
   U ();
   while (g_token == '*' || g_token == '/' || g_token == '%')
-    {
-      g_token = getToken ();
-      U ();
-    }
+	{
+		g_token = getToken ();
+		U ();
+	}
 }
 
 /****************************************************/
@@ -288,10 +307,10 @@ U ()
 
   F ();
   if (g_token == '^')
-    {
-      match ('^');
-      U ();
-    }
+	{
+		match ('^', "U");
+		U ();
+	}
 }
 
 /****************************************************/
@@ -303,11 +322,11 @@ F ()
   // F --> '(' E ')' | id | num
 
   if (g_token == '(')
-    {
-      match ('(');
-      E ();
-      match (')');
-    }
+	{
+		match ('(', "F");
+		E ();
+		match (')', "F");
+	}
   else if (islower (g_token))
     g_token = getToken ();
   else if (isdigit (g_token))
@@ -317,18 +336,17 @@ F ()
 }
 
 /****************************************************/
-
-
+// matches token and advances input
 void
-match (char token)
+match (char token, const char* callee)
 {
   if (g_token == token)
     g_token = getToken ();
   else
-    {
-      printf ("Expected %c, found %c\n", token, g_token);
-      error ("match");
-    }
+	{
+		printf ("Expected %c, found %c\n", token, g_token);
+		error (callee);
+	}
 }
 
 /****************************************************/
@@ -336,7 +354,7 @@ match (char token)
 void
 error (const char* error)
 {
-  printf ("\n*** ERROR: %s\n", error);
+  printf ("\nParse error in: %s\n", error);
   exit (1);
 }
 
