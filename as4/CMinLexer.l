@@ -21,7 +21,7 @@
 %}
 
 DIGIT     [0-9]
-IDENT     [[:alpha:]][[:alnum:]]*
+IDENT     [[:alpha:]][[:alpha:]]*
 
 %%
  /* Rules section */
