@@ -1,5 +1,5 @@
 /* 
-   Filename    : CMinTokens.hpp
+   Filename    : CMinTokens.h
    Author      : Merv Fansler
    Course      : CSCI 435
    Assignment  : Assignment 4, Lex Luthor vs C-

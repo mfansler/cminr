@@ -10,7 +10,7 @@
 /* Definitions Section */
 
 %{
-  #include "CMinTokens.hpp"
+  #include "CMinTokens.h"
 
   extern "C"
   int
