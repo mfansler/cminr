@@ -49,12 +49,6 @@ void
 A ();
 
 void
-P ();
-
-void
-C ();
-
-void
 G ();
 
 void
@@ -218,40 +212,6 @@ A ()
 /****************************************************/
 
 void
-P ()
-{
-  // to handle production
-  // P --> '<' E ;
-
-  match ('<', "P");
-  E ();
-  match (';', "P");
-}
-
-/****************************************************/
-
-void 
-C ()
-{
-  // to handle production
-  // C --> '<' ( 'B' | 'T' | 'N' ) ;
-
-  match ('<', "C");
-  if (g_token == 'B')
-    match ('B', "C");
-  else if (g_token == 'T')
-    match ('T', "C");
-  else if (g_token == 'N')
-    match ('N', "C");
-  else
-    error ("C");
-
-  match (';', "C");
-}
-
-/****************************************************/
-
-void
 G ()
 {
   // to handle production
@@ -354,7 +314,7 @@ match (char token, const char* callee)
 void
 error (const char* error)
 {
-  printf ("\nParse error in: %s\n", error);
+  printf ("\nParse error in %s\n", error);
   exit (1);
 }
 
