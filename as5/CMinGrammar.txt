@@ -1,0 +1,52 @@
+prog  -> { decl }
+decl  -> VOID ID func | INT ID decl2
+decl2 -> func | [ LBRACK NUM RBRACK ] SEMI
+func  -> LPAREN para RPAREN cstm
+para  -> VOID | para2 { COMMA para2 }
+para2 -> type ID [ LBRACK RBRACK ]
+type  -> VOID | INT
+cstm  -> LBRACE lvar { stmt } RBRACE
+lvar  -> { INT ID [ LBRACK NUM RBRACK ] SEMI }
+stmt  -> cstm | estm | wstm | istm | rstm
+istm  -> IF LPAREN expr RPAREN stmt [ ELSE stmt ]
+wstm  -> WHILE LPAREN expr RPAREN stmt
+rstm  -> RETURN [ expr ] SEMI
+estm  -> [ expr ] SEMI
+expr  -> NUM math | LPAREN expr RPAREN math | ID expr2
+expr2 -> LPAREN args RPAREN math | ASSIGN expr | [ LBRACK expr RBRACK ] math
+math  -> { mops term } { aops aexp } { rops aexp }
+args  -> [ expr { COMMA expr } ]
+aexp  -> term { aops aexp }
+term  -> fact { mops term }
+fact  -> LPAREN expr RPAREN | NUM | ID fact2
+fact2 -> LPAREN args RPAREN | [ LBRACK expr RBRACK ]
+rops  -> LT | LTE | GT | GTE | EQ | NEQ
+aops  -> PLUS | MINUS
+mops  -> TIMES | DIVIDE
+
+-------------------------------------------------------------------------------
+P  -> { D }
+D  -> VOID ID U | INT ID D2
+D2 -> U | [ LBRACK NUM RBRACK ] SEMI
+U  -> LPAREN P RPAREN C
+P  -> VOID | P2 { COMMA P2 }
+P2 -> Y ID [ LBRACK RBRACK ]
+Y  -> VOID | INT
+C  -> LBRACE V { S } RBRACE
+V  -> { INT ID [ LBRACK NUM RBRACK ] SEMI }
+S  -> C | I | W | R | E
+I  -> IF LPAREN X RPAREN S [ ELSE S ]
+W  -> WHILE LPAREN X RPAREN S
+R  -> RETURN [ X ] SEMI
+E  -> [ X ] SEMI
+X  -> NUM H | LPAREN X RPAREN H | ID X2
+X2 -> LPAREN G RPAREN H | ASSIGN X | [ LBRACK X RBRACK ] H
+H  -> { M T } { A Q } { L Q }
+G  -> [ X { COMMA X } ]
+Q  -> T { A Q }
+T  -> F { M T }
+F  -> LPAREN X RPAREN | NUM | ID F2
+F2 -> LPAREN G RPAREN | [ LBRACK X RBRACK ]
+L  -> LT | LTE | GT | GTE | EQ | NEQ
+A  -> PLUS | MINUS
+M  -> TIMES | DIVIDE
