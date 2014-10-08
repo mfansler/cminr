@@ -1,0 +1,15 @@
+/*
+  File       : failallthethings.cm
+  Author     : Merv Fansler
+  Assignment : C- Tests
+  Description: Cases one might expect to pass, but shouldn't.
+*/
+
+/* function declarations must have explicit parameter declaration */
+int random () { return 42; }
+
+/* cannot assign values in global context */
+int PI; PI = 3;
+
+/* cannot assign values while declaring */
+void f (void) { int x = PI; }

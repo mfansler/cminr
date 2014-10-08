@@ -1,0 +1,111 @@
+/*
+  Filename  : stats.cm
+  Author    : Merv Fansler
+  Assignment: C- Tests
+  Description: a few simple statistical functions
+
+*/
+
+
+/*************************************************/
+
+int
+pow (int x, int n)
+{
+  int y;
+  int i;
+  y = 1;
+  i = 0;
+  while (i < n)
+  {
+    y = y * x;
+    i = i + 1;
+  }
+  return y;
+}
+
+/*************************************************/
+
+int
+nthMoment (int n, int x[], int low, int high)
+{
+  int i; int sum;
+  sum = 0;
+  i = low;
+  while (i <= high)
+  {
+    sum = sum + pow (x[i], n);
+    i = i + 1;
+  }
+  return sum / (high - low);
+}
+
+/*************************************************/
+
+int
+mean (int x[], int low, int high)
+{
+  return nthMoment (1, x, low, high);
+}
+
+/*************************************************/
+
+int
+variance (int x[], int low, int high)
+{
+  return nthMoment (2, x, low, high) - pow (mean (x, low, high), 2);
+}
+
+/*************************************************/
+
+int
+stdev (int x[], int low, int high)
+{
+  return sqrt (variance (x, low, high));
+}
+
+/*************************************************/
+
+int
+sqrt (int sq)
+{
+  int i;
+  int rt;
+  i = 0;
+  rt = 1;
+  
+  while (i < 5) /* 5 runs good enough? */
+  {
+    rt = (rt + sq / rt) / 2;
+  }
+  return rt;
+}
+
+/*************************************************/
+
+/*
+  The following is from a Code Golf answer for producing
+  a "who-really-cares-if-its-really-random"-pseudorandom
+  number without using system calls or built-in random
+  libraries.
+
+  Assumes OS is randomizing pointer values for security.
+
+  http://codegolf.stackexchange.com/a/22018
+*/
+
+int
+rand (void)
+{ 
+  int x[1];
+
+  return x - 100 * (x / 100); /* approximate modulus */
+}
+
+/*************************************************/
+
+int
+PI (void)
+{
+  return 355 / 113;
+}

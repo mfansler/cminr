@@ -14,6 +14,7 @@
 #include <iomanip>
 #include <map>
 #include <string>
+#include <functional>
 
 /******************************************************************************/
 // Local Includes
@@ -27,6 +28,9 @@
 using std::endl;
 using std::setw;
 */
+using std::string;
+using std::placeholders::_1;
+
 /******************************************************************************/
 // External references
 
@@ -38,6 +42,9 @@ extern FILE* yyin;
 
 extern char* yytext;
 
+extern int lineCount;
+extern int colCount;
+
 /******************************************************************************/
 // Function declarations
 
@@ -45,22 +52,24 @@ int
 getToken ();
 
 void
-error (const char* msg);
+error (string msg);
 
 void
-match (int token);
+matchGeneric (int token, string callee);
+
+// Non-terminals
 
 void
-P ();
+program ();
 
 void
-D ();
+declaration ();
 
 void
 D2 ();
 
 void
-U ();
+functionDeclaration ();
 
 void
 P1 ();
@@ -99,6 +108,9 @@ void
 X2 ();
 
 void
+X3 ();
+
+void
 H ();
 
 void
@@ -130,6 +142,42 @@ M ();
 
 int g_token;
 
+
+std::map<int, std::string> tokenNames = 
+  {
+    {ERROR, "ERROR"},
+    {IF, "IF"},
+    {ELSE, "ELSE"},
+    {INT, "INT"},
+    {VOID, "VOID"},
+    {RETURN, "RETURN"},
+    {WHILE, "WHILE"},
+    { FOR, "FOR"},
+    {PLUS, "PLUS"},
+    {MINUS, "MINUS"},
+    {TIMES, "TIMES"},
+    {DIVIDE, "DIVIDE"},
+    {LT, "LT"},
+    {LTE, "LTE"},
+    {GT, "GT"},
+    {GTE, "GTE"},
+    {EQ, "EQ"},
+    {NEQ, "NEQ"},
+    {INCREMENT, "INCREMENT"},
+    {DECREMENT, "DECREMENT"},
+    {ASSIGN, "ASSIGN"},
+    {SEMI, "SEMI"},
+    {COMMA, "COMMA"},
+    {LPAREN, "LPAREN"},
+    {RPAREN, "RPAREN"},
+    {LBRACK, "LBRACK"},
+    {RBRACK, "RBRACK"},
+    {LBRACE, "LBRACE"},
+    {RBRACE, "RBRACE"},
+    {ID, "ID"},
+    {NUM, "NUM"} 
+  };
+
 /******************************************************************************/
 
 int
@@ -146,7 +194,7 @@ main (int argc, char* argv[])
   }
   
   g_token = getToken ();
-  P ();
+  program ();
   if (g_token == 0)
     printf ("Successful parse\n");
   else
@@ -167,47 +215,54 @@ getToken ()
 /******************************************************************************/
 
 void
-error (const char* msg)
+error (std::string msg)
 {
-  printf ("Error in %s", msg);
+  std::cout << "Error in " + msg << std::endl
+	    << "Line " << lineCount << ", Column " << colCount << std::endl;
   exit (1);
 }
 
 /******************************************************************************/
 
 void
-match (int expectedToken)
+matchGeneric (int expectedToken, string callee)
 {
   if (g_token == expectedToken)
     g_token = getToken ();
   else
-    error ("match");
+  {
+    std::cout << "Expected " << tokenNames[expectedToken]
+	      << ", found " << tokenNames[g_token] << std::endl;
+    error (callee);
+  }
 }
 
 /******************************************************************************/
-// P --> { D }
+// program --> { declaration }
 
 void
-P ()
+program ()
 {
   while (g_token != 0)
-    D ();
+    declaration ();
 }
 
 /******************************************************************************/
-// D --> VOID ID U | INT ID D2
+// declaration --> VOID ID functionDeclaration | INT ID D2
 
 void
-D ()
+declaration ()
 {
+  auto match = std::bind(matchGeneric, _1, "declaration");
+  
   if (g_token == VOID)
-  { // must be U (function) declaration
+  { // must be functionDeclaration (function) declaration
     match (VOID);
     match (ID);
-    U ();
+    functionDeclaration ();
   }
   else if (g_token == INT)
-  { // could still be U or V
+  { // could still be functionDeclaration or V
     match (INT);
     match (ID);
     D2 ();
@@ -217,14 +272,16 @@ D ()
 }
 
 /******************************************************************************/
-// D2 --> U | [ LBRACK NUM RBRACK ] SEMI
+// D2 --> functionDeclaration | [ LBRACK NUM RBRACK ] SEMI
 
 void
 D2 ()
 {
+  auto match = std::bind(matchGeneric, _1, "functionOrVariable");
+ 
   if (g_token == LPAREN)
   { // must be function declaration
-    U ();
+    functionDeclaration ();
   }
   else if (g_token == LBRACK)
   {
@@ -242,11 +299,13 @@ D2 ()
 }
 
 /******************************************************************************/
-// U --> LPAREN P RPAREN C
+// functionDeclaration --> LPAREN P RPAREN C
 
 void
-U ()
+functionDeclaration ()
 {
+  auto match = std::bind(matchGeneric, _1, "functionDeclaration");
+ 
   match (LPAREN);
   P1 ();
   match (RPAREN);
@@ -259,6 +318,8 @@ U ()
 void
 P1 ()
 {
+  auto match = std::bind(matchGeneric, _1, "P1 ");
+ 
   if (g_token == VOID)
     match (VOID);
   else if (g_token == INT)
@@ -280,6 +341,8 @@ P1 ()
 void
 P2 ()
 {
+  auto match = std::bind(matchGeneric, _1, "P2 ");
+ 
   Y ();
   match (ID);
   if (g_token == LBRACK)
@@ -294,6 +357,8 @@ P2 ()
 void
 Y ()
 {
+  auto match = std::bind(matchGeneric, _1, "Y ");
+  
   if (g_token == VOID)
     match (VOID);
   else if (g_token == INT)
@@ -309,6 +374,8 @@ Y ()
 void
 C ()
 {
+  auto match = std::bind(matchGeneric, _1, "C ");
+ 
   match (LBRACE);
   V ();
   while (g_token != RBRACE)
@@ -322,6 +389,8 @@ C ()
 void
 V ()
 {
+  auto match = std::bind(matchGeneric, _1, "V ");
+ 
   while (g_token == INT)
   {
     match (INT);
@@ -342,6 +411,8 @@ V ()
 void
 S ()
 {
+  auto match = std::bind(matchGeneric, _1, "S ");
+ 
   if (g_token == LBRACE)
     C ();
   else if (g_token == IF)
@@ -359,6 +430,8 @@ S ()
 void
 I ()
 {
+  auto match = std::bind(matchGeneric, _1, "I ");
+ 
   match (IF);
   match (LPAREN);
   X ();
@@ -377,6 +450,8 @@ I ()
 void
 W ()
 {
+  auto match = std::bind(matchGeneric, _1, "W ");
+ 
   match (WHILE);
   match (LPAREN);
   X ();
@@ -390,6 +465,8 @@ W ()
 void
 R ()
 {
+  auto match = std::bind(matchGeneric, _1, "R ");
+ 
   match (RETURN);
   if (g_token != SEMI)
     X ();
@@ -402,6 +479,8 @@ R ()
 void
 E ()
 {
+  auto match = std::bind(matchGeneric, _1, "E ");
+ 
   if (g_token != SEMI)
     X ();
   match (SEMI);
@@ -413,6 +492,8 @@ E ()
 void
 X ()
 {
+  auto match = std::bind(matchGeneric, _1, "X ");
+ 
   if (g_token == NUM)
   {
     match (NUM);
@@ -435,22 +516,19 @@ X ()
 }
 
 /******************************************************************************/
-// X2 --> LPAREN G RPAREN H | ASSIGN X | [ LBRACK X RBRACK ] H
+// X2 --> LPAREN G RPAREN H | [ LBRACK X RBRACK ] X3
 
 void
 X2 ()
 {
+  auto match = std::bind(matchGeneric, _1, "X2 ");
+ 
   if (g_token == LPAREN)
   {
     match (LPAREN);
     G ();
     match (RPAREN);
     H ();
-  }
-  else if (g_token == ASSIGN)
-  {
-    match (ASSIGN);
-    X ();
   }
   else
   {
@@ -460,8 +538,25 @@ X2 ()
       X ();
       match (RBRACK);
     }
-    H ();
+    X3 ();
   }
+}
+
+/******************************************************************************/
+// X3 --> ASSIGN X | H
+
+void
+X3 ()
+{
+  auto match = std::bind(matchGeneric, _1, "X3 ");
+ 
+  if (g_token == ASSIGN)
+  {
+    match (ASSIGN);
+    X ();
+  }
+  else
+    H();
 }
 
 /******************************************************************************/
@@ -470,6 +565,8 @@ X2 ()
 void
 H ()
 {
+  auto match = std::bind(matchGeneric, _1, "H ");
+ 
   while (g_token == TIMES || g_token == DIVIDE)
   {
     M ();
@@ -494,6 +591,8 @@ H ()
 void
 G ()
 {
+  auto match = std::bind(matchGeneric, _1, "G ");
+ 
   if (g_token == NUM || g_token == LPAREN || g_token == ID)
   {
     X ();
@@ -517,6 +616,8 @@ G ()
 void
 Q ()
 {
+  auto match = std::bind(matchGeneric, _1, "Q ");
+ 
   T ();
   while (g_token == PLUS || g_token == MINUS)
   {
@@ -531,6 +632,8 @@ Q ()
 void
 T ()
 {
+  auto match = std::bind(matchGeneric, _1, "T ");
+  
   F ();
   while (g_token == TIMES || g_token == DIVIDE)
   {
@@ -545,6 +648,8 @@ T ()
 void
 F ()
 {
+  auto match = std::bind(matchGeneric, _1, "F ");
+ 
   if (g_token == LPAREN)
   {
     match (LPAREN);
@@ -568,6 +673,8 @@ F ()
 void
 F2 ()
 {
+  auto match = std::bind(matchGeneric, _1, "F2 ");
+ 
   if (g_token == LPAREN)
   {
     match (LPAREN);
@@ -589,6 +696,8 @@ F2 ()
 void
 L ()
 {
+  auto match = std::bind(matchGeneric, _1, "L ");
+ 
   switch (g_token)
   {
   case LT:
@@ -610,7 +719,7 @@ L ()
     match (NEQ);
     break;
   default:
-    error ("L, Logical operation missing");
+    error ("L, Logical operator missing");
   }
 }
 
@@ -620,6 +729,8 @@ L ()
 void
 A ()
 {
+  auto match = std::bind(matchGeneric, _1, "A ");
+ 
   if (g_token == PLUS)
     match (PLUS);
   else if (g_token == MINUS)
@@ -634,6 +745,8 @@ A ()
 void
 M ()
 {
+  auto match = std::bind(matchGeneric, _1, "M ");
+ 
   if (g_token == TIMES)
     match (TIMES);
   else if (g_token == DIVIDE)
