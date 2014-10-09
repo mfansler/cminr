@@ -1,0 +1,25 @@
+/* 
+   Testing while loops and some arithmetic.
+*/
+
+int test (int u, int v)
+{
+    int z;
+    if(u > v) 
+    {
+        while(a = u < 10)
+        {
+            z = 15;
+        }
+    }
+    else
+    {
+        z = a / b * c - d + e > 7 + j;
+    }
+}
+
+int main (void)
+{ 
+  u = input(); v = input();
+  test(u, v);
+}

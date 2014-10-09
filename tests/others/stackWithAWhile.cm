@@ -1,0 +1,79 @@
+/*
+  Filename   : stackWithAWhile.cm
+  Author     : Kimberlyn A. Broskie
+  Course     : CSCI 435
+  Assignment : Lab 6:  C- Parser sub 1 (Recursive Descent Parsing)
+  Description: Simulates a stack's push, pop, and peek operations 
+  	       using the C- language.
+*/
+
+int stack [20];
+int size;
+int capacity;
+int SENTINELVALUE;
+
+void 
+push (int value)
+{
+  if (size < capacity)
+  {
+     stack[size] = value;
+     size = size + 1;
+  }
+}
+
+void 
+pop (void)
+{
+  if (size > 0)
+  {
+    size = size - 1;
+  }		
+}
+
+
+int 
+top (void)
+{
+  int valueToReturn;
+
+  if (size == 0)
+  {
+     valueToReturn = SENTINELVALUE;
+  }
+  else
+  {
+    valueToReturn = stack[size - 1];
+  }
+		
+  return valueToReturn;
+}
+
+void 
+main (void)
+{
+  int number;  
+  int index;
+  int valueBeingPopped;
+
+  size = 0;
+  capacity = 20;
+  SENTINELVALUE = 99999;
+
+  /* Push odd numbers starting at 1, but add some math to it 
+     to test the operators.                                  */
+  while (size < capacity)
+  {
+    number = (index * 4 + 1) / 2 - 1; 
+    push (number);
+    index = index + 1;
+  } 
+  
+  while (size != 0)
+  { 
+    /* Test assignment to function calls that return a value */
+    valueBeingPopped = top ();
+
+    pop ();
+  }
+}

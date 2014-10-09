@@ -13,3 +13,6 @@ int PI; PI = 3;
 
 /* cannot assign values while declaring */
 void f (void) { int x = PI; }
+
+/* statements are not valid expressions */
+int max (int x, int y) { return if (x > y) x else y; }

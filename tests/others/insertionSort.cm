@@ -1,0 +1,86 @@
+/*
+  Filename   : insertionSort.cm
+  Author     : Kimberlyn A. Broskie
+  Course     : CSCI 435
+  Assignment : Lab 6:  C- Parser sub 1 (Recursive Descent Parsing)
+  Description: Performs an insertion sort using the C- language.
+*/
+
+int x[20];
+
+int continueSorting (int a[], int index, int temp)
+{
+  int keepGoing;
+  
+  if (index >= 1)
+  {
+    keepGoing = 1;
+  }
+  else if (temp < x[index - 1])
+  {
+    keepGoing = 1;
+  }
+  else
+  {
+    keepGoing = 0;
+  }
+
+  return keepGoing;
+}
+
+void 
+sort (int a[], int size)
+{
+  int temp;
+  int currentIndex;
+  int index;
+  int keepGoing;
+
+  keepGoing = 1;
+  currentIndex = 1;
+
+  while (currentIndex < size)
+  {
+    temp = x[currentIndex];
+    index = currentIndex;
+
+    while (keepGoing = continueSorting (x, index, temp) == 1)
+    {
+      x[index] = x[index -1];
+      index = index - 1;
+    }
+
+    keepGoing = 1;
+    x[index] = temp;
+    currentIndex = currentIndex + 1;
+  }
+}
+
+void 
+main (void)
+{
+  int size;
+  int i;
+  int num;
+  
+  size = 20;
+  i = size;
+  num = 0;
+
+  /* Add some numbers in reverse order to sort. */
+  while (i > 0)
+  {
+    x[i - 1] = num;
+    i = i - 1; 
+    num = num + 1;
+  }
+  
+  sort (x, size);
+ 
+  i = 0;
+  while (i < size)
+  {
+    output (x[i]);
+    i = i + 1;
+  }
+}

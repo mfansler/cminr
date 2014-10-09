@@ -1,0 +1,9 @@
+/* A nice little workout for the declaration grammar. */
+
+void foo;
+
+void main(void)
+{
+  int bar;
+  void baz;
+}

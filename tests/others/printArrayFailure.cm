@@ -1,0 +1,15 @@
+/**
+ * This method is poorly written. Who wrote this?
+ */
+void printArray ( int array[], int arraySize )
+{
+	int i;
+	i = 0;
+	while ( i < arraySize )
+	{
+		print ( array[i] );
+	}
+	/* Can't declare variables willy-nilly */
+	int nl;
+	print ( nl );
+}

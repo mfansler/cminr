@@ -1,0 +1,8 @@
+/* No function declarations in local declaration! */
+
+void main(void)
+{
+  int foo(void){
+    main();
+  }
+}

@@ -1,0 +1,28 @@
+/*
+  File       : passallthethings.cm
+  Author     : Merv Fansler
+  Assignment : C- Tests
+  Description: Cases one might expect to fail or are ill-formed semantically,
+                 but should still pass.
+*/
+
+/* can void functions still return things? */
+void nonsense (void) { return 42; }
+
+/* could this cause trouble in the code gen stage? */
+int uhOh (int x[]) {
+  x[x[0]] = x;
+  return x[x];
+}
+
+/* but I don't want to do anything! */
+void bidingTime (void) { ;;;; }
+
+/* Evaluating assignments? */
+int both (int x, int y) {
+  if ((x = y) * (y = x)) {
+    return x == y;
+  } else {
+    return (x != y) + (y != x);
+  }
+}

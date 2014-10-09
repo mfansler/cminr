@@ -1,0 +1,34 @@
+/* Nonsensical, but a good work out. Should be valid. */
+int getone(int ignored)
+{
+  return 1;
+}
+
+void main(void)
+{
+  int foo;
+  int bar;
+  int baz[1];
+  
+  foo = 4;
+  bar = 2;
+  
+  baz[(foo-bar)/bar] = foo * 10 + bar;
+
+  baz[(foo-bar)/bar] + 1;
+  
+  foo = bar = baz[getone(foo)];
+
+  if (foo = bar = getone(2))
+  {
+    bar = baz[1];
+    while (bar > 1)
+    {
+      bar = foo = bar - 1;
+    }
+  }
+  
+  return;
+}
+
+    

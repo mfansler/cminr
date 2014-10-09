@@ -1,0 +1,18 @@
+/* Starting Test 1 
+This should be a valid c- program*/
+
+int x;
+int double(int y)
+{
+int temp;
+temp = 2;
+return temp * y;
+}
+
+int main(void) 
+{
+double ();
+return 1;
+}
+
+/* Ending Test 1 */

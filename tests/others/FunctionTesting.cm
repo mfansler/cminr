@@ -1,0 +1,16 @@
+/* 
+    Testing expressions inside functions.
+
+    Last will fail.
+*/
+
+int main (void)
+{ 
+    okFunc(a());
+    okFuncTwo(a < 5);
+    okFuncThree(a + 5, 7 - a < 5 + 5);
+    okFuncFour(a = b);
+    okFuncFive(f);
+    okFuncSix();;
+    badLastParam(y + 2, a = b = c > 4, x() = z));
+}

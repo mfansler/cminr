@@ -1,0 +1,6 @@
+/* A very simple test case which checks assignment grammar */
+
+void main(void)
+{
+  bar() = baz;
+}
