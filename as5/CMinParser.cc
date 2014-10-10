@@ -652,5 +652,5 @@ factorFunctionCallOrVariable ()
     expression ();
     match (RBRACK);
   }
-  // else => empty
+  // else => epsilon
 }
