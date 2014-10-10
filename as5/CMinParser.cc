@@ -112,15 +112,6 @@ factor ();
 void
 factorFunctionCallOrVariable ();
 
-void
-relationalOperator ();
-
-void
-additiveOperator ();
-
-void
-multiplicativeOperator ();
-
 /******************************************************************************/
 // Global vars
 
@@ -242,13 +233,13 @@ declaration ()
   auto match = createMatch ("declaration");
   
   if (g_token == VOID)
-  { // must be functionDeclaration (function) declaration
+  { // must be function declaration
     match (VOID);
     match (ID);
     functionDeclaration ();
   }
   else if (g_token == INT)
-  { // could still be functionDeclaration or V
+  { // could still be function or variable
     match (INT);
     match (ID);
     functionOrVariableDeclaration ();
@@ -270,14 +261,14 @@ functionOrVariableDeclaration ()
     functionDeclaration ();
   }
   else if (g_token == LBRACK)
-  {
+  { // array declaration
     match (LBRACK);
     match (NUM);
     match (RBRACK);
     match (SEMI);
   }
   else if (g_token == SEMI)
-  {
+  { // basic var declaration
     match (SEMI);
   }
   else
@@ -306,13 +297,13 @@ parameterList ()
 {
   auto match = createMatch ("parameterList");
  
-  if (g_token == VOID)
+  if (g_token == VOID) // no parameters
     match (VOID);
   else if (g_token == INT)
-  {
+  { // at least one parameter
     parameter ();
     while (g_token == COMMA)
-    {
+    { // more parametes
       match (COMMA);
       parameter ();
     }
@@ -332,7 +323,7 @@ parameter ()
   match (INT);
   match (ID);
   if (g_token == LBRACK)
-  {
+  { // array
     match (LBRACK);
     match (RBRACK);
   }
@@ -408,7 +399,7 @@ ifStatement ()
   match (RPAREN);
   statement ();
   if (g_token == ELSE)
-  {
+  { // optional else
     match (ELSE);
     statement ();
   }
@@ -430,7 +421,7 @@ whileStatement ()
 }
 
 /******************************************************************************/
-// returnStatement --> RETURN [ expression ] SEMI
+// returnStatement --> RETURN expressionStatement
 
 void
 returnStatement ()
@@ -438,9 +429,7 @@ returnStatement ()
   auto match = createMatch ("returnStatement");
  
   match (RETURN);
-  if (g_token != SEMI)
-    expression ();
-  match (SEMI);
+  expressionStatement ();
 }
 
 /******************************************************************************/
@@ -467,19 +456,19 @@ expression ()
   auto match = createMatch ("expression");
  
   if (g_token == NUM)
-  {
+  { // numerical expression
     match (NUM);
     mathematicalExpression ();
   }
   else if (g_token == LPAREN)
-  {
+  { // associative expression
     match (LPAREN);
     expression ();
     match (RPAREN);
     mathematicalExpression ();
   }
   else if (g_token == ID)
-  {
+  { // either function call or variable reference
     match (ID);
     functionCallOrVariable ();
   }
@@ -534,9 +523,9 @@ assignmentOrMathExpression ()
 }
 
 /******************************************************************************/
-// mathematicalExpression --> [ multiplicativeOperator term ]
-//                            [ additiveOperator additiveExpression ]
-//                            { relationalOperator additiveExpression }
+// mathematicalExpression --> [ ( TIMES | DIVIDE ) term ]
+//                            [ ( PLUS | MINUS ) additiveExpression ]
+//                            { ( LT | LTE | GT | GTE | EQ | NEQ ) additiveExpression }
 
 void
 mathematicalExpression ()
@@ -545,18 +534,18 @@ mathematicalExpression ()
  
   if (g_token == TIMES || g_token == DIVIDE)
   { // found multiplicative expression
-    multiplicativeOperator ();
+    match (g_token);
     term ();
   }
   if (g_token == PLUS || g_token == MINUS)
-  {
-    additiveOperator ();
+  { // found additive expression
+    match (g_token);
     additiveExpression ();
   }
   while (g_token == LT || g_token == LTE || g_token == EQ ||
 	 g_token == GT || g_token == GTE || g_token == NEQ)
-  {
-    relationalOperator ();
+  { // found relational expression
+    match (g_token);
     additiveExpression ();
   }
 }
@@ -603,7 +592,7 @@ additiveExpression ()
 }
 
 /******************************************************************************/
-// term --> factor { multiplicativeOperator term }
+// term --> factor { ( TIMES | DIVIDE ) term }
 
 void
 term ()
@@ -619,7 +608,7 @@ term ()
 }
 
 /******************************************************************************/
-// factor -> LPAREN expression RPAREN | NUM | ID F2
+// factor -> LPAREN expression RPAREN | NUM | ID factorFunctionCallOrVariable
 
 void
 factor ()
@@ -627,15 +616,15 @@ factor ()
   auto match = createMatch ("factor");
  
   if (g_token == LPAREN)
-  {
+  { // associative expression
     match (LPAREN);
     expression ();
     match (RPAREN);
   }
-  else if (g_token == NUM)
+  else if (g_token == NUM) // number
     match (NUM);
   else if (g_token == ID)
-  {
+  { // function or variable
     match (ID);
     factorFunctionCallOrVariable ();
   }
@@ -652,81 +641,16 @@ factorFunctionCallOrVariable ()
   auto match = createMatch ("factorFunctionCallOrVariable");
  
   if (g_token == LPAREN)
-  {
+  { // function call
     match (LPAREN);
     argumentList ();
     match (RPAREN);
   }
   else if (g_token == LBRACK)
-  {
+  { // array
     match (LBRACK);
     expression ();
     match (RBRACK);
   }
   // else => empty
-}
-
-/******************************************************************************/
-// relationalOperator --> LT | LTE | GT | GTE | EQ | NEQ
-
-void
-relationalOperator ()
-{
-  auto match = createMatch ("relationalOperator");
- 
-  switch (g_token)
-  {
-  case LT:
-    match (LT);
-    break;
-  case LTE:
-    match (LTE);
-    break;
-  case GT:
-    match (GT);
-    break;
-  case GTE:
-    match (GTE);
-    break;
-  case EQ:
-    match (EQ);
-    break;
-  case NEQ:
-    match (NEQ);
-    break;
-  default:
-    error ("relationOperator, operator was expected");
-  }
-}
-
-/******************************************************************************/
-// additiveOperator --> PLUS | MINUS
-
-void
-additiveOperator ()
-{
-  auto match = createMatch ("additiveOperator");
- 
-  if (g_token == PLUS)
-    match (PLUS);
-  else if (g_token == MINUS)
-    match (MINUS);
-  else
-    error ("additiveOperator, operator was expected");
-}
-
-/******************************************************************************/
-// multiplicativeOperator --> TIMES | DIVIDE
-
-void
-multiplicativeOperator ()
-{
-  auto match = createMatch ("multiplicativeOperator");
- 
-  if (g_token == TIMES)
-    match (TIMES);
-  else if (g_token == DIVIDE)
-    match (DIVIDE);
-  else
-    error ("multiplicativeOperator, operator was expected");
 }

@@ -34,7 +34,7 @@
 
 11. whileStatement --> WHILE LPAREN expression RPAREN statement
 
-12. returnStatement --> RETURN [ expression ] SEMI
+12. returnStatement --> RETURN expressionStatement
 
 13. expressionStatement --> [ expression ] SEMI
 
@@ -47,23 +47,17 @@
 
 16. assignmentOrMathExpression --> ASSIGN expression | mathematicalExpression
 
-17. mathematicalExpression --> { multiplicativeOperator term }
-    			       { additiveOperator additiveExpression }
-			       { relationalOperator additiveExpression }
+17. mathematicalExpression --> [ ( TIMES | DIVIDE ) term ]
+    			       [ ( PLUS | MINUS ) additiveExpression ]
+			       { ( LT | LTE | GT | GTE | EQ | NEQ ) additiveExpression }
 
 18. argumentList --> [ expression { COMMA expression } ]
 
 19. additiveExpression --> term { ( PLUS | MINUS ) additiveExpression }
 
-20. term --> factor { multiplicativeOperator term }
+20. term --> factor { ( TIMES | DIVIDE ) term }
 
-21. factor -> LPAREN expression RPAREN | NUM | ID F2
+21. factor -> LPAREN expression RPAREN | NUM | ID factorFunctionCallOrVariable
 
 22. factorFunctionCallOrVariable --> LPAREN args RPAREN |
     				     [ LBRACK expression RBRACK ]
-
-23. relationalOperator --> LT | LTE | GT | GTE | EQ | NEQ
-
-24. additiveOperator --> PLUS | MINUS
-
-25. multiplicativeOperator --> TIMES | DIVIDE
