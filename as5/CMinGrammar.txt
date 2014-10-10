@@ -1,52 +1,69 @@
-prog  -> { decl }
-decl  -> VOID ID func | INT ID decl2
-decl2 -> func | [ LBRACK NUM RBRACK ] SEMI
-func  -> LPAREN para RPAREN cstm
-para  -> VOID | para2 { COMMA para2 }
-para2 -> type ID [ LBRACK RBRACK ]
-type  -> VOID | INT
-cstm  -> LBRACE lvar { stmt } RBRACE
-lvar  -> { INT ID [ LBRACK NUM RBRACK ] SEMI }
-stmt  -> cstm | estm | wstm | istm | rstm
-istm  -> IF LPAREN expr RPAREN stmt [ ELSE stmt ]
-wstm  -> WHILE LPAREN expr RPAREN stmt
-rstm  -> RETURN [ expr ] SEMI
-estm  -> [ expr ] SEMI
-expr  -> NUM math | LPAREN expr RPAREN math | ID expr2
-expr2 -> LPAREN args RPAREN math | ASSIGN expr | [ LBRACK expr RBRACK ] math
-math  -> { mops term } { aops aexp } { rops aexp }
-args  -> [ expr { COMMA expr } ]
-aexp  -> term { aops aexp }
-term  -> fact { mops term }
-fact  -> LPAREN expr RPAREN | NUM | ID fact2
-fact2 -> LPAREN args RPAREN | [ LBRACK expr RBRACK ]
-rops  -> LT | LTE | GT | GTE | EQ | NEQ
-aops  -> PLUS | MINUS
-mops  -> TIMES | DIVIDE
+/*
+  Filename   : CMinGrammar.txt
+  Author     : Merv Fansler
+  Course     : CSCI 435
+  Assignment : Assignment 5, C- Parser_1
+  Description: Left-factored grammar for C- language
+*/
 
--------------------------------------------------------------------------------
-P  -> { D }
-D  -> VOID ID U | INT ID D2
-D2 -> U | [ LBRACK NUM RBRACK ] SEMI
-U  -> LPAREN P RPAREN C
-P  -> VOID | P2 { COMMA P2 }
-P2 -> Y ID [ LBRACK RBRACK ]
-Y  -> VOID | INT
-C  -> LBRACE V { S } RBRACE
-V  -> { INT ID [ LBRACK NUM RBRACK ] SEMI }
-S  -> C | I | W | R | E
-I  -> IF LPAREN X RPAREN S [ ELSE S ]
-W  -> WHILE LPAREN X RPAREN S
-R  -> RETURN [ X ] SEMI
-E  -> [ X ] SEMI
-X  -> NUM H | LPAREN X RPAREN H | ID X2
-X2 -> LPAREN G RPAREN H | ASSIGN X | [ LBRACK X RBRACK ] H
-H  -> { M T } { A Q } { L Q }
-G  -> [ X { COMMA X } ]
-Q  -> T { A Q }
-T  -> F { M T }
-F  -> LPAREN X RPAREN | NUM | ID F2
-F2 -> LPAREN G RPAREN | [ LBRACK X RBRACK ]
-L  -> LT | LTE | GT | GTE | EQ | NEQ
-A  -> PLUS | MINUS
-M  -> TIMES | DIVIDE
+01. program --> { declaration }
+
+02. declaration --> VOID ID functionDeclaration |
+    		    INT ID functionOrVariableDeclaration
+		  
+03. functionOrVariableDeclaration --> functionDeclaration |
+    				      [ LBRACK NUM RBRACK ] SEMI
+
+04. functionDeclaration --> LPAREN parameterList RPAREN compoundStatement
+
+05. parameterList --> VOID | parameter { COMMA parameter }
+
+06. parameter --> INT ID [ LBRACK RBRACK ]
+
+07. compoundStatement --> LBRACE localVariableList { statement } RBRACE
+
+08. localVariableList --> { INT ID [ LBRACK NUM RBRACK ] SEMI }
+
+09. statement --> compoundStatement |
+    	      	  ifStatement |
+		  whileStatement |
+		  returnStatement |
+		  expressionStatement
+
+10. ifStatement --> IF LPAREN expression RPAREN statement [ ELSE statement ]
+
+11. whileStatement --> WHILE LPAREN expression RPAREN statement
+
+12. returnStatement --> RETURN [ expression ] SEMI
+
+13. expressionStatement --> [ expression ] SEMI
+
+14. expression --> NUM mathematicalExpression |
+    	       	   LPAREN expression RPAREN mathematicalExpression |
+		   ID functionCallOrVariable
+
+15. functionCallOrVariable --> LPAREN argumentList RPAREN mathematicalExpression |
+    			       [ LBRACK expression RBRACK ] assignmentOrMathExpression
+
+16. assignmentOrMathExpression --> ASSIGN expression | mathematicalExpression
+
+17. mathematicalExpression --> { multiplicativeOperator term }
+    			       { additiveOperator additiveExpression }
+			       { relationalOperator additiveExpression }
+
+18. argumentList --> [ expression { COMMA expression } ]
+
+19. additiveExpression --> term { ( PLUS | MINUS ) additiveExpression }
+
+20. term --> factor { multiplicativeOperator term }
+
+21. factor -> LPAREN expression RPAREN | NUM | ID F2
+
+22. factorFunctionCallOrVariable --> LPAREN args RPAREN |
+    				     [ LBRACK expression RBRACK ]
+
+23. relationalOperator --> LT | LTE | GT | GTE | EQ | NEQ
+
+24. additiveOperator --> PLUS | MINUS
+
+25. multiplicativeOperator --> TIMES | DIVIDE

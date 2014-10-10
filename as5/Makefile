@@ -36,7 +36,7 @@ LDLIBS   := -lfl
 %.cc : %.l
 	flex --nounput -o $@ $<
 
-CMinParser : CMinParser.o ../as4/CMinLexer.o
+CMinParser : CMinParser.o CMinLexer.o
 
 #############################################################
 

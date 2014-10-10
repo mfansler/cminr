@@ -11,7 +11,6 @@
 // System Includes
 
 #include <iostream>
-#include <iomanip>
 #include <map>
 #include <string>
 #include <functional>
@@ -19,17 +18,7 @@
 /******************************************************************************/
 // Local Includes
 
-#include "../as4/CMinTokens.h"
-
-/******************************************************************************/
-// Namespace declarations
-
-/*using std::cout;
-using std::endl;
-using std::setw;
-*/
-using std::string;
-using std::placeholders::_1;
+#include "CMinTokens.h"
 
 /******************************************************************************/
 // External references
@@ -39,8 +28,6 @@ int
 yylex ();
 
 extern FILE* yyin;
-
-extern char* yytext;
 
 extern int lineCount;
 extern int colCount;
@@ -52,10 +39,10 @@ int
 getToken ();
 
 void
-error (string msg);
+error (std::string msg);
 
-void
-matchGeneric (int token, string callee);
+std::function<void(int)>
+createMatch (std::string callee);
 
 // Non-terminals
 
@@ -66,82 +53,78 @@ void
 declaration ();
 
 void
-D2 ();
+functionOrVariableDeclaration ();
 
 void
 functionDeclaration ();
 
 void
-P1 ();
+parameterList ();
 
 void
-P2 ();
+parameter ();
 
 void
-Y ();
+compoundStatement ();
 
 void
-C ();
+localVariableList ();
 
 void
-V ();
+statement ();
 
 void
-S ();
+ifStatement ();
 
 void
-I ();
+whileStatement ();
 
 void
-W ();
+returnStatement ();
 
 void
-R ();
+expressionStatement ();
 
 void
-E ();
+expression ();
 
 void
-X ();
+functionCallOrVariable ();
 
 void
-X2 ();
+assignmentOrMathExpression ();
 
 void
-X3 ();
+mathematicalExpression ();
 
 void
-H ();
+argumentList ();
 
 void
-G ();
+additiveExpression ();
 
 void
-Q ();
+term ();
 
 void
-T ();
+factor ();
 
 void
-F ();
+factorFunctionCallOrVariable ();
 
 void
-F2 ();
+relationalOperator ();
 
 void
-L ();
+additiveOperator ();
 
 void
-A ();
-
-void
-M ();
+multiplicativeOperator ();
 
 /******************************************************************************/
 // Global vars
 
 int g_token;
-
 
 std::map<int, std::string> tokenNames = 
   {
@@ -196,13 +179,12 @@ main (int argc, char* argv[])
   g_token = getToken ();
   program ();
   if (g_token == 0)
-    printf ("Successful parse\n");
+    std::cout << "Successful parse\n\n";
   else
     error ("main");
   
   return EXIT_SUCCESS;
 }
-
 
 /******************************************************************************/
 
@@ -218,23 +200,27 @@ void
 error (std::string msg)
 {
   std::cout << "Error in " + msg << std::endl
-	    << "Line " << lineCount << ", Column " << colCount << std::endl;
+	    << "Line " << lineCount << ", Column " << colCount
+	    << std::endl << std::endl;
   exit (1);
 }
 
 /******************************************************************************/
 
-void
-matchGeneric (int expectedToken, string callee)
+std::function<void(int)>
+createMatch (std::string callee)
 {
-  if (g_token == expectedToken)
-    g_token = getToken ();
-  else
+  return [callee] (int expectedToken)
   {
-    std::cout << "Expected " << tokenNames[expectedToken]
-	      << ", found " << tokenNames[g_token] << std::endl;
-    error (callee);
-  }
+    if (g_token == expectedToken)
+      g_token = getToken ();
+    else
+    {
+      std::cout << "Expected " << tokenNames[expectedToken]
+		<< ", found " << tokenNames[g_token] << std::endl;
+      error (callee);
+    }
+  };
 }
 
 /******************************************************************************/
@@ -248,12 +234,12 @@ program ()
 }
 
 /******************************************************************************/
-// declaration --> VOID ID functionDeclaration | INT ID D2
+// declaration --> VOID ID functionDeclaration | INT ID functionOrVariableDeclaration
 
 void
 declaration ()
 {
-  auto match = std::bind(matchGeneric, _1, "declaration");
+  auto match = createMatch ("declaration");
   
   if (g_token == VOID)
   { // must be functionDeclaration (function) declaration
@@ -265,19 +251,19 @@ declaration ()
   { // could still be functionDeclaration or V
     match (INT);
     match (ID);
-    D2 ();
+    functionOrVariableDeclaration ();
   }
   else
-    error ("D: invalid declaration");
+    error ("declaration: invalid declaration");
 }
 
 /******************************************************************************/
-// D2 --> functionDeclaration | [ LBRACK NUM RBRACK ] SEMI
+// functionOrVariableDeclaration --> functionDeclaration | [ LBRACK NUM RBRACK ] SEMI
 
 void
-D2 ()
+functionOrVariableDeclaration ()
 {
-  auto match = std::bind(matchGeneric, _1, "functionOrVariable");
+  auto match = createMatch ("functionOrVariable");
  
   if (g_token == LPAREN)
   { // must be function declaration
@@ -295,55 +281,55 @@ D2 ()
     match (SEMI);
   }
   else
-    error ("D2: invalid declaration");
+    error ("functionOrVariableDeclaration: invalid declaration");
 }
 
 /******************************************************************************/
-// functionDeclaration --> LPAREN P RPAREN C
+// functionDeclaration --> LPAREN parameterList RPAREN compoundStatement
 
 void
 functionDeclaration ()
 {
-  auto match = std::bind(matchGeneric, _1, "functionDeclaration");
+  auto match = createMatch ("functionDeclaration");
  
   match (LPAREN);
-  P1 ();
+  parameterList ();
   match (RPAREN);
-  C ();
+  compoundStatement ();
 }
 
 /******************************************************************************/
-// P1 --> VOID | P2 { COMMA P2 }
+// parameterList --> VOID | parameter { COMMA parameter }
 
 void
-P1 ()
+parameterList ()
 {
-  auto match = std::bind(matchGeneric, _1, "P1 ");
+  auto match = createMatch ("parameterList");
  
   if (g_token == VOID)
     match (VOID);
   else if (g_token == INT)
   {
-    P2 ();
+    parameter ();
     while (g_token == COMMA)
     {
       match (COMMA);
-      P2 ();
+      parameter ();
     }
   }
   else
-    error ("P1: invalid parameter syntax");
+    error ("parameterList: invalid parameter syntax");
 }
 
 /******************************************************************************/
-// P2 --> Y ID [ LBRACK RBRACK ]
+// parameter --> INT ID [ LBRACK RBRACK ]
 
 void
-P2 ()
+parameter ()
 {
-  auto match = std::bind(matchGeneric, _1, "P2 ");
- 
-  Y ();
+  auto match = createMatch ("parameter");
+
+  match (INT);
   match (ID);
   if (g_token == LBRACK)
   {
@@ -353,43 +339,27 @@ P2 ()
 }
 
 /******************************************************************************/
-// Y --> VOID | INT
-void
-Y ()
-{
-  auto match = std::bind(matchGeneric, _1, "Y ");
-  
-  if (g_token == VOID)
-    match (VOID);
-  else if (g_token == INT)
-    match (INT);
-  else
-    error ("Y, type unspecified");
-}
-
-
-/******************************************************************************/
-// C --> LBRACE V { S } RBRACE
+// compoundStatement --> LBRACE localVariableList { statement } RBRACE
 
 void
-C ()
+compoundStatement ()
 {
-  auto match = std::bind(matchGeneric, _1, "C ");
+  auto match = createMatch ("compoundStatement");
  
   match (LBRACE);
-  V ();
+  localVariableList ();
   while (g_token != RBRACE)
-    S ();
+    statement ();
   match (RBRACE);
 }
 
 /******************************************************************************/
-// V --> { INT ID [ LBRACK NUM RBRACK ] SEMI }
+// localVariableList --> { INT ID [ LBRACK NUM RBRACK ] SEMI }
 
 void
-V ()
+localVariableList ()
 {
-  auto match = std::bind(matchGeneric, _1, "V ");
+  auto match = createMatch ("localVariableList");
  
   while (g_token == INT)
   {
@@ -406,254 +376,260 @@ V ()
 }
 
 /******************************************************************************/
-// S --> C | I | W | R | E
+// statement --> compoundStatement | ifStatement | whileStatement |
+//               returnStatement | expressionStatement
 
 void
-S ()
+statement ()
 {
-  auto match = std::bind(matchGeneric, _1, "S ");
- 
   if (g_token == LBRACE)
-    C ();
+    compoundStatement ();
   else if (g_token == IF)
-    I ();
+    ifStatement ();
   else if (g_token == WHILE)
-    W ();
+    whileStatement ();
   else if (g_token == RETURN)
-    R ();
+    returnStatement ();
   else
-    E ();
+    expressionStatement ();
 }
 
 /******************************************************************************/
+// ifStatement --> IF LPAREN expression RPAREN statement [ ELSE statement ]
 
 void
-I ()
+ifStatement ()
 {
-  auto match = std::bind(matchGeneric, _1, "I ");
+  auto match = createMatch ("ifStatement");
  
   match (IF);
   match (LPAREN);
-  X ();
+  expression ();
   match (RPAREN);
-  S ();
+  statement ();
   if (g_token == ELSE)
   {
     match (ELSE);
-    S ();
+    statement ();
   }
 }
 
 /******************************************************************************/
-// W --> WHILE LPAREN X RPAREN S
+// whileStatement --> WHILE LPAREN expression RPAREN statement
 
 void
-W ()
+whileStatement ()
 {
-  auto match = std::bind(matchGeneric, _1, "W ");
+  auto match = createMatch ("whileStatement");
  
   match (WHILE);
   match (LPAREN);
-  X ();
+  expression ();
   match (RPAREN);
-  S ();
+  statement ();
 }
 
 /******************************************************************************/
-// R --> RETURN [ X ] SEMI
+// returnStatement --> RETURN [ expression ] SEMI
 
 void
-R ()
+returnStatement ()
 {
-  auto match = std::bind(matchGeneric, _1, "R ");
+  auto match = createMatch ("returnStatement");
  
   match (RETURN);
   if (g_token != SEMI)
-    X ();
+    expression ();
   match (SEMI);
 }
 
 /******************************************************************************/
-// E --> [ X ] SEMI
+// expressionStatement --> [ expression ] SEMI
 
 void
-E ()
+expressionStatement ()
 {
-  auto match = std::bind(matchGeneric, _1, "E ");
- 
+  auto match = createMatch ("expressionStatement");
+  
   if (g_token != SEMI)
-    X ();
+    expression ();
   match (SEMI);
 }
 
 /******************************************************************************/
-// X --> NUM H | LPAREN X RPAREN H | ID X2
+// expression --> NUM mathematicalExpression |
+//                LPAREN expression RPAREN mathematicalExpression |
+//                ID functionCallOrVariable
 
 void
-X ()
+expression ()
 {
-  auto match = std::bind(matchGeneric, _1, "X ");
+  auto match = createMatch ("expression");
  
   if (g_token == NUM)
   {
     match (NUM);
-    H ();
+    mathematicalExpression ();
   }
   else if (g_token == LPAREN)
   {
     match (LPAREN);
-    X ();
+    expression ();
     match (RPAREN);
-    H ();
+    mathematicalExpression ();
   }
   else if (g_token == ID)
   {
     match (ID);
-    X2 ();
+    functionCallOrVariable ();
   }
   else
-    error ("X, invalid expression");
+    error ("expression, invalid expression");
 }
 
 /******************************************************************************/
-// X2 --> LPAREN G RPAREN H | [ LBRACK X RBRACK ] X3
+// functionCallOrVariable -->
+//   LPAREN argumentList RPAREN mathematicalExpression |
+//   [ LBRACK expression RBRACK ] assignmentOrMathExpression
 
 void
-X2 ()
+functionCallOrVariable ()
 {
-  auto match = std::bind(matchGeneric, _1, "X2 ");
+  auto match = createMatch ("functionCallOrVariable");
  
   if (g_token == LPAREN)
-  {
+  { // function call
     match (LPAREN);
-    G ();
+    argumentList ();
     match (RPAREN);
-    H ();
+    mathematicalExpression ();
   }
   else
-  {
+  { // assignment or mathematical expression
     if (g_token == LBRACK)
-    {
+    { // array
       match (LBRACK);
-      X ();
+      expression ();
       match (RBRACK);
     }
-    X3 ();
+    assignmentOrMathExpression ();
   }
 }
 
 /******************************************************************************/
-// X3 --> ASSIGN X | H
+// assignmentOrMathExpression --> ASSIGN expression | mathematicalExpression
 
 void
-X3 ()
+assignmentOrMathExpression ()
 {
-  auto match = std::bind(matchGeneric, _1, "X3 ");
+  auto match = createMatch ("assignmentOrMathExpression");
  
   if (g_token == ASSIGN)
-  {
+  { // must be assignment 
     match (ASSIGN);
-    X ();
+    expression ();
   }
-  else
-    H();
+  else // must be math (or epsilon)
+    mathematicalExpression ();
 }
 
 /******************************************************************************/
-// H --> { M T } { A Q } { L Q }
+// mathematicalExpression --> [ multiplicativeOperator term ]
+//                            [ additiveOperator additiveExpression ]
+//                            { relationalOperator additiveExpression }
 
 void
-H ()
+mathematicalExpression ()
 {
-  auto match = std::bind(matchGeneric, _1, "H ");
+  auto match = createMatch ("mathematicalExpression");
  
-  while (g_token == TIMES || g_token == DIVIDE)
-  {
-    M ();
-    T ();
+  if (g_token == TIMES || g_token == DIVIDE)
+  { // found multiplicative expression
+    multiplicativeOperator ();
+    term ();
   }
-  while (g_token == PLUS || g_token == MINUS)
+  if (g_token == PLUS || g_token == MINUS)
   {
-    A ();
-    Q ();
+    additiveOperator ();
+    additiveExpression ();
   }
   while (g_token == LT || g_token == LTE || g_token == EQ ||
 	 g_token == GT || g_token == GTE || g_token == NEQ)
   {
-    L ();
-    Q ();
+    relationalOperator ();
+    additiveExpression ();
   }
 }
 
 /******************************************************************************/
-// G --> [ X { COMMA X } ]
+// argumentList --> [ expression { COMMA expression } ]
 
 void
-G ()
+argumentList ()
 {
-  auto match = std::bind(matchGeneric, _1, "G ");
+  auto match = createMatch ("argumentList");
  
   if (g_token == NUM || g_token == LPAREN || g_token == ID)
-  {
-    X ();
+  { // found an argument
+    expression ();
     while (g_token == COMMA)
-    {
+    { // and another
       match (COMMA);
-      X ();
+      expression ();
     }
   }
   else if (g_token == RPAREN)
   {
-    // empty
+    // epsilon
   }
   else
-    error ("G, argument syntax invalid");
+    error ("argumentList, argument syntax invalid");
 }
 
 /******************************************************************************/
-// Q --> T { A Q }
+// additiveExpression --> term { ( PLUS | MINUS ) additiveExpression }
 
 void
-Q ()
+additiveExpression ()
 {
-  auto match = std::bind(matchGeneric, _1, "Q ");
+  auto match = createMatch ("additiveExpression");
  
-  T ();
+  term ();
   while (g_token == PLUS || g_token == MINUS)
-  {
-    A ();
-    Q ();
+  { // more expressions
+    match (g_token);
+    additiveExpression ();
   }
 }
 
 /******************************************************************************/
-// T --> F { M T }
+// term --> factor { multiplicativeOperator term }
 
 void
-T ()
+term ()
 {
-  auto match = std::bind(matchGeneric, _1, "T ");
+  auto match = createMatch ("term");
   
-  F ();
+  factor ();
   while (g_token == TIMES || g_token == DIVIDE)
-  {
-    M ();
-    T ();
+  { // more terms
+    match (g_token);
+    term ();
   }
 }
 
 /******************************************************************************/
-// F -> LPAREN X RPAREN | NUM | ID F2
+// factor -> LPAREN expression RPAREN | NUM | ID F2
 
 void
-F ()
+factor ()
 {
-  auto match = std::bind(matchGeneric, _1, "F ");
+  auto match = createMatch ("factor");
  
   if (g_token == LPAREN)
   {
     match (LPAREN);
-    X ();
+    expression ();
     match (RPAREN);
   }
   else if (g_token == NUM)
@@ -661,42 +637,42 @@ F ()
   else if (g_token == ID)
   {
     match (ID);
-    F2 ();
+    factorFunctionCallOrVariable ();
   }
   else
-    error ("F, missing factor");
+    error ("factor, expected factor");
 }
 
 /******************************************************************************/
-// F2 --> LPAREN args RPAREN | [ LBRACK X RBRACK ]
+// factorFunctionCallOrVariable --> LPAREN args RPAREN | [ LBRACK expression RBRACK ]
 
 void
-F2 ()
+factorFunctionCallOrVariable ()
 {
-  auto match = std::bind(matchGeneric, _1, "F2 ");
+  auto match = createMatch ("factorFunctionCallOrVariable");
  
   if (g_token == LPAREN)
   {
     match (LPAREN);
-    G ();
+    argumentList ();
     match (RPAREN);
   }
   else if (g_token == LBRACK)
   {
     match (LBRACK);
-    X ();
+    expression ();
     match (RBRACK);
   }
   // else => empty
 }
 
 /******************************************************************************/
-// L --> LT | LTE | GT | GTE | EQ | NEQ
+// relationalOperator --> LT | LTE | GT | GTE | EQ | NEQ
 
 void
-L ()
+relationalOperator ()
 {
-  auto match = std::bind(matchGeneric, _1, "L ");
+  auto match = createMatch ("relationalOperator");
  
   switch (g_token)
   {
@@ -719,38 +695,38 @@ L ()
     match (NEQ);
     break;
   default:
-    error ("L, Logical operator missing");
+    error ("relationOperator, operator was expected");
   }
 }
 
 /******************************************************************************/
-// A --> PLUS | MINUS
+// additiveOperator --> PLUS | MINUS
 
 void
-A ()
+additiveOperator ()
 {
-  auto match = std::bind(matchGeneric, _1, "A ");
+  auto match = createMatch ("additiveOperator");
  
   if (g_token == PLUS)
     match (PLUS);
   else if (g_token == MINUS)
     match (MINUS);
   else
-    error ("A, Additive operator missing");
+    error ("additiveOperator, operator was expected");
 }
 
 /******************************************************************************/
-// M --> TIMES | DIVIDE
+// multiplicativeOperator --> TIMES | DIVIDE
 
 void
-M ()
+multiplicativeOperator ()
 {
-  auto match = std::bind(matchGeneric, _1, "M ");
+  auto match = createMatch ("multiplicativeOperator");
  
   if (g_token == TIMES)
     match (TIMES);
   else if (g_token == DIVIDE)
     match (DIVIDE);
   else
-    error ("M, Multiplicative operator missing");
+    error ("multiplicativeOperator, operator was expected");
 }
