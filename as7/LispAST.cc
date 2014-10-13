@@ -22,111 +22,60 @@
 // Class definitions
 
 class TreeNode
-{ // abstract
-  protected:
-    TreeNode* child = NULL;
-    TreeNode* sibling = NULL;
+{ // abstract base class
   
-  public:
-    virtual int
-    evaluate () {};
+protected:
+  TreeNode* child = NULL;
+  TreeNode* sibling = NULL;
+  
+public:
+  virtual int
+  evaluate () = 0;
 
-    void
-    setSibling (TreeNode* s)
-    {
-      sibling = s;
-    };
+  void
+  setSibling (TreeNode*);
 
-    TreeNode*
-    getSibling ()
-    {
-      return sibling;
-    };
+  TreeNode*
+  getSibling ();
 
-    void
-    setChild (TreeNode* c)
-    {
-      child = c;
-    };
+  void
+  setChild (TreeNode*);
 
-    TreeNode*
-    getChild ()
-    {
-      return child;
-    };
+  TreeNode*
+  getChild ();
 };
 
 class NumberNode: public TreeNode
 {
+private:
   int value;
   
-  public:
-    NumberNode (int v)
-    {
-      value = v;
-    }
+public:
+  NumberNode (int v);
 
-    int
-    evaluate ()
-    {
-      return value;
-    };
+  int
+  evaluate ();
 };
 
-class AddNode: public TreeNode
+class PlusNode: public TreeNode
 {
-  public:
-    int
-    evaluate ()
-    {
-      int sum = child->evaluate ();
-      TreeNode* next = child->getSibling ();
-      while (next != NULL)
-      {
-	sum += next->evaluate ();
-	next = next->getSibling ();
-      }
-      return sum;
-    };
+public:
+  int
+  evaluate ();
 };
 
 class TimesNode: public TreeNode
 {
-  public:
-    int
-    evaluate ()
-    {
-      int product = child->evaluate ();
-      TreeNode* next = child->getSibling ();
-      while (next != NULL || product == 0)
-      {
-	product *= next->evaluate ();
-	next = next->getSibling ();
-      }
-      return product;
-    };
+public:
+  int
+  evaluate ();
 };
 
-class SubtractNode: public TreeNode
+class MinusNode: public TreeNode
 {
-  public:
-    int
-    evaluate ()
-    {
-      int difference = child->evaluate ();
-      
-      TreeNode* next = child->getSibling ();
-
-      if (next == NULL)
-	return -difference;
-      
-      while (next != NULL)
-      {
-	difference -= next->evaluate ();
-	next = next->getSibling ();
-      }
-      return difference;
-    };
+public:
+  int
+  evaluate ();
 };
 
 /****************************************************/
@@ -168,6 +117,108 @@ main ()
   printf ("Valid LISP expression.\nValue = %d\n", t->evaluate ());
   
   return EXIT_SUCCESS;
+}
+
+/****************************************************/
+
+void
+TreeNode::setSibling (TreeNode* s)
+{
+  sibling = s;
+}
+
+/****************************************************/
+
+TreeNode*
+TreeNode::getSibling ()
+{
+  return sibling;
+}
+
+/****************************************************/
+
+void
+TreeNode::setChild (TreeNode* c)
+{
+  child = c;
+}
+
+/****************************************************/
+
+TreeNode*
+TreeNode::getChild ()
+{
+  return child;
+}
+
+/****************************************************/
+// NumberNode Constructor
+
+NumberNode::NumberNode (int v)
+{
+  value = v;
+}
+
+/****************************************************/
+
+int
+NumberNode::evaluate ()
+{
+  return value;
+}
+
+/****************************************************/
+
+int
+PlusNode::evaluate ()
+{
+  int sum = child->evaluate ();
+  TreeNode* next = child->getSibling ();
+
+  while (next != NULL)
+  {
+    sum += next->evaluate ();
+    next = next->getSibling ();
+  }
+
+  return sum;
+}
+
+/****************************************************/
+
+int
+TimesNode::evaluate ()
+{
+  int product = child->evaluate ();
+  TreeNode* next = child->getSibling ();
+  
+  while (next != NULL && product != 0)
+  {
+    product *= next->evaluate ();
+    next = next->getSibling ();
+  }
+  
+  return product;
+}
+
+/****************************************************/
+
+int
+MinusNode::evaluate ()
+{
+  int difference = child->evaluate ();
+  TreeNode* next = child->getSibling ();
+
+  if (next == NULL)
+    return -difference;
+      
+  while (next != NULL)
+  {
+    difference -= next->evaluate ();
+    next = next->getSibling ();
+  }
+  
+  return difference;
 }
 
 /****************************************************/
@@ -236,11 +287,11 @@ op ()
       break;
     case '+':
       match ('+', "op");
-      t = new AddNode ();
+      t = new PlusNode ();
       break;
     case '-':
       match ('-', "op");
-      t = new SubtractNode ();
+      t = new MinusNode ();
       break;
     default:
       error ("op, operator missing");
