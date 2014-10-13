@@ -119,37 +119,37 @@ int g_token;
 
 std::map<int, std::string> tokenNames = 
   {
-    {ERROR, "ERROR"},
-    {IF, "IF"},
-    {ELSE, "ELSE"},
-    {INT, "INT"},
-    {VOID, "VOID"},
-    {RETURN, "RETURN"},
-    {WHILE, "WHILE"},
-    { FOR, "FOR"},
-    {PLUS, "PLUS"},
-    {MINUS, "MINUS"},
-    {TIMES, "TIMES"},
-    {DIVIDE, "DIVIDE"},
-    {LT, "LT"},
-    {LTE, "LTE"},
-    {GT, "GT"},
-    {GTE, "GTE"},
-    {EQ, "EQ"},
-    {NEQ, "NEQ"},
-    {INCREMENT, "INCREMENT"},
-    {DECREMENT, "DECREMENT"},
-    {ASSIGN, "ASSIGN"},
-    {SEMI, "SEMI"},
-    {COMMA, "COMMA"},
-    {LPAREN, "LPAREN"},
-    {RPAREN, "RPAREN"},
-    {LBRACK, "LBRACK"},
-    {RBRACK, "RBRACK"},
-    {LBRACE, "LBRACE"},
-    {RBRACE, "RBRACE"},
-    {ID, "ID"},
-    {NUM, "NUM"} 
+    { INCREMENT, "INCREMENT" },
+    { DECREMENT, "DECREMENT" },
+    { DIVIDE, "DIVIDE" },
+    { RETURN, "RETURN" },
+    { ASSIGN, "ASSIGN" },
+    { LPAREN, "LPAREN" },
+    { RPAREN, "RPAREN" },
+    { LBRACK, "LBRACK" },
+    { RBRACK, "RBRACK" },
+    { LBRACE, "LBRACE" },
+    { RBRACE, "RBRACE" },
+    { ERROR, "ERROR" },
+    { MINUS, "MINUS" },
+    { TIMES, "TIMES" },
+    { WHILE, "WHILE" },
+    { COMMA, "COMMA" },
+    { ELSE, "ELSE" },
+    { VOID, "VOID" },
+    { PLUS, "PLUS" },
+    { SEMI, "SEMI" },
+    { INT, "INT" },
+    { FOR, "FOR" },
+    { LTE, "LTE" },
+    { GTE, "GTE" },
+    { NEQ, "NEQ" },
+    { NUM, "NUM" },
+    { IF, "IF" },
+    { LT, "LT" },
+    { GT, "GT" },
+    { EQ, "EQ" },
+    { ID, "ID" }
   };
 
 /******************************************************************************/
@@ -170,7 +170,7 @@ main (int argc, char* argv[])
   g_token = getToken ();
   program ();
   if (g_token == 0)
-    std::cout << "Successful parse\n\n";
+    std::cout << "Valid C- program.\n";
   else
     error ("main");
   
@@ -191,8 +191,7 @@ void
 error (std::string msg)
 {
   std::cout << "Error in " + msg << std::endl
-	    << "Line " << lineCount << ", Column " << colCount
-	    << std::endl << std::endl;
+	    << "Line " << lineCount << ", Column " << colCount << std::endl;
   exit (1);
 }
 
@@ -220,12 +219,14 @@ createMatch (std::string callee)
 void
 program ()
 {
+  // assuming entire file/string must be parsed to be considered valid
   while (g_token != 0)
     declaration ();
 }
 
 /******************************************************************************/
-// declaration --> VOID ID functionDeclaration | INT ID functionOrVariableDeclaration
+// declaration --> VOID ID functionDeclaration |
+//                 INT ID functionOrVariableDeclaration
 
 void
 declaration ()
@@ -249,7 +250,8 @@ declaration ()
 }
 
 /******************************************************************************/
-// functionOrVariableDeclaration --> functionDeclaration | [ LBRACK NUM RBRACK ] SEMI
+// functionOrVariableDeclaration --> functionDeclaration |
+//                                   [ LBRACK NUM RBRACK ] SEMI
 
 void
 functionOrVariableDeclaration ()
@@ -339,6 +341,11 @@ compoundStatement ()
  
   match (LBRACE);
   localVariableList ();
+
+  // AD HOC: Rather than positively test for FIRST(statement), it is much more
+  //           simple to assume 'statement' if we don't find the termiating
+  //           RBRACE. This has the consequence of pushing compoundStatement
+  //           syntax errors to be 'statement' syntax errors.
   while (g_token != RBRACE)
     statement ();
   match (RBRACE);
@@ -439,7 +446,11 @@ void
 expressionStatement ()
 {
   auto match = createMatch ("expressionStatement");
-  
+
+  // AD HOC: Rather than positively test for FIRST(expression), it is much
+  //           more simple to assume expression if we don't find the termiating
+  //           SEMI. This has the consequence of pushing expressionStatement
+  //           syntax errors to be expression syntax errors.
   if (g_token != SEMI)
     expression ();
   match (SEMI);
@@ -523,9 +534,10 @@ assignmentOrMathExpression ()
 }
 
 /******************************************************************************/
-// mathematicalExpression --> [ ( TIMES | DIVIDE ) term ]
-//                            [ ( PLUS | MINUS ) additiveExpression ]
-//                            { ( LT | LTE | GT | GTE | EQ | NEQ ) additiveExpression }
+// mathematicalExpression -->
+//   [ ( TIMES | DIVIDE ) term ]
+//   [ ( PLUS | MINUS ) additiveExpression ]
+//   { ( LT | LTE | GT | GTE | EQ | NEQ ) additiveExpression }
 
 void
 mathematicalExpression ()
@@ -633,7 +645,8 @@ factor ()
 }
 
 /******************************************************************************/
-// factorFunctionCallOrVariable --> LPAREN args RPAREN | [ LBRACK expression RBRACK ]
+// factorFunctionCallOrVariable --> LPAREN args RPAREN |
+//                                  [ LBRACK expression RBRACK ]
 
 void
 factorFunctionCallOrVariable ()
