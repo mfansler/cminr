@@ -2,7 +2,7 @@
    Filename    : CMinLexer.l
    Author      : Merv Fansler
    Course      : CSCI 435
-   Assignment  : Assignment 4, Lex Luthor vs C-
+   Assignment  : Assignment 8, C- Parser_2
    Description : Scanner for C- language as per Louden, "Compiler
                    Construction" specification
 */
@@ -10,7 +10,7 @@
 /* Definitions Section */
 
 %{
-  #include "CMinTokens.h"
+  #include "CMinParser.hh"
 
   extern "C"
   int
