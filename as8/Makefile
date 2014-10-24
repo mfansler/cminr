@@ -1,10 +1,14 @@
-########################################################
-# GMZ: Generic Makefile
+#######################OA###################A##############
+#  Filename    : Makefile
+#  Author      : Merv Fansler
+#  Course      : CSCI 435
+#  Assignment  : Assignment 8, C- Parser_2
+#  Description : Build and clean commands for C- parser
+#  Reference   : Modeled after example from G. Zoppetti 
 ########################################################
 # Variables
 
 # C++ compiler
-#CXX      := clang++
 CXX      := g++
 
 # C++ compiler flags

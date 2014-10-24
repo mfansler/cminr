@@ -1,8 +1,13 @@
+/*
+  Filename   : CMinParser.yy
+  Author     : Merv Fansler
+  Course     : CSCI 435
+  Assignment : Assignment 8, C- Parser_2
+  Description: Bison-based implementation of C- parser; acceptence only version
+*/
+
 %{
   // Prologue section
-  #include <cstdio>
-  #include <cctype>
-  #include <cmath>
   
   extern "C"
   int
@@ -56,6 +61,12 @@
 %token RBRACE
 %token ID
 %token NUM
+
+// Explicitly resolve dangling ELSE
+%right RPAREN ELSE
+
+// Include found / expected tokens in error message
+%define parse.error verbose
 
 /* Declare non-terminals if necessary */
 
@@ -140,6 +151,8 @@ statement :
 	    selection-stmt
 	  | 
 	    iteration-stmt
+	  |
+	    for-stmt
 	  | 
 	    return-stmt
 ;
@@ -160,6 +173,12 @@ iteration-stmt :
 	         WHILE LPAREN expression RPAREN statement
 ;
 
+for-stmt :
+	   FOR LPAREN expression-stmt expression-stmt expression RPAREN statement
+	 |
+	   FOR LPAREN expression-stmt expression-stmt RPAREN statement
+;
+
 return-stmt :
 	      RETURN SEMI
 	    |
@@ -168,6 +187,10 @@ return-stmt :
 
 expression :
 	     var ASSIGN expression
+	   |
+	     INCREMENT ID
+	   |
+	     DECREMENT ID
 	   |
 	     simple-expression
 ;
@@ -252,9 +275,6 @@ arg-list :
 
 /*********************************************************************/
 // Epilogue
-
-
-/*********************************************************************/
 
 void
 yyerror (const char* s)

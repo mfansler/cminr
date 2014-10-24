@@ -1,25 +1,16 @@
 /*
-  Filename   : CMinLexerDriver.cc
+  Filename   : CMinDriver.cc
   Author     : Merv Fansler
   Course     : CSCI 435
-  Assignment : Assignment 4, Lex Luthor vs C-
-  Description: Driver for C- lexer that accepts a C- source input and outputs
-                 a list of the resulting tokens
+  Assignment : Assignment 8, C- Parser_2
+  Description: Driver for C- parser that accepts a C- source input and outputs
+                 confirmation of syntactic validity or location or syntax error
 */
 
 /******************************************************************************/
 // System Includes
 
 #include <iostream>
-#include <iomanip>
-#include <map>
-#include <string>
-
-/******************************************************************************/
-// Local Includes
-
-/******************************************************************************/
-// Namespace declarations
 
 /******************************************************************************/
 // External references
@@ -28,11 +19,23 @@ extern
 int
 yyparse ();
 
+extern FILE* yyin;
+
 /******************************************************************************/
 
 int
-main ()
+main (int argc, char* argv[])
 {
+  ++argv, --argc;
+  if (argc > 0)
+  {
+    yyin = fopen (argv[0], "r");
+  }
+  else
+  {
+    yyin = stdin;
+  }
+  
   // Uncomment to show parser actions (shifts and reductions)
   //extern int yydebug;
   //yydebug = 1;
@@ -40,7 +43,7 @@ main ()
   int parseResult = yyparse ();
 
   if (parseResult == 0)
-    std::cout << "program syntax valid";
+    std::cout << "program syntax valid\n";
 
   return EXIT_SUCCESS;
 }
