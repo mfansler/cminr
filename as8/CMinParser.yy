@@ -188,9 +188,9 @@ return-stmt :
 expression :
 	     var ASSIGN expression
 	   |
-	     INCREMENT ID
+	     INCREMENT var
 	   |
-	     DECREMENT ID
+	     DECREMENT var
 	   |
 	     simple-expression
 ;

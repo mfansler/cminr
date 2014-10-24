@@ -1,4 +1,4 @@
-*
+/*
   Filename   : stackWithAFor.cm
   Author     : Kimberlyn A. Broskie
   Course     : CSCI 435
@@ -65,7 +65,7 @@ main (void)
 
   /* Push odd numbers starting at 1, but add some math to it 
      to test the operators.                                 */
-  for (int index = 1; index <= capacity; ++index)
+  for (index = 1; index <= capacity; ++index)
   {
     number = (index * 4 + 1) / 2 - 1; 
     push (number);
