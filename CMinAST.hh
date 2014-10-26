@@ -29,27 +29,27 @@ class ParameterNode;
 
 struct IVisitor
 {
-	virtual void visit (ProgramNode* node) = 0;
-	virtual void visit (DeclarationNode* node) = 0;
-	virtual void visit (ExpressionNode* node) = 0;
-	virtual void visit (FunctionParameterNode* node) = 0;
+  virtual void visit (ProgramNode* node) = 0;
+  virtual void visit (DeclarationNode* node) = 0;
+  virtual void visit (ExpressionNode* node) = 0;
+  virtual void visit (FunctionParameterNode* node) = 0;
 };
 
 struct Node
 {
   virtual ~Node ();
-	
-	virtual void
-	accept (IVisitor* visitor) = 0;
+  
+  virtual void
+  accept (IVisitor* visitor) = 0;
 };
 
 struct ProgramNode : Node
 {
-	ProgramNode (DeclarationNode* node);
-	
-	virtual ~ProgramNode ();
-	
-	vector<DeclarationNode*> children;
+  ProgramNode (DeclarationNode* node);
+  
+  virtual ~ProgramNode ();
+  
+  vector<DeclarationNode*> children;
 };
 
 /******************************************************************************/
@@ -57,30 +57,30 @@ struct ProgramNode : Node
 
 struct DeclarationNode : Node
 {
-	virtual ~DeclarationNode ();
-	
-	string identifier;
+  virtual ~DeclarationNode ();
+  
+  string identifier;
 };
 
 struct FunctionDeclarationNode : DeclaratonNode
 {
-	FunctionDeclarationNode (string t, string id,
-		vector<ParameterNode*> params, CompoundStatementNode* csNode);
+  FunctionDeclarationNode (string t, string id,
+    vector<ParameterNode*> params, CompoundStatementNode* csNode);
 
-	virtual ~FunctionDeclarationNode ();
-	
-	string returnType;
-	vector<ParameterNode*> parameters;
-	CompoundStatementNode* functionBody;
+  virtual ~FunctionDeclarationNode ();
+  
+  string returnType;
+  vector<ParameterNode*> parameters;
+  CompoundStatementNode* functionBody;
 };
 
 struct VariableDeclarationNode : DeclarationNode
 {
-	VariableDeclarationNode (string id, int size = 0);
-	
-	virtual ~VariableDeclarationNode ();
-	
-	int arraySize = 0;
+  VariableDeclarationNode (string id, int size = 0);
+  
+  virtual ~VariableDeclarationNode ();
+  
+  int arraySize = 0;
 };
 
 /******************************************************************************/
@@ -88,59 +88,59 @@ struct VariableDeclarationNode : DeclarationNode
 
 struct StatementNode : Node
 {
-	virtual ~StatementNode ();
+  virtual ~StatementNode ();
 };
 
 struct CompoundStatementNode : StatementNode
 {
-	CompoundStatementNode ();
-	virtual ~CompoundStatementNode ();
-	
-	vector<VariableDeclarationNode*> localDeclarations;
-	vector<StatementNode*> statements;
+  CompoundStatementNode ();
+  virtual ~CompoundStatementNode ();
+  
+  vector<VariableDeclarationNode*> localDeclarations;
+  vector<StatementNode*> statements;
 };
 
 struct IfStatementNode : StatementNode
 {
-	IfStatementNode (ExpressionNode* expr, StatementNode* thenStmt, StatementNode* elseStmt = nullptr);
-	
-	virtual ~IfStatementNode ();
-	
-	ExpressionNode* conditionalExpression;
-	StatementNode* thenStatement;
-	StatementNode* elseStatement;
+  IfStatementNode (ExpressionNode* expr, StatementNode* thenStmt, StatementNode* elseStmt = nullptr);
+  
+  virtual ~IfStatementNode ();
+  
+  ExpressionNode* conditionalExpression;
+  StatementNode* thenStatement;
+  StatementNode* elseStatement;
 };
 
 struct WhileStatementNode : StatementNode
 {
-	WhileStatementNode (ExpressionNode* expr, StatementNode* stmt);
-	
-	virtual ~WhileStatementNode ();
-	
-	ExpressionNode* conditionalExpression;
-	StatementNode* body;
+  WhileStatementNode (ExpressionNode* expr, StatementNode* stmt);
+  
+  virtual ~WhileStatementNode ();
+  
+  ExpressionNode* conditionalExpression;
+  StatementNode* body;
 };
 
 struct ForStatementNode : StatementNode
 {
-	ForStatementNode (ExpressionNode* e1, ExpressionNode* e2, ExpressionNode* e3, StatementNode* s);
-	
-	virtual ~ForStatementNode ();
-	
-	ExpressionNode* expression1;
-	ExpressionNode* expression2;
-	ExpressionNode* expression3;
-	StatementNode* body;
-	
+  ForStatementNode (ExpressionNode* e1, ExpressionNode* e2, ExpressionNode* e3, StatementNode* s);
+  
+  virtual ~ForStatementNode ();
+  
+  ExpressionNode* expression1;
+  ExpressionNode* expression2;
+  ExpressionNode* expression3;
+  StatementNode* body;
+  
 };
 
 struct ReturnStatementNode : StatementNode
 {
   ReturnStatementNode (ExpressionNode* expr = nullptr);
-	
-	virtual ~ReturnStatementNode ();
-	
-	ExpressionNode* expression;
+  
+  virtual ~ReturnStatementNode ();
+  
+  ExpressionNode* expression;
 };
 
 /******************************************************************************/
@@ -153,61 +153,61 @@ struct ExpressionNode : Node
 
 struct AssignmentExpressionNode : ExpressionNode
 {
-	AssignmentExpressionNode (VariableExpressionNode* v, ExpressionNode* e);
-	
-	virtual ~AssignmentExpressionNode ();
-	
-	VariableExpressionNode* variable;
-	ExpressionNode* expression;
+  AssignmentExpressionNode (VariableExpressionNode* v, ExpressionNode* e);
+  
+  virtual ~AssignmentExpressionNode ();
+  
+  VariableExpressionNode* variable;
+  ExpressionNode* expression;
 };
 
 struct VariableExpressionNode : ExpressionNode
 {
-	VariableExpressionNode (string id, int i = -1);
-	virtual ~VariableExpressionNode ();
-	
-	string identifier;
-	int index;
+  VariableExpressionNode (string id, int i = -1);
+  virtual ~VariableExpressionNode ();
+  
+  string identifier;
+  int index;
 };
 
 struct CallExpressionNode : ExpressionNode
 {
-	CallExpressionNode (string id, vector<ExpressionNode*> args = NULL);
-	virtual ~CallExpressionNode ();
-	
-	string identifier;
-	vector<ExpressionNode*> arguments;
+  CallExpressionNode (string id, vector<ExpressionNode*> args = NULL);
+  virtual ~CallExpressionNode ();
+  
+  string identifier;
+  vector<ExpressionNode*> arguments;
 };
 
 struct BinaryOperatorExpressionNode : ExpressionNode
 {
-	BinaryOperatorExpressionNode (CMinTokenType op, ExpressionNode* l, ExpressionNode* r);
-	
-	CMinTokenType operation;
-	ExpressionNode* left;
-	ExpressionNode* right;
+  BinaryOperatorExpressionNode (CMinTokenType op, ExpressionNode* l, ExpressionNode* r);
+  
+  CMinTokenType operation;
+  ExpressionNode* left;
+  ExpressionNode* right;
 };
 
 struct UnaryOperatorExpressionNode : ExpressionNode
 {
-	UnaryOperatorExpressionNode (bool incr, VariableExpressionNode* v);
-	
-	bool isIncrement;
-	VariableExpressionNode* variable;
+  UnaryOperatorExpressionNode (bool incr, VariableExpressionNode* v);
+  
+  bool isIncrement;
+  VariableExpressionNode* variable;
 };
 
 struct ConstantExpressionNode : ExpressionNode
 {
-	ConstantExpressionNode (int v);
-	
-	int value;
+  ConstantExpressionNode (int v);
+  
+  int value;
 };
 
 // Other
 struct ParameterNode : Node
 {
-	ParameterNode (string id, bool array);
-	
-	string identifier;
-	bool isArray;
+  ParameterNode (string id, bool array);
+  
+  string identifier;
+  bool isArray;
 };
