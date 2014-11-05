@@ -31,8 +31,9 @@ struct IVisitor
 {
   virtual void visit (ProgramNode* node) = 0;
   virtual void visit (DeclarationNode* node) = 0;
+  virtual void visit (StatementNode* node) = 0;
   virtual void visit (ExpressionNode* node) = 0;
-  virtual void visit (FunctionParameterNode* node) = 0;
+  virtual void visit (ParameterNode* node) = 0;
 };
 
 struct Node
