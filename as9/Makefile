@@ -38,14 +38,15 @@ LDLIBS   := -lfl
 %.cc : %.yy
 	bison -dv $< -o $@
 
-CMinDriver : CMinDriver.o CMinParser.o CMinLexer.o
+CMinDriver : CMinDriver.o CMinParser.o CMinLexer.o CMinusAst.or
 
 #############################################################
 
-.PHONY : clean
+.PHONY : cleanC
 clean :
 	$(RM) a.out core
 	$(RM) *.o *.d *~ *.hh *.output
 	$(RM) CMinParser.cc CMinDriver
+
 
 #############################################################

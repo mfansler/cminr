@@ -34,7 +34,7 @@
 
 %parse-param
 {
-  Node& root
+  ProgramNode* root
 }
 
 // YYSTYPE
@@ -119,12 +119,12 @@ declaration-list
 	: declaration-list declaration
 	{
 	  $$ = $1;
-	  $$.add ($2);
+	  $$->push_back ($2);
 	}
 	| declaration
 	{
 	  $$ = new vector<DeclarationNode*> ();
-	  $$.add ($1);
+	  $$->push_back ($1);
 	}
 	;
 

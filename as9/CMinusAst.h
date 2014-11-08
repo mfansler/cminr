@@ -109,9 +109,12 @@ struct Node
 
 struct ProgramNode : Node
 {
-  ProgramNode (DeclarationNode* node);
+  ProgramNode (vector<DeclarationNode*> children);
   
   ~ProgramNode ();
+
+  void
+  accept (IVisitor* visitor);
   
   vector<DeclarationNode*> children;
 };
@@ -153,6 +156,14 @@ struct ArrayDeclarationNode : VariableDeclarationNode
   ~ArrayDeclarationNode ();
 
   size_t size;
+};
+
+struct ParameterNode : DeclarationNode
+{
+  ParameterNode (string id, bool array);
+  ~ParameterNode ();
+
+  bool isArray;
 };
 
 /********************************************************************/
@@ -221,6 +232,9 @@ struct ReturnStatementNode : StatementNode
 
 struct ExpressionStatementNode : StatementNode
 {
+  ExpressionStatementNode (ExpressionNode* expr);
+  ~ExpressionStatementNode ();
+  
   ExpressionNode* expression; 
 };
 
@@ -250,7 +264,7 @@ struct VariableExpressionNode : ExpressionNode
   string identifier;
 };
 
-struct SubscriptExpressionNode : ExpressionNode
+struct SubscriptExpressionNode : VariableExpressionNode
 {
   SubscriptExpressionNode (string id, ExpressionNode* index);
   ~SubscriptExpressionNode ();
@@ -320,15 +334,4 @@ struct IntegerLiteralExpressionNode : ExpressionNode
   ~IntegerLiteralExpressionNode ();
 
   int value;
-};
-
-// Other
-struct ParameterNode : Node
-{
-  ParameterNode (string id, bool array);
-  ~ParameterNode ();
-
-  ValueType valType;
-  string identifier;
-  bool isArray;
 };

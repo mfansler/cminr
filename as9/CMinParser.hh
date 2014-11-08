@@ -119,6 +119,6 @@ union YYSTYPE
 
 extern YYSTYPE yylval;
 
-int yyparse (Node& root);
+int yyparse (ProgramNode* root);
 
 #endif /* !YY_YY_CMINPARSER_HH_INCLUDED  */
