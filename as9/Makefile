@@ -38,7 +38,7 @@ LDLIBS   := -lfl
 %.cc : %.yy
 	bison -dv $< -o $@
 
-CMinDriver : CMinDriver.o CMinParser.o CMinLexer.o CMinusAst.or
+CMinDriver : CMinDriver.o CMinParser.o CMinLexer.o CMinusAst.o
 
 #############################################################
 

@@ -19,7 +19,7 @@
   extern int colCount;
 
   void
-  yyerror (const char*);
+  yyerror (ProgramNode* root, const char*);
 
   
   // Type of "yylval"
@@ -51,17 +51,22 @@
   MultiplicativeOperatorType mulType;
 
   // node pointers
-  Node*            nodePtr;
-  DeclarationNode* declPtr;
-  StatementNode*   stmtPtr;
-  ExpressionNode*  exprPtr;
-  ParameterNode*   paramPtr;
-
+  Node*			   nodePtr;
+  DeclarationNode* 	   declPtr;
+  StatementNode*   	   stmtPtr;
+  ExpressionNode*	   exprPtr;
+  ParameterNode*	   paramPtr;
+  VariableDeclarationNode* vardPtr;
+  VariableExpressionNode*  varePtr;
+  ExpressionStatementNode* exprStmtPtr;
+  CompoundStatementNode*   cmpdStmtPtr;
+  
   // vector pointers
-  vector<DeclarationNode*>* declVect;
-  vector<ExpressionNode*>* exprVect;
-  vector<ParameterNode*>* paramVect;
-  vector<StatementNode*>* stmtVect;
+  vector<DeclarationNode*>*	    declVect;
+  vector<VariableDeclarationNode*>* vardVect;
+  vector<ExpressionNode*>* 	    exprVect;
+  vector<ParameterNode*>* 	    paramVect;
+  vector<StatementNode*>* 	    stmtVect;
   
 }
   
@@ -79,19 +84,24 @@
 /***********************************************************************/
 // Declare Non-terminal value types
 
-%type<nodePtr>   program
-%type<declPtr>   declaration var-declaration fun-declaration
-%type<declVect>  declaration-list local-declarations
-%type<stmtPtr>   compound-stmt expression-stmt selection-stmt iteration-stmt for-stmt return-stmt statement
-%type<stmtVect>  statement-list
-%type<exprPtr>   expression var simple-expression additive-expression term factor call 
-%type<exprVect>  arg-list args
-%type<paramPtr>  param
-%type<paramVect> params param-list
-%type<valType>   type-specifier
-%type<relType>   relop
-%type<addType>   addop
-%type<mulType>   mulop
+%type<nodePtr>     program
+%type<declPtr>     declaration fun-declaration
+%type<declVect>    declaration-list
+%type<vardPtr>	   var-declaration
+%type<vardVect>	   local-declarations
+%type<stmtPtr>     selection-stmt iteration-stmt for-stmt return-stmt statement
+%type<stmtVect>    statement-list
+%type<exprStmtPtr> expression-stmt
+%type<cmpdStmtPtr> compound-stmt
+%type<exprPtr>     expression simple-expression additive-expression term factor call
+%type<varePtr>	   var
+%type<exprVect>    arg-list args
+%type<paramPtr>    param
+%type<paramVect>   params param-list
+%type<valType>     type-specifier
+%type<relType>     relop
+%type<addType>     addop
+%type<mulType>     mulop
 
 // Explicitly resolve dangling ELSE
 %right RPAREN ELSE
@@ -164,7 +174,7 @@ type-specifier
 fun-declaration
 	: type-specifier ID LPAREN params RPAREN compound-stmt
 	{
-	  $$ = new FunctionDeclarationNode ($1, $2, $4, $6);
+	  $$ = new FunctionDeclarationNode ($1, $2, *$4, $6);
 	}
 	;
 
@@ -183,12 +193,12 @@ param-list
 	: param-list COMMA param
 	{
 	  $$ = $1;
-	  $$.add ($3);
+	  $$->push_back ($3);
 	}
 	| param
 	{
 	  $$ = new vector<ParameterNode*> ();
-	  $$.add ($1);
+	  $$->push_back ($1);
 	}
 	;
 
@@ -206,7 +216,7 @@ param
 compound-stmt
 	: LBRACE local-declarations statement-list RBRACE
 	{
-	  $$ = new CompoundStatmentNode ($2, $3);
+	  $$ = new CompoundStatementNode (*$2, *$3);
 	}
 	;
 
@@ -214,11 +224,11 @@ local-declarations
 	: local-declarations var-declaration
 	{
 	  $$ = $1;
-	  $$.add ($2);
+	  $$->push_back ($2);
 	}
 	| %empty
 	{
-	  $$ = new vector<DeclarationNode*> ();
+	  $$ = new vector<VariableDeclarationNode*> ();
 	}
 	;
 
@@ -226,7 +236,7 @@ statement-list
 	: statement-list statement
 	{
 	  $$ = $1;
-	  $$.add ($2);
+	  $$->push_back ($2);
 	}
 	| %empty
 	{
@@ -264,7 +274,7 @@ statement
 expression-stmt
 	: expression SEMI
 	{
-	  $$ = new ExpressionStatmenetNode ($1);
+	  $$ = new ExpressionStatementNode ($1);
 	}
 	| SEMI
 	{
@@ -293,11 +303,11 @@ iteration-stmt
 for-stmt
 	: FOR LPAREN expression-stmt expression-stmt expression RPAREN statement
 	{
-	  $$ = new ForStatementNode ($3.expression, $4.expression, $5, $7);
+	  $$ = new ForStatementNode ($3->expression, $4->expression, $5, $7);
 	}
 	| FOR LPAREN expression-stmt expression-stmt RPAREN statement
 	{
-	  $$ = new ForStatementNode ($3.expression, $4.expression, nullptr, $6); 
+	  $$ = new ForStatementNode ($3->expression, $4->expression, nullptr, $6); 
 	}
 	;
 
@@ -446,7 +456,7 @@ factor
 call
 	: ID LPAREN args RPAREN
 	{
-	  $$ = new CallExpressionNode ($1, $3);
+	  $$ = new CallExpressionNode ($1, *$3);
 	}
 	;
 
@@ -457,7 +467,7 @@ args
 	}
 	| %empty
 	{
-	  $$ = new vector<Expression*> ();
+	  $$ = new vector<ExpressionNode*> ();
 	}
 	;
 
@@ -465,12 +475,12 @@ arg-list
 	: arg-list COMMA expression
 	{
 	  $$ = $1;
-	  $$.add ($3);
+	  $$->push_back ($3);
 	}
 	| expression
 	{
-	  $$ = new vector<Expression*> ();
-	  $$.add ($1);
+	  $$ = new vector<ExpressionNode*> ();
+	  $$->push_back ($1);
 	}
 	;
 
@@ -480,7 +490,7 @@ arg-list
 // Epilogue
 
 void
-yyerror (const char* s)
+yyerror (ProgramNode* root, const char* s)
 {
   fprintf (stderr, "%s\nLine %d, Column %d\n", s, lineCount, colCount);
 }

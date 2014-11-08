@@ -13,11 +13,16 @@
 #include <iostream>
 
 /******************************************************************************/
+// Local Includes
+
+#include "CMinusAst.h"
+
+/******************************************************************************/
 // External references
 
 extern
 int
-yyparse ();
+yyparse (ProgramNode* root);
 
 extern FILE* yyin;
 
@@ -40,7 +45,9 @@ main (int argc, char* argv[])
   //extern int yydebug;
   //yydebug = 1;
 
-  int parseResult = yyparse ();
+  ProgramNode* root;
+  
+  int parseResult = yyparse (root);
 
   if (parseResult == 0)
     std::cout << "program syntax valid\n";

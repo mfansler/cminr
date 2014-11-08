@@ -20,11 +20,21 @@ using std::string;
 using std::vector;
 
 /********************************************************************/
+// Empty Virtual Destructors
+
+Node::~Node () {}
+DeclarationNode::~DeclarationNode () {}
+StatementNode::~StatementNode () {}
+ExpressionNode::~ExpressionNode () {}
+VariableDeclarationNode::~VariableDeclarationNode () {}
+VariableExpressionNode::~VariableExpressionNode () {}
+
+/********************************************************************/
 // ProgramNode Methods
 
 ProgramNode::ProgramNode (vector<DeclarationNode*> children)
 {
-  this.children = children;
+  this->children = children;
 }
 
 ProgramNode::~ProgramNode ()
@@ -33,7 +43,6 @@ ProgramNode::~ProgramNode ()
     delete d;
 
   children.clear ();
-  delete children;
 }
 
 void ProgramNode::accept (IVisitor* visitor)
@@ -66,10 +75,9 @@ FunctionDeclarationNode::FunctionDeclarationNode (ValueType t,
 FunctionDeclarationNode::~FunctionDeclarationNode ()
 {
   delete functionBody;
-  for (ParameterNode pn : parameters)
-    delete pn;
+  for (ParameterNode* p : parameters)
+    delete p;
   parameters.clear ();
-  delete parameters;
 }
 
 /********************************************************************/
@@ -85,10 +93,12 @@ VariableDeclarationNode::VariableDeclarationNode (string id)
 // ArrayDeclarationNode methods
 
 ArrayDeclarationNode::ArrayDeclarationNode (string id, size_t size)
+  : VariableDeclarationNode (id)
 {
-  super (id);
-  this.size = size;
+  this->size = size;
 }
+
+ArrayDeclarationNode::~ArrayDeclarationNode () {}
 
 /********************************************************************/
 // StatementNode Methods
@@ -101,10 +111,11 @@ void StatementNode::accept (IVisitor* visitor)
 /********************************************************************/
 // CompoundStatementNode Methods
 
-CompoundStatementNode::CompoundStatementNode ()
+CompoundStatementNode::CompoundStatementNode (vector<VariableDeclarationNode*> decls,
+					      vector<StatementNode*> stmts)
 {
-  localDeclarations = new vector<VariableDeclarationNode*> ();
-  statements = new vector<StatementNode*> ();
+  localDeclarations = decls;
+  statements = stmts;
 }
 
 CompoundStatementNode::~CompoundStatementNode ()
@@ -112,12 +123,10 @@ CompoundStatementNode::~CompoundStatementNode ()
   for (VariableDeclarationNode* v : localDeclarations)
     delete v;
   localDeclarations.clear ();
-  delete localDeclarations;
   
   for (StatementNode* s : statements)
     delete s;
   statements.clear ();
-  delete statements;
 }
 
 /********************************************************************/
@@ -125,7 +134,7 @@ CompoundStatementNode::~CompoundStatementNode ()
 
 IfStatementNode::IfStatementNode (ExpressionNode* expr,
 				  StatementNode* thenStmt,
-				  StatementNode* elseStmt = nullptr)
+				  StatementNode* elseStmt)
 {
   conditionalExpression = expr;
   thenStatement = thenStmt;
@@ -181,12 +190,12 @@ ForStatementNode::~ForStatementNode ()
 /********************************************************************/
 // ReturnStatementNode Methods
 
-ReturnStatementNode::ReturnStatementNode (ExpressionNode* expr = nullptr)
+ReturnStatementNode::ReturnStatementNode (ExpressionNode* expr)
 {
   expression = expr;
 }
 
-ReturnStatementNode::~ReturnStatmentNode ()
+ReturnStatementNode::~ReturnStatementNode ()
 {
   delete expression;
 }
@@ -199,7 +208,7 @@ ExpressionStatementNode::ExpressionStatementNode (ExpressionNode* expr)
   expression = expr;
 }
 
-ExpressionStatementNode::~ExpressionStatmentNode ()
+ExpressionStatementNode::~ExpressionStatementNode ()
 {
   delete expression;
 }
@@ -241,9 +250,9 @@ VariableExpressionNode::VariableExpressionNode (string id)
 
 SubscriptExpressionNode::SubscriptExpressionNode (string id,
 						  ExpressionNode* index)
+  : VariableExpressionNode (id)
 {
-  super (id);
-  this.index = index;
+  this->index = index;
 }
 
 SubscriptExpressionNode::~SubscriptExpressionNode ()
@@ -265,7 +274,6 @@ CallExpressionNode::~CallExpressionNode ()
   for (ExpressionNode* e : arguments)
     delete e;
   arguments.clear ();
-  delete arguments;
 }
 
 /********************************************************************/
@@ -282,8 +290,8 @@ AdditiveExpressionNode::AdditiveExpressionNode (AdditiveOperatorType addop,
 
 AdditiveExpressionNode::~AdditiveExpressionNode ()
 {
-  delete l;
-  delete r;
+  delete left;
+  delete right;
 }
 
 /********************************************************************/
@@ -318,8 +326,8 @@ RelationalExpressionNode::RelationalExpressionNode (RelationalOperatorType relop
 
 RelationalExpressionNode::~RelationalExpressionNode ()
 {
-  delete l;
-  delete r;
+  delete left;
+  delete right;
 }
 
 /********************************************************************/
@@ -345,12 +353,16 @@ IntegerLiteralExpressionNode::IntegerLiteralExpressionNode (int v)
   value = v;
 }
 
+IntegerLiteralExpressionNode::~IntegerLiteralExpressionNode () {}
+
 /********************************************************************/
 // ParameterNode Methods
 
-ParameterNode::ParameterNode (string id, bool array)
+ParameterNode::ParameterNode (string id, bool array) : DeclarationNode ()
 {
-  indentifier = id;
+  identifier = id;
   isArray = array;
-  valType = ValueType::INT;
+  valueType = ValueType::INT;
 }
+
+ParameterNode::~ParameterNode () {}

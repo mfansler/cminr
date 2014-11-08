@@ -124,8 +124,11 @@ struct ProgramNode : Node
 
 struct DeclarationNode : Node
 {
-  ~DeclarationNode ();
+  virtual ~DeclarationNode ();
 
+  void
+  accept (IVisitor* visitor);
+  
   ValueType valueType;
   string identifier;
 };
@@ -171,12 +174,16 @@ struct ParameterNode : DeclarationNode
 
 struct StatementNode : Node
 {
-  ~StatementNode ();
+  virtual ~StatementNode ();
+
+  void
+  accept (IVisitor* visitor);
 };
 
 struct CompoundStatementNode : StatementNode
 {
-  CompoundStatementNode ();
+  CompoundStatementNode (vector<VariableDeclarationNode*> decls,
+			 vector<StatementNode*> stmts);
   ~CompoundStatementNode ();
   
   vector<VariableDeclarationNode*> localDeclarations;
@@ -243,7 +250,10 @@ struct ExpressionStatementNode : StatementNode
 
 struct ExpressionNode : Node
 {
-  ~ExpressionNode ();
+  virtual ~ExpressionNode ();
+
+  void
+  accept (IVisitor* visitor);
 };
 
 struct AssignmentExpressionNode : ExpressionNode
@@ -286,7 +296,7 @@ struct AdditiveExpressionNode : ExpressionNode
   AdditiveExpressionNode (AdditiveOperatorType addop,
 			  ExpressionNode* l,
 			  ExpressionNode* r);
-  AdditiveExpressionNode ();
+  ~AdditiveExpressionNode ();
   
   AdditiveOperatorType addOperator;
   ExpressionNode* left;

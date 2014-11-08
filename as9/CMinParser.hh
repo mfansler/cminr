@@ -97,20 +97,25 @@ union YYSTYPE
   MultiplicativeOperatorType mulType;
 
   // node pointers
-  Node*            nodePtr;
-  DeclarationNode* declPtr;
-  StatementNode*   stmtPtr;
-  ExpressionNode*  exprPtr;
-  ParameterNode*   paramPtr;
-
+  Node*			   nodePtr;
+  DeclarationNode* 	   declPtr;
+  StatementNode*   	   stmtPtr;
+  ExpressionNode*	   exprPtr;
+  ParameterNode*	   paramPtr;
+  VariableDeclarationNode* vardPtr;
+  VariableExpressionNode*  varePtr;
+  ExpressionStatementNode* exprStmtPtr;
+  CompoundStatementNode*   cmpdStmtPtr;
+  
   // vector pointers
-  vector<DeclarationNode*>* declVect;
-  vector<ExpressionNode*>* exprVect;
-  vector<ParameterNode*>* paramVect;
-  vector<StatementNode*>* stmtVect;
+  vector<DeclarationNode*>*	    declVect;
+  vector<VariableDeclarationNode*>* vardVect;
+  vector<ExpressionNode*>* 	    exprVect;
+  vector<ParameterNode*>* 	    paramVect;
+  vector<StatementNode*>* 	    stmtVect;
   
 
-#line 114 "CMinParser.hh" /* yacc.c:1909  */
+#line 119 "CMinParser.hh" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
