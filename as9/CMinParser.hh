@@ -39,6 +39,12 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 36 "CMinParser.yy" /* yacc.c:1909  */
+
+  #include "CMinusAst.h"
+
+#line 48 "CMinParser.hh" /* yacc.c:1909  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -84,7 +90,7 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 42 "CMinParser.yy" /* yacc.c:1909  */
+#line 47 "CMinParser.yy" /* yacc.c:1909  */
 
   // literals
   char* name;
@@ -115,7 +121,7 @@ union YYSTYPE
   vector<StatementNode*>* 	    stmtVect;
   
 
-#line 119 "CMinParser.hh" /* yacc.c:1909  */
+#line 125 "CMinParser.hh" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -124,6 +130,6 @@ union YYSTYPE
 
 extern YYSTYPE yylval;
 
-int yyparse (ProgramNode* root);
+int yyparse (ProgramNode* &root);
 
 #endif /* !YY_YY_CMINPARSER_HH_INCLUDED  */

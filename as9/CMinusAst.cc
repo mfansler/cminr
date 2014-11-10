@@ -9,7 +9,11 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
+#include <typeinfo>
 
+/********************************************************************/
+// Local Includes
 
 #include "CMinusAst.h"
 
@@ -53,10 +57,10 @@ void ProgramNode::accept (IVisitor* visitor)
 /********************************************************************/
 // DeclarationNode Methods
 
-void DeclarationNode::accept (IVisitor* visitor)
-{
-  visitor->visit (this);
-}
+//void DeclarationNode::accept (IVisitor* visitor)
+//{
+//  visitor->visit (this);
+//}
 
 /********************************************************************/
 // FunctionDeclarationNode methods
@@ -80,6 +84,12 @@ FunctionDeclarationNode::~FunctionDeclarationNode ()
   parameters.clear ();
 }
 
+void FunctionDeclarationNode::accept (IVisitor* visitor)
+{
+  std::cout << "FunctionDeclaration accepting...\n";
+  visitor->visit (this);
+}
+
 /********************************************************************/
 // VariableDeclarationNode methods
 
@@ -87,6 +97,13 @@ VariableDeclarationNode::VariableDeclarationNode (string id)
 {
   valueType = ValueType::INT;
   identifier = id;
+}
+
+void VariableDeclarationNode::accept (IVisitor* visitor)
+{
+  std::cout << "VariableDeclaration accepting...\n"
+	    << typeid(this).name() << std::endl;
+  visitor->visit (this);
 }
 
 /********************************************************************/
@@ -99,6 +116,32 @@ ArrayDeclarationNode::ArrayDeclarationNode (string id, size_t size)
 }
 
 ArrayDeclarationNode::~ArrayDeclarationNode () {}
+
+void ArrayDeclarationNode::accept (IVisitor* visitor)
+{
+  std::cout << "ArrayDeclaration accepting...\n"
+	    << typeid(this).name() << std::endl;
+  visitor->visit (this);
+}
+
+/********************************************************************/
+// ParameterNode Methods
+
+ParameterNode::ParameterNode (string id, bool array) : DeclarationNode ()
+{
+  identifier = id;
+  isArray = array;
+  valueType = ValueType::INT;
+}
+
+ParameterNode::~ParameterNode () {}
+
+void ParameterNode::accept (IVisitor* visitor)
+{
+  std::cout << "ParameterDeclaration accepting...\n"
+	    << typeid(this).name() << std::endl;
+  visitor->visit (this);
+}
 
 /********************************************************************/
 // StatementNode Methods
@@ -354,15 +397,3 @@ IntegerLiteralExpressionNode::IntegerLiteralExpressionNode (int v)
 }
 
 IntegerLiteralExpressionNode::~IntegerLiteralExpressionNode () {}
-
-/********************************************************************/
-// ParameterNode Methods
-
-ParameterNode::ParameterNode (string id, bool array) : DeclarationNode ()
-{
-  identifier = id;
-  isArray = array;
-  valueType = ValueType::INT;
-}
-
-ParameterNode::~ParameterNode () {}

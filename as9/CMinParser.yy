@@ -19,7 +19,7 @@
   extern int colCount;
 
   void
-  yyerror (ProgramNode* root, const char*);
+  yyerror (ProgramNode* &root, const char*);
 
   
   // Type of "yylval"
@@ -32,9 +32,14 @@
 
 /** Declarations **/ 
 
+%code requires
+{
+  #include "CMinusAst.h"
+}
+
 %parse-param
 {
-  ProgramNode* root
+  ProgramNode* &root
 }
 
 // YYSTYPE
@@ -490,7 +495,7 @@ arg-list
 // Epilogue
 
 void
-yyerror (ProgramNode* root, const char* s)
+yyerror (ProgramNode* &root, const char* s)
 {
   fprintf (stderr, "%s\nLine %d, Column %d\n", s, lineCount, colCount);
 }

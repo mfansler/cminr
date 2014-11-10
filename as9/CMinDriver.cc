@@ -16,13 +16,14 @@
 // Local Includes
 
 #include "CMinusAst.h"
+#include "PrintVisitor.h"
 
 /******************************************************************************/
 // External references
 
 extern
 int
-yyparse (ProgramNode* root);
+yyparse (ProgramNode* &root);
 
 extern FILE* yyin;
 
@@ -50,7 +51,17 @@ main (int argc, char* argv[])
   int parseResult = yyparse (root);
 
   if (parseResult == 0)
-    std::cout << "program syntax valid\n";
-
+  {
+    PrintVisitor* treePrinter = new PrintVisitor ();
+    
+    root->accept (treePrinter);
+  }
+  else
+  {
+    std::cout << "Program syntax invalid\n";
+  }
+  
+  delete root;
+  
   return EXIT_SUCCESS;
 }

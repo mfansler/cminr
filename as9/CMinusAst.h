@@ -4,6 +4,9 @@
 // Design by CSCI 435: Compilers class
 // Fall 2014
 
+#ifndef __C_Minus_AST_Classes__
+#define __C_Minus_AST_Classes__
+
 /********************************************************************/
 // System Includes
 
@@ -126,8 +129,8 @@ struct DeclarationNode : Node
 {
   virtual ~DeclarationNode ();
 
-  void
-  accept (IVisitor* visitor);
+  virtual void
+  accept (IVisitor* visitor) = 0;
   
   ValueType valueType;
   string identifier;
@@ -139,6 +142,9 @@ struct FunctionDeclarationNode : DeclarationNode
     vector<ParameterNode*> params, CompoundStatementNode* csNode);
 
   ~FunctionDeclarationNode ();
+
+  void
+  accept (IVisitor* visitor);
   
   ValueType returnType;
   vector<ParameterNode*> parameters;
@@ -150,6 +156,9 @@ struct VariableDeclarationNode : DeclarationNode
   VariableDeclarationNode (string id);
   
   ~VariableDeclarationNode ();
+
+  void
+  accept (IVisitor* visitor);
 };
 
 struct ArrayDeclarationNode : VariableDeclarationNode
@@ -158,6 +167,9 @@ struct ArrayDeclarationNode : VariableDeclarationNode
 
   ~ArrayDeclarationNode ();
 
+  void
+  accept (IVisitor* visitor);
+
   size_t size;
 };
 
@@ -165,6 +177,9 @@ struct ParameterNode : DeclarationNode
 {
   ParameterNode (string id, bool array);
   ~ParameterNode ();
+
+  void
+  accept (IVisitor* visitor);
 
   bool isArray;
 };
@@ -345,3 +360,5 @@ struct IntegerLiteralExpressionNode : ExpressionNode
 
   int value;
 };
+
+#endif

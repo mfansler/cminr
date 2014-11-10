@@ -11,7 +11,8 @@
 
 %{
   #include "CMinParser.hh"
-
+  #include "CMinusAst.h"
+  
   extern "C"
   int
   yylex ();
@@ -168,11 +169,13 @@ for       {
 
 {IDENT}   {
             colCount += yyleng;
+	    yylval.name = yytext;
             return ID;
           }
 
 {DIGIT}+  {
             colCount += yyleng;
+	    yylval.intValue = std::stoi (yytext);
             return NUM;
           }
 
