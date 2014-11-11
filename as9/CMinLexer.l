@@ -169,7 +169,7 @@ for       {
 
 {IDENT}   {
             colCount += yyleng;
-	    yylval.name = yytext;
+	    yylval.name = strdup (yytext);
             return ID;
           }
 

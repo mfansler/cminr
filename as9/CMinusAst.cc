@@ -57,10 +57,10 @@ void ProgramNode::accept (IVisitor* visitor)
 /********************************************************************/
 // DeclarationNode Methods
 
-//void DeclarationNode::accept (IVisitor* visitor)
-//{
-//  visitor->visit (this);
-//}
+void DeclarationNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
+}
 
 /********************************************************************/
 // FunctionDeclarationNode methods
@@ -86,7 +86,6 @@ FunctionDeclarationNode::~FunctionDeclarationNode ()
 
 void FunctionDeclarationNode::accept (IVisitor* visitor)
 {
-  std::cout << "FunctionDeclaration accepting...\n";
   visitor->visit (this);
 }
 
@@ -101,8 +100,6 @@ VariableDeclarationNode::VariableDeclarationNode (string id)
 
 void VariableDeclarationNode::accept (IVisitor* visitor)
 {
-  std::cout << "VariableDeclaration accepting...\n"
-	    << typeid(this).name() << std::endl;
   visitor->visit (this);
 }
 
@@ -119,8 +116,6 @@ ArrayDeclarationNode::~ArrayDeclarationNode () {}
 
 void ArrayDeclarationNode::accept (IVisitor* visitor)
 {
-  std::cout << "ArrayDeclaration accepting...\n"
-	    << typeid(this).name() << std::endl;
   visitor->visit (this);
 }
 
@@ -138,8 +133,6 @@ ParameterNode::~ParameterNode () {}
 
 void ParameterNode::accept (IVisitor* visitor)
 {
-  std::cout << "ParameterDeclaration accepting...\n"
-	    << typeid(this).name() << std::endl;
   visitor->visit (this);
 }
 
@@ -172,6 +165,11 @@ CompoundStatementNode::~CompoundStatementNode ()
   statements.clear ();
 }
 
+void CompoundStatementNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
+}
+
 /********************************************************************/
 // IfStatementNode Methods
 
@@ -191,6 +189,11 @@ IfStatementNode::~IfStatementNode ()
   delete elseStatement;
 }
 
+void IfStatementNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
+}
+
 /********************************************************************/
 // WhileStatementNode Methods
 
@@ -205,6 +208,11 @@ WhileStatementNode::~WhileStatementNode ()
 {
   delete conditionalExpression;
   delete body;
+}
+
+void WhileStatementNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
 }
 
 /********************************************************************/
@@ -230,6 +238,11 @@ ForStatementNode::~ForStatementNode ()
   delete body;
 }
 
+void ForStatementNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
+}
+
 /********************************************************************/
 // ReturnStatementNode Methods
 
@@ -243,6 +256,11 @@ ReturnStatementNode::~ReturnStatementNode ()
   delete expression;
 }
 
+void ReturnStatementNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
+}
+
 /********************************************************************/
 // ExpressionStatementNode Methods
 
@@ -254,6 +272,11 @@ ExpressionStatementNode::ExpressionStatementNode (ExpressionNode* expr)
 ExpressionStatementNode::~ExpressionStatementNode ()
 {
   delete expression;
+}
+
+void ExpressionStatementNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
 }
 
 /********************************************************************/
@@ -280,12 +303,22 @@ AssignmentExpressionNode::~AssignmentExpressionNode ()
   delete expression;
 }
 
+void AssignmentExpressionNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
+}
+
 /********************************************************************/
 // VariableExpressionNode Methods
 
 VariableExpressionNode::VariableExpressionNode (string id)
 {
   identifier = id;
+}
+
+void VariableExpressionNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
 }
 
 /********************************************************************/
@@ -303,6 +336,11 @@ SubscriptExpressionNode::~SubscriptExpressionNode ()
   delete index;
 }
 
+void SubscriptExpressionNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
+}
+
 /********************************************************************/
 // CallExpressionNode Methods
 
@@ -317,6 +355,11 @@ CallExpressionNode::~CallExpressionNode ()
   for (ExpressionNode* e : arguments)
     delete e;
   arguments.clear ();
+}
+
+void CallExpressionNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
 }
 
 /********************************************************************/
@@ -337,6 +380,11 @@ AdditiveExpressionNode::~AdditiveExpressionNode ()
   delete right;
 }
 
+void AdditiveExpressionNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
+}
+
 /********************************************************************/
 // MultiplicativeExpressionNode Methods
 
@@ -353,6 +401,11 @@ MultiplicativeExpressionNode::~MultiplicativeExpressionNode ()
 {
   delete left;
   delete right;
+}
+
+void MultiplicativeExpressionNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
 }
 
 /********************************************************************/
@@ -373,6 +426,11 @@ RelationalExpressionNode::~RelationalExpressionNode ()
   delete right;
 }
 
+void RelationalExpressionNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
+}
+
 /********************************************************************/
 // UnaryExpressionNode Methods
 
@@ -388,6 +446,11 @@ UnaryExpressionNode::~UnaryExpressionNode ()
   delete variable;
 }
 
+void UnaryExpressionNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
+}
+
 /********************************************************************/
 // IntegerLiteralExpressionNode Methods
 
@@ -397,3 +460,8 @@ IntegerLiteralExpressionNode::IntegerLiteralExpressionNode (int v)
 }
 
 IntegerLiteralExpressionNode::~IntegerLiteralExpressionNode () {}
+
+void IntegerLiteralExpressionNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
+}

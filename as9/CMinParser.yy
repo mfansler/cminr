@@ -158,10 +158,12 @@ var-declaration
 	: type-specifier ID SEMI
 	{
 	  $$ = new VariableDeclarationNode ($2);
+	  free ($2);
 	}
 	| type-specifier ID LBRACK NUM RBRACK SEMI
 	{
 	  $$ = new ArrayDeclarationNode ($2, $4);
+	  free ($2);
 	}
 	;
 
@@ -180,6 +182,7 @@ fun-declaration
 	: type-specifier ID LPAREN params RPAREN compound-stmt
 	{
 	  $$ = new FunctionDeclarationNode ($1, $2, *$4, $6);
+	  free ($2);
 	}
 	;
 
@@ -211,10 +214,12 @@ param
 	: type-specifier ID
 	{
 	  $$ = new ParameterNode ($2, false);
+	  free ($2);
 	}
 	| type-specifier ID LBRACK RBRACK
 	{
 	  $$ = new ParameterNode ($2, true);
+	  free ($2);
 	}
 	;
 
@@ -342,10 +347,12 @@ var
 	: ID
 	{
 	  $$ = new VariableExpressionNode ($1);
+	  free ($1);
 	}
 	| ID LBRACK expression RBRACK
 	{
 	  $$ = new SubscriptExpressionNode ($1, $3);
+	  free ($1);
 	}
 	;
 
@@ -462,6 +469,7 @@ call
 	: ID LPAREN args RPAREN
 	{
 	  $$ = new CallExpressionNode ($1, *$3);
+	  free ($1);
 	}
 	;
 
