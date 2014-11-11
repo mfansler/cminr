@@ -11,6 +11,7 @@
 // System Includes
 
 #include <string>
+#include <fstream>
 
 /********************************************************************/
 // Local Includes
@@ -23,11 +24,12 @@
 class PrintVisitor : public IVisitor
 {
   int depth;
+  std::ofstream outFile;
   
   std::string indent ();
 
 public:
-  PrintVisitor ();
+  PrintVisitor (std::string ofname);
   ~PrintVisitor ();
   
   void visit (ProgramNode* node);

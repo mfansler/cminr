@@ -1,8 +1,10 @@
-/********************************************************************/
-// C- AST Class Definitions
-// Header file by Daniel J. Rabiega & Mervin Fansler
-// Design by CSCI 435: Compilers class
-// Fall 2014
+/*
+  Filename   : CMinusAst.cc
+  Author     : Merv Fansler
+  Course     : CSCI 435
+  Assignment : Assignment 9, A Happy Little AST
+  Description: Implementation of AST classes for C- langauge.
+*/
 
 /********************************************************************/
 // System Includes
@@ -24,14 +26,9 @@ using std::string;
 using std::vector;
 
 /********************************************************************/
-// Empty Virtual Destructors
+// Node Methods
 
 Node::~Node () {}
-DeclarationNode::~DeclarationNode () {}
-StatementNode::~StatementNode () {}
-ExpressionNode::~ExpressionNode () {}
-VariableDeclarationNode::~VariableDeclarationNode () {}
-VariableExpressionNode::~VariableExpressionNode () {}
 
 /********************************************************************/
 // ProgramNode Methods
@@ -56,6 +53,8 @@ void ProgramNode::accept (IVisitor* visitor)
 
 /********************************************************************/
 // DeclarationNode Methods
+
+DeclarationNode::~DeclarationNode () {}
 
 void DeclarationNode::accept (IVisitor* visitor)
 {
@@ -98,6 +97,8 @@ VariableDeclarationNode::VariableDeclarationNode (string id)
   identifier = id;
 }
 
+VariableDeclarationNode::~VariableDeclarationNode () {}
+
 void VariableDeclarationNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
@@ -138,6 +139,8 @@ void ParameterNode::accept (IVisitor* visitor)
 
 /********************************************************************/
 // StatementNode Methods
+
+StatementNode::~StatementNode () {}
 
 void StatementNode::accept (IVisitor* visitor)
 {
@@ -282,6 +285,8 @@ void ExpressionStatementNode::accept (IVisitor* visitor)
 /********************************************************************/
 // ExpressionNode Methods
 
+ExpressionNode::~ExpressionNode () {}
+
 void ExpressionNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
@@ -315,6 +320,8 @@ VariableExpressionNode::VariableExpressionNode (string id)
 {
   identifier = id;
 }
+
+VariableExpressionNode::~VariableExpressionNode () {}
 
 void VariableExpressionNode::accept (IVisitor* visitor)
 {

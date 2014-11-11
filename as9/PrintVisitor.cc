@@ -12,6 +12,7 @@
 
 #include <string>
 #include <iostream>
+#include <fstream>
 
 /********************************************************************/
 // Local Includes
@@ -21,14 +22,20 @@
 /********************************************************************/
 // Using declarations
 
-using std::cout;
 using std::endl;
 
 /********************************************************************/
 // Class Methods
 
-PrintVisitor::PrintVisitor () {}
-PrintVisitor::~PrintVisitor () {}
+PrintVisitor::PrintVisitor (std::string ofname)
+{
+  outFile.open (ofname);
+}
+
+PrintVisitor::~PrintVisitor ()
+{
+  outFile.close ();
+}
 
 std::string PrintVisitor::indent ()
 {
@@ -38,7 +45,7 @@ std::string PrintVisitor::indent ()
 void PrintVisitor::visit (ProgramNode* node)
 {
   depth = 0;
-  cout << "Program Node\n";
+  outFile << "Program Node\n";
   
   ++depth;
   for (DeclarationNode* d : node->children)
@@ -48,22 +55,22 @@ void PrintVisitor::visit (ProgramNode* node)
   
 void PrintVisitor::visit (DeclarationNode* node)
 {
-  cout << indent () << "Declaration: " << node->identifier << endl;
+  outFile << indent () << "Declaration: " << node->identifier << endl;
 }
 
 void PrintVisitor::visit (FunctionDeclarationNode* node)
 {
-  cout << indent () << "Function: " << node->identifier << ": ";
+  outFile << indent () << "Function: " << node->identifier << ": ";
   switch (node->valueType)
   {
   case ValueType::INT:
-    cout << "Int type\n";
+    outFile << "Int type\n";
     break;
   case ValueType::VOID:
-    cout << "Void type\n";
+    outFile << "Void type\n";
     break;
   case ValueType::ARRAY:
-    cout << "Array type\n";
+    outFile << "Array type\n";
     break;
   }
   
@@ -77,35 +84,35 @@ void PrintVisitor::visit (FunctionDeclarationNode* node)
 
 void PrintVisitor::visit (VariableDeclarationNode* node)
 {
-  cout  << indent () << "VariableDeclaration: " << node->identifier << ": ";
+  outFile  << indent () << "VariableDeclaration: " << node->identifier << ": ";
   switch (node->valueType)
   {
   case ValueType::INT:
-    cout << "Int type\n";
+    outFile << "Int type\n";
     break;
   case ValueType::VOID:
-    cout << "Void type\n";
+    outFile << "Void type\n";
     break;
   case ValueType::ARRAY:
-    cout << "Array type\n";
+    outFile << "Array type\n";
     break;
   }
 }
 
 void PrintVisitor::visit (ArrayDeclarationNode* node)
 {
-  cout << indent () << "Variable: " << node->identifier
+  outFile << indent () << "Variable: " << node->identifier
        << "[" << node->size << "]: ";
   switch (node->valueType)
   {
   case ValueType::INT:
-    cout << "Int type\n";
+    outFile << "Int type\n";
     break;
   case ValueType::VOID:
-    cout << "Void type\n";
+    outFile << "Void type\n";
     break;
   case ValueType::ARRAY:
-    cout << "Array type\n";
+    outFile << "Array type\n";
     break;
   }
   
@@ -113,31 +120,31 @@ void PrintVisitor::visit (ArrayDeclarationNode* node)
 
 void PrintVisitor::visit (ParameterNode* node)
 {
-  cout << indent () << "Parameter: " << node->identifier;
+  outFile << indent () << "Parameter: " << node->identifier;
   if (node->isArray)
-    cout << "[]";
+    outFile << "[]";
   switch (node->valueType)
   {
   case ValueType::INT:
-    cout << ": Int type\n";
+    outFile << ": Int type\n";
     break;
   case ValueType::VOID:
-    cout << ": Void type\n";
+    outFile << ": Void type\n";
     break;
   case ValueType::ARRAY:
-    cout << ": Array type\n";
+    outFile << ": Array type\n";
     break;
   }
 }
 
 void PrintVisitor::visit (StatementNode* node)
 {
-  cout << indent () << "Statement" << endl;
+  outFile << indent () << "Statement" << endl;
 }
 
 void PrintVisitor::visit (CompoundStatementNode* node)
 {
-  cout << indent () << "CompoundStatement" << endl;
+  outFile << indent () << "CompoundStatement" << endl;
 
   ++depth;
   for (auto l : node->localDeclarations)
@@ -149,7 +156,7 @@ void PrintVisitor::visit (CompoundStatementNode* node)
 
 void PrintVisitor::visit (IfStatementNode* node)
 {
-  cout << indent () << "If\n";
+  outFile << indent () << "If\n";
 
   ++depth;
   node->conditionalExpression->accept (this);
@@ -161,7 +168,7 @@ void PrintVisitor::visit (IfStatementNode* node)
 
 void PrintVisitor::visit (WhileStatementNode* node)
 {
-  cout << indent () << "While\n";
+  outFile << indent () << "While\n";
 
   ++depth;
   node->conditionalExpression->accept (this);
@@ -171,7 +178,7 @@ void PrintVisitor::visit (WhileStatementNode* node)
 
 void PrintVisitor::visit (ForStatementNode* node)
 {
-  cout << indent () << "For\n";
+  outFile << indent () << "For\n";
 
   ++depth;
   node->initializer->accept (this);
@@ -183,7 +190,7 @@ void PrintVisitor::visit (ForStatementNode* node)
 
 void PrintVisitor::visit (ReturnStatementNode* node)
 {
-  cout << indent () << "Return\n";
+  outFile << indent () << "Return\n";
 
   if (node->expression != nullptr)
   {
@@ -195,7 +202,7 @@ void PrintVisitor::visit (ReturnStatementNode* node)
 
 void PrintVisitor::visit (ExpressionStatementNode* node)
 {
-  cout << indent () << "ExpressionStatement\n";
+  outFile << indent () << "ExpressionStatement\n";
 
   ++depth;
   node->expression->accept (this);
@@ -204,12 +211,12 @@ void PrintVisitor::visit (ExpressionStatementNode* node)
 
 void PrintVisitor::visit (ExpressionNode* node)
 {
-  cout << indent () << "Expression" << endl;
+  outFile << indent () << "Expression" << endl;
 }
 
 void PrintVisitor::visit (AssignmentExpressionNode* node)
 {
-  cout << indent () << "Assignment\n";
+  outFile << indent () << "Assignment\n";
 
   ++depth;
   node->variable->accept (this);
@@ -219,15 +226,15 @@ void PrintVisitor::visit (AssignmentExpressionNode* node)
 
 void PrintVisitor::visit (VariableExpressionNode* node)
 {
-  cout << indent () << "Variable: " << node->identifier << endl;
+  outFile << indent () << "Variable: " << node->identifier << endl;
 }
 
 void PrintVisitor::visit (SubscriptExpressionNode* node)
 {
-  cout << indent () << "Subscript: " << node->identifier << endl;
+  outFile << indent () << "Subscript: " << node->identifier << endl;
 
   ++depth;
-  cout << indent () << "Index:\n";
+  outFile << indent () << "Index:\n";
   ++depth;
   node->index->accept (this);
   depth -= 2;
@@ -235,41 +242,41 @@ void PrintVisitor::visit (SubscriptExpressionNode* node)
 
 void PrintVisitor::visit (CallExpressionNode* node)
 {
-  cout << indent () << "FunctionCall: " << node->identifier;
+  outFile << indent () << "FunctionCall: " << node->identifier;
 
   if (node->arguments.size() > 0)
   {
     ++depth;
-    cout << endl << indent () << "Arguments:\n";
+    outFile << endl << indent () << "Arguments:\n";
     ++depth;
     for (auto a : node->arguments)
       a->accept (this);
     depth -= 2;
   }
   else
-    cout << "()\n";
+    outFile << "()\n";
 }
 
 void PrintVisitor::visit (AdditiveExpressionNode* node)
 {
-  cout << indent () << "AdditiveExpression: ";
+  outFile << indent () << "AdditiveExpression: ";
 
   switch (node->addOperator)
   {
   case AdditiveOperatorType::PLUS:
-    cout << "+\n";
+    outFile << "+\n";
     break;
   case AdditiveOperatorType::MINUS:
-    cout << "-\n";
+    outFile << "-\n";
     break;
   }
 
   ++depth;
-  cout << indent () << "Left:\n";
+  outFile << indent () << "Left:\n";
   ++depth;
   node->left->accept (this);
   --depth;
-  cout << indent () << "Right:\n";
+  outFile << indent () << "Right:\n";
   ++depth;
   node->right->accept (this);
   depth -= 2;
@@ -277,24 +284,24 @@ void PrintVisitor::visit (AdditiveExpressionNode* node)
 
 void PrintVisitor::visit (MultiplicativeExpressionNode* node)
 {
-  cout << indent () << "MultiplicativeExpression: ";
+  outFile << indent () << "MultiplicativeExpression: ";
 
   switch (node->multOperator)
   {
   case MultiplicativeOperatorType::TIMES:
-    cout << "*\n";
+    outFile << "*\n";
     break;
   case MultiplicativeOperatorType::DIVIDE:
-    cout << "/\n";
+    outFile << "/\n";
     break;
   }
 
   ++depth;
-  cout << indent () << "Left:\n";
+  outFile << indent () << "Left:\n";
   ++depth;
   node->left->accept (this);
   --depth;
-  cout << indent () << "Right:\n";
+  outFile << indent () << "Right:\n";
   ++depth;
   node->right->accept (this);
   depth -= 2;
@@ -302,36 +309,36 @@ void PrintVisitor::visit (MultiplicativeExpressionNode* node)
 
 void PrintVisitor::visit (RelationalExpressionNode* node)
 {
-  cout << indent () << "RelationalExpression: ";
+  outFile << indent () << "RelationalExpression: ";
 
   switch (node->relationalOperator)
   {
   case RelationalOperatorType::EQ:
-    cout << "==\n";
+    outFile << "==\n";
     break;
   case RelationalOperatorType::NEQ:
-    cout << "!=\n";
+    outFile << "!=\n";
     break;
   case RelationalOperatorType::LT:
-    cout << "<\n";
+    outFile << "<\n";
     break;
   case RelationalOperatorType::LTE:
-    cout << "<=\n";
+    outFile << "<=\n";
     break;
   case RelationalOperatorType::GT:
-    cout << ">\n";
+    outFile << ">\n";
     break;
   case RelationalOperatorType::GTE:
-    cout << ">=\n";
+    outFile << ">=\n";
     break;
   }
 
   ++depth;
-  cout << indent () << "Left:\n";
+  outFile << indent () << "Left:\n";
   ++depth;
   node->left->accept (this);
   --depth;
-  cout << indent () << "Right:\n";
+  outFile << indent () << "Right:\n";
   ++depth;
   node->right->accept (this);
   depth -= 2;
@@ -339,15 +346,15 @@ void PrintVisitor::visit (RelationalExpressionNode* node)
 
 void PrintVisitor::visit (UnaryExpressionNode* node)
 {
-  cout << indent () << "UnaryExpression: ";
+  outFile << indent () << "UnaryExpression: ";
 
   switch (node->unaryOperator)
   {
   case UnaryOperatorType::INCREMENT:
-    cout << "++\n";
+    outFile << "++\n";
     break;
   case UnaryOperatorType::DECREMENT:
-    cout << "--\n";
+    outFile << "--\n";
     break;
   }
 
@@ -358,5 +365,5 @@ void PrintVisitor::visit (UnaryExpressionNode* node)
 
 void PrintVisitor::visit (IntegerLiteralExpressionNode* node)
 {
-  cout << indent () << "Integer: " << node->value << endl;
+  outFile << indent () << "Integer: " << node->value << endl;
 }

@@ -2,15 +2,16 @@
   Filename   : CMinDriver.cc
   Author     : Merv Fansler
   Course     : CSCI 435
-  Assignment : Assignment 8, C- Parser_2
+  Assignment : Assignment 9, A (Partially) Happy Little AST
   Description: Driver for C- parser that accepts a C- source input and outputs
-                 confirmation of syntactic validity or location or syntax error
+                 a file containing a printed AST if the syntax is valid.
 */
 
 /******************************************************************************/
 // System Includes
 
 #include <iostream>
+#include <string>
 
 /******************************************************************************/
 // Local Includes
@@ -32,14 +33,20 @@ extern FILE* yyin;
 int
 main (int argc, char* argv[])
 {
+  std::string outFileName;
+  
   ++argv, --argc;
   if (argc > 0)
   {
     yyin = fopen (argv[0], "r");
+    
+    outFileName = std::string(argv[0]);
+    outFileName = outFileName.replace(outFileName.end()-2, outFileName.end(), "ast");
   }
   else
   {
     yyin = stdin;
+    outFileName = "Default.ast";
   }
   
   // Uncomment to show parser actions (shifts and reductions)
@@ -52,8 +59,10 @@ main (int argc, char* argv[])
 
   if (parseResult == 0)
   {
-    PrintVisitor* treePrinter = new PrintVisitor ();
+    std::cout << "Program syntax valid\n"
+	      << "Writing to tree to: " << outFileName << std::endl;
     
+    PrintVisitor* treePrinter = new PrintVisitor (outFileName);
     root->accept (treePrinter);
   }
   else
