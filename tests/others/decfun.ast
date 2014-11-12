@@ -1,0 +1,4 @@
+Program Node
+  VariableDeclaration: foo: Int type
+  Function: main: Void type
+    CompoundStatement

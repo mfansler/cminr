@@ -1,0 +1,91 @@
+Program Node
+  Function: fib: Int type
+    Parameter: n: Int type
+    CompoundStatement
+      If
+        RelationalExpression: <=
+          Left:
+            Variable: n
+          Right:
+            Integer: 2
+        CompoundStatement
+          Return
+            Integer: 1
+        CompoundStatement
+          Return
+            AdditiveExpression: +
+              Left:
+                FunctionCall: fib
+                  Arguments:
+                    AdditiveExpression: -
+                      Left:
+                        Variable: n
+                      Right:
+                        Integer: 2
+              Right:
+                FunctionCall: fib
+                  Arguments:
+                    AdditiveExpression: -
+                      Left:
+                        Variable: n
+                      Right:
+                        Integer: 1
+  Function: main: Int type
+    CompoundStatement
+      VariableDeclaration: m: Int type
+      VariableDeclaration: n: Int type
+      ExpressionStatement
+        Assignment
+          Variable: m
+          Assignment
+            Variable: n
+            FunctionCall: fib
+              Arguments:
+                Integer: 10
+      ExpressionStatement
+        Assignment
+          Variable: m
+          FunctionCall: pow
+            Arguments:
+              AdditiveExpression: +
+                Left:
+                  MultiplicativeExpression: *
+                    Left:
+                      Variable: n
+                    Right:
+                      Integer: 5
+                Right:
+                  MultiplicativeExpression: /
+                    Left:
+                      Integer: 2
+                    Right:
+                      AdditiveExpression: -
+                        Left:
+                          Integer: 3
+                        Right:
+                          MultiplicativeExpression: *
+                            Left:
+                              MultiplicativeExpression: *
+                                Left:
+                                  Integer: 2
+                                Right:
+                                  Integer: 1
+                            Right:
+                              Integer: 1
+              Integer: 2
+      If
+        RelationalExpression: ==
+          Left:
+            Variable: m
+          Right:
+            Variable: n
+        Return
+          FunctionCall: fib
+            Arguments:
+              FunctionCall: fib
+                Arguments:
+                  FunctionCall: fib
+                    Arguments:
+                      Integer: 10
+        Return
+          Integer: 0

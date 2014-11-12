@@ -1,0 +1,182 @@
+Program Node
+  Variable: x[10]: Int type
+  Function: minloc: Int type
+    Parameter: a[]: Int type
+    Parameter: low: Int type
+    Parameter: high: Int type
+    CompoundStatement
+      VariableDeclaration: i: Int type
+      VariableDeclaration: x: Int type
+      VariableDeclaration: k: Int type
+      ExpressionStatement
+        Assignment
+          Variable: k
+          Variable: low
+      ExpressionStatement
+        Assignment
+          Variable: x
+          Subscript: a
+            Index:
+              Variable: low
+      ExpressionStatement
+        Assignment
+          Variable: i
+          AdditiveExpression: +
+            Left:
+              Variable: low
+            Right:
+              Integer: 1
+      While
+        RelationalExpression: <
+          Left:
+            Variable: i
+          Right:
+            Variable: high
+        CompoundStatement
+          If
+            RelationalExpression: <
+              Left:
+                Subscript: a
+                  Index:
+                    Variable: i
+              Right:
+                Variable: x
+            CompoundStatement
+              ExpressionStatement
+                Assignment
+                  Variable: x
+                  Subscript: a
+                    Index:
+                      Variable: i
+              ExpressionStatement
+                Assignment
+                  Variable: k
+                  Variable: i
+          ExpressionStatement
+            Assignment
+              Variable: i
+              AdditiveExpression: +
+                Left:
+                  Variable: i
+                Right:
+                  Integer: 1
+      Return
+        Variable: k
+  Function: sort: Void type
+    Parameter: a[]: Int type
+    Parameter: low: Int type
+    Parameter: high: Int type
+    CompoundStatement
+      VariableDeclaration: i: Int type
+      VariableDeclaration: k: Int type
+      ExpressionStatement
+        Assignment
+          Variable: i
+          Variable: low
+      While
+        RelationalExpression: <
+          Left:
+            Variable: i
+          Right:
+            AdditiveExpression: -
+              Left:
+                Variable: high
+              Right:
+                Integer: 1
+        CompoundStatement
+          VariableDeclaration: t: Int type
+          ExpressionStatement
+            Assignment
+              Variable: k
+              FunctionCall: minloc
+                Arguments:
+                  Variable: a
+                  Variable: i
+                  Variable: high
+          ExpressionStatement
+            Assignment
+              Variable: t
+              Subscript: a
+                Index:
+                  Variable: k
+          ExpressionStatement
+            Assignment
+              Subscript: a
+                Index:
+                  Variable: k
+              Subscript: a
+                Index:
+                  Variable: i
+          ExpressionStatement
+            Assignment
+              Subscript: a
+                Index:
+                  Variable: i
+              Variable: t
+          ExpressionStatement
+            Assignment
+              Variable: i
+              AdditiveExpression: +
+                Left:
+                  Variable: i
+                Right:
+                  Integer: 1
+  Function: main: Void type
+    CompoundStatement
+      VariableDeclaration: i: Int type
+      ExpressionStatement
+        Assignment
+          Variable: i
+          Integer: 0
+      While
+        RelationalExpression: <
+          Left:
+            Variable: i
+          Right:
+            Integer: 10
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Subscript: x
+                Index:
+                  Variable: i
+              FunctionCall: input()
+          ExpressionStatement
+            Assignment
+              Variable: i
+              AdditiveExpression: +
+                Left:
+                  Variable: i
+                Right:
+                  Integer: 1
+      ExpressionStatement
+        FunctionCall: sort
+          Arguments:
+            Variable: x
+            Integer: 0
+            Integer: 10
+      ExpressionStatement
+        Assignment
+          Variable: i
+          Integer: 0
+      While
+        RelationalExpression: <
+          Left:
+            Variable: i
+          Right:
+            Integer: 10
+        CompoundStatement
+          ExpressionStatement
+            FunctionCall: output
+              Arguments:
+                Subscript: x
+                  Index:
+                    Variable: i
+          ExpressionStatement
+            Assignment
+              Variable: i
+              AdditiveExpression: +
+                Left:
+                  Variable: i
+                Right:
+                  Integer: 1

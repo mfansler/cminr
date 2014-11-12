@@ -204,9 +204,12 @@ void PrintVisitor::visit (ExpressionStatementNode* node)
 {
   outFile << indent () << "ExpressionStatement\n";
 
-  ++depth;
-  node->expression->accept (this);
-  --depth;
+  if (node->expression != nullptr)
+  {
+    ++depth;
+    node->expression->accept (this);
+    --depth;
+  }
 }
 
 void PrintVisitor::visit (ExpressionNode* node)

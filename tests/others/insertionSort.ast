@@ -1,0 +1,207 @@
+Program Node
+  Variable: x[20]: Int type
+  Function: continueSorting: Int type
+    Parameter: a[]: Int type
+    Parameter: index: Int type
+    Parameter: temp: Int type
+    CompoundStatement
+      VariableDeclaration: keepGoing: Int type
+      If
+        RelationalExpression: >=
+          Left:
+            Variable: index
+          Right:
+            Integer: 1
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Variable: keepGoing
+              Integer: 1
+        If
+          RelationalExpression: <
+            Left:
+              Variable: temp
+            Right:
+              Subscript: x
+                Index:
+                  AdditiveExpression: -
+                    Left:
+                      Variable: index
+                    Right:
+                      Integer: 1
+          CompoundStatement
+            ExpressionStatement
+              Assignment
+                Variable: keepGoing
+                Integer: 1
+          CompoundStatement
+            ExpressionStatement
+              Assignment
+                Variable: keepGoing
+                Integer: 0
+      Return
+        Variable: keepGoing
+  Function: sort: Void type
+    Parameter: a[]: Int type
+    Parameter: size: Int type
+    CompoundStatement
+      VariableDeclaration: temp: Int type
+      VariableDeclaration: currentIndex: Int type
+      VariableDeclaration: index: Int type
+      VariableDeclaration: keepGoing: Int type
+      ExpressionStatement
+        Assignment
+          Variable: keepGoing
+          Integer: 1
+      ExpressionStatement
+        Assignment
+          Variable: currentIndex
+          Integer: 1
+      While
+        RelationalExpression: <
+          Left:
+            Variable: currentIndex
+          Right:
+            Variable: size
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Variable: temp
+              Subscript: x
+                Index:
+                  Variable: currentIndex
+          ExpressionStatement
+            Assignment
+              Variable: index
+              Variable: currentIndex
+          While
+            Assignment
+              Variable: keepGoing
+              RelationalExpression: ==
+                Left:
+                  FunctionCall: continueSorting
+                    Arguments:
+                      Variable: x
+                      Variable: index
+                      Variable: temp
+                Right:
+                  Integer: 1
+            CompoundStatement
+              ExpressionStatement
+                Assignment
+                  Subscript: x
+                    Index:
+                      Variable: index
+                  Subscript: x
+                    Index:
+                      AdditiveExpression: -
+                        Left:
+                          Variable: index
+                        Right:
+                          Integer: 1
+              ExpressionStatement
+                Assignment
+                  Variable: index
+                  AdditiveExpression: -
+                    Left:
+                      Variable: index
+                    Right:
+                      Integer: 1
+          ExpressionStatement
+            Assignment
+              Variable: keepGoing
+              Integer: 1
+          ExpressionStatement
+            Assignment
+              Subscript: x
+                Index:
+                  Variable: index
+              Variable: temp
+          ExpressionStatement
+            Assignment
+              Variable: currentIndex
+              AdditiveExpression: +
+                Left:
+                  Variable: currentIndex
+                Right:
+                  Integer: 1
+  Function: main: Void type
+    CompoundStatement
+      VariableDeclaration: size: Int type
+      VariableDeclaration: i: Int type
+      VariableDeclaration: num: Int type
+      ExpressionStatement
+        Assignment
+          Variable: size
+          Integer: 20
+      ExpressionStatement
+        Assignment
+          Variable: i
+          Variable: size
+      ExpressionStatement
+        Assignment
+          Variable: num
+          Integer: 0
+      While
+        RelationalExpression: >
+          Left:
+            Variable: i
+          Right:
+            Integer: 0
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Subscript: x
+                Index:
+                  AdditiveExpression: -
+                    Left:
+                      Variable: i
+                    Right:
+                      Integer: 1
+              Variable: num
+          ExpressionStatement
+            Assignment
+              Variable: i
+              AdditiveExpression: -
+                Left:
+                  Variable: i
+                Right:
+                  Integer: 1
+          ExpressionStatement
+            Assignment
+              Variable: num
+              AdditiveExpression: +
+                Left:
+                  Variable: num
+                Right:
+                  Integer: 1
+      ExpressionStatement
+        FunctionCall: sort
+          Arguments:
+            Variable: x
+            Variable: size
+      ExpressionStatement
+        Assignment
+          Variable: i
+          Integer: 0
+      While
+        RelationalExpression: <
+          Left:
+            Variable: i
+          Right:
+            Variable: size
+        CompoundStatement
+          ExpressionStatement
+            FunctionCall: output
+              Arguments:
+                Subscript: x
+                  Index:
+                    Variable: i
+          ExpressionStatement
+            Assignment
+              Variable: i
+              AdditiveExpression: +
+                Left:
+                  Variable: i
+                Right:
+                  Integer: 1

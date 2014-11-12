@@ -1,0 +1,31 @@
+Program Node
+  Function: printArray: Void type
+    Parameter: array[]: Int type
+    Parameter: arraySize: Int type
+    CompoundStatement
+      VariableDeclaration: i: Int type
+      ExpressionStatement
+        Assignment
+          Variable: i
+          Integer: 0
+      While
+        RelationalExpression: <
+          Left:
+            Variable: i
+          Right:
+            Variable: arraySize
+        CompoundStatement
+          ExpressionStatement
+            FunctionCall: print
+              Arguments:
+                Subscript: array
+                  Index:
+                    Variable: i
+          ExpressionStatement
+            Assignment
+              Variable: i
+              AdditiveExpression: +
+                Left:
+                  Variable: i
+                Right:
+                  Integer: 1

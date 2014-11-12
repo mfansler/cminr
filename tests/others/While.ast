@@ -1,0 +1,70 @@
+Program Node
+  Function: test: Int type
+    Parameter: u: Int type
+    Parameter: v: Int type
+    CompoundStatement
+      VariableDeclaration: z: Int type
+      If
+        RelationalExpression: >
+          Left:
+            Variable: u
+          Right:
+            Variable: v
+        CompoundStatement
+          While
+            Assignment
+              Variable: a
+              RelationalExpression: <
+                Left:
+                  Variable: u
+                Right:
+                  Integer: 10
+            CompoundStatement
+              ExpressionStatement
+                Assignment
+                  Variable: z
+                  Integer: 15
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Variable: z
+              RelationalExpression: >
+                Left:
+                  AdditiveExpression: +
+                    Left:
+                      AdditiveExpression: -
+                        Left:
+                          MultiplicativeExpression: *
+                            Left:
+                              MultiplicativeExpression: /
+                                Left:
+                                  Variable: a
+                                Right:
+                                  Variable: b
+                            Right:
+                              Variable: c
+                        Right:
+                          Variable: d
+                    Right:
+                      Variable: e
+                Right:
+                  AdditiveExpression: +
+                    Left:
+                      Integer: 7
+                    Right:
+                      Variable: j
+  Function: main: Int type
+    CompoundStatement
+      ExpressionStatement
+        Assignment
+          Variable: u
+          FunctionCall: input()
+      ExpressionStatement
+        Assignment
+          Variable: v
+          FunctionCall: input()
+      ExpressionStatement
+        FunctionCall: test
+          Arguments:
+            Variable: u
+            Variable: v

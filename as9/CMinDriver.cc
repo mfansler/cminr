@@ -53,14 +53,14 @@ main (int argc, char* argv[])
   //extern int yydebug;
   //yydebug = 1;
 
-  ProgramNode* root;
+  ProgramNode* root = nullptr;
   
   int parseResult = yyparse (root);
 
   if (parseResult == 0)
   {
     std::cout << "Program syntax valid\n"
-	      << "Writing to tree to: " << outFileName << std::endl;
+	      << "Writing tree to: " << outFileName << std::endl;
     
     PrintVisitor* treePrinter = new PrintVisitor (outFileName);
     root->accept (treePrinter);

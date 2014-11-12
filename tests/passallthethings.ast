@@ -1,0 +1,62 @@
+Program Node
+  Function: nonsense: Void type
+    CompoundStatement
+      Return
+        Integer: 42
+  Function: uhOh: Int type
+    Parameter: x[]: Int type
+    CompoundStatement
+      ExpressionStatement
+        Assignment
+          Subscript: x
+            Index:
+              Subscript: x
+                Index:
+                  Integer: 0
+          Variable: x
+      Return
+        Subscript: x
+          Index:
+            Variable: x
+  Function: bidingTime: Void type
+    CompoundStatement
+      ExpressionStatement
+      ExpressionStatement
+      ExpressionStatement
+      ExpressionStatement
+  Function: both: Int type
+    Parameter: x: Int type
+    Parameter: y: Int type
+    CompoundStatement
+      If
+        MultiplicativeExpression: *
+          Left:
+            Assignment
+              Variable: x
+              Variable: y
+          Right:
+            Assignment
+              Variable: y
+              Variable: x
+        CompoundStatement
+          Return
+            RelationalExpression: ==
+              Left:
+                Variable: x
+              Right:
+                Variable: y
+        CompoundStatement
+          Return
+            AdditiveExpression: +
+              Left:
+                RelationalExpression: !=
+                  Left:
+                    Variable: x
+                  Right:
+                    Variable: y
+              Right:
+                RelationalExpression: !=
+                  Left:
+                    Variable: y
+                  Right:
+                    Variable: x

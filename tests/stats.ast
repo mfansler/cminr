@@ -1,0 +1,205 @@
+Program Node
+  Function: pow: Int type
+    Parameter: x: Int type
+    Parameter: n: Int type
+    CompoundStatement
+      VariableDeclaration: y: Int type
+      VariableDeclaration: i: Int type
+      ExpressionStatement
+        Assignment
+          Variable: y
+          Integer: 1
+      ExpressionStatement
+        Assignment
+          Variable: i
+          Integer: 0
+      While
+        RelationalExpression: <
+          Left:
+            Variable: i
+          Right:
+            Variable: n
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Variable: y
+              MultiplicativeExpression: *
+                Left:
+                  Variable: y
+                Right:
+                  Variable: x
+          ExpressionStatement
+            Assignment
+              Variable: i
+              AdditiveExpression: +
+                Left:
+                  Variable: i
+                Right:
+                  Integer: 1
+      Return
+        Variable: y
+  Function: nthMoment: Int type
+    Parameter: n: Int type
+    Parameter: x[]: Int type
+    Parameter: low: Int type
+    Parameter: high: Int type
+    CompoundStatement
+      VariableDeclaration: i: Int type
+      VariableDeclaration: sum: Int type
+      ExpressionStatement
+        Assignment
+          Variable: sum
+          Integer: 0
+      ExpressionStatement
+        Assignment
+          Variable: i
+          Variable: low
+      While
+        RelationalExpression: <=
+          Left:
+            Variable: i
+          Right:
+            Variable: high
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Variable: sum
+              AdditiveExpression: +
+                Left:
+                  Variable: sum
+                Right:
+                  FunctionCall: pow
+                    Arguments:
+                      Subscript: x
+                        Index:
+                          Variable: i
+                      Variable: n
+          ExpressionStatement
+            Assignment
+              Variable: i
+              AdditiveExpression: +
+                Left:
+                  Variable: i
+                Right:
+                  Integer: 1
+      Return
+        MultiplicativeExpression: /
+          Left:
+            Variable: sum
+          Right:
+            AdditiveExpression: -
+              Left:
+                Variable: high
+              Right:
+                Variable: low
+  Function: mean: Int type
+    Parameter: x[]: Int type
+    Parameter: low: Int type
+    Parameter: high: Int type
+    CompoundStatement
+      Return
+        FunctionCall: nthMoment
+          Arguments:
+            Integer: 1
+            Variable: x
+            Variable: low
+            Variable: high
+  Function: variance: Int type
+    Parameter: x[]: Int type
+    Parameter: low: Int type
+    Parameter: high: Int type
+    CompoundStatement
+      Return
+        AdditiveExpression: -
+          Left:
+            FunctionCall: nthMoment
+              Arguments:
+                Integer: 2
+                Variable: x
+                Variable: low
+                Variable: high
+          Right:
+            FunctionCall: pow
+              Arguments:
+                FunctionCall: mean
+                  Arguments:
+                    Variable: x
+                    Variable: low
+                    Variable: high
+                Integer: 2
+  Function: stdev: Int type
+    Parameter: x[]: Int type
+    Parameter: low: Int type
+    Parameter: high: Int type
+    CompoundStatement
+      Return
+        FunctionCall: sqrt
+          Arguments:
+            FunctionCall: variance
+              Arguments:
+                Variable: x
+                Variable: low
+                Variable: high
+  Function: sqrt: Int type
+    Parameter: sq: Int type
+    CompoundStatement
+      VariableDeclaration: i: Int type
+      VariableDeclaration: rt: Int type
+      ExpressionStatement
+        Assignment
+          Variable: i
+          Integer: 0
+      ExpressionStatement
+        Assignment
+          Variable: rt
+          Integer: 1
+      While
+        RelationalExpression: <
+          Left:
+            Variable: i
+          Right:
+            Integer: 5
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Variable: rt
+              MultiplicativeExpression: /
+                Left:
+                  AdditiveExpression: +
+                    Left:
+                      Variable: rt
+                    Right:
+                      MultiplicativeExpression: /
+                        Left:
+                          Variable: sq
+                        Right:
+                          Variable: rt
+                Right:
+                  Integer: 2
+      Return
+        Variable: rt
+  Function: rand: Int type
+    CompoundStatement
+      Variable: x[1]: Int type
+      Return
+        AdditiveExpression: -
+          Left:
+            Variable: x
+          Right:
+            MultiplicativeExpression: *
+              Left:
+                Integer: 100
+              Right:
+                MultiplicativeExpression: /
+                  Left:
+                    Variable: x
+                  Right:
+                    Integer: 100
+  Function: PI: Int type
+    CompoundStatement
+      Return
+        MultiplicativeExpression: /
+          Left:
+            Integer: 355
+          Right:
+            Integer: 113

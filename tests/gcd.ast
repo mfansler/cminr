@@ -1,0 +1,49 @@
+Program Node
+  Function: gcd: Int type
+    Parameter: u: Int type
+    Parameter: v: Int type
+    CompoundStatement
+      If
+        RelationalExpression: ==
+          Left:
+            Variable: v
+          Right:
+            Integer: 0
+        Return
+          Variable: u
+        Return
+          FunctionCall: gcd
+            Arguments:
+              Variable: v
+              AdditiveExpression: -
+                Left:
+                  Variable: u
+                Right:
+                  MultiplicativeExpression: *
+                    Left:
+                      MultiplicativeExpression: /
+                        Left:
+                          Variable: u
+                        Right:
+                          Variable: v
+                    Right:
+                      Variable: v
+  Function: main: Void type
+    CompoundStatement
+      VariableDeclaration: x: Int type
+      VariableDeclaration: y: Int type
+      ExpressionStatement
+        Assignment
+          Variable: x
+          FunctionCall: input()
+      ExpressionStatement
+        Assignment
+          Variable: y
+          FunctionCall: input()
+      ExpressionStatement
+        FunctionCall: output
+          Arguments:
+            FunctionCall: gcd
+              Arguments:
+                Variable: x
+                Variable: y

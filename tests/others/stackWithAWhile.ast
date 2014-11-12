@@ -1,0 +1,139 @@
+Program Node
+  Variable: stack[20]: Int type
+  VariableDeclaration: size: Int type
+  VariableDeclaration: capacity: Int type
+  VariableDeclaration: SENTINELVALUE: Int type
+  Function: push: Void type
+    Parameter: value: Int type
+    CompoundStatement
+      If
+        RelationalExpression: <
+          Left:
+            Variable: size
+          Right:
+            Variable: capacity
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Subscript: stack
+                Index:
+                  Variable: size
+              Variable: value
+          ExpressionStatement
+            Assignment
+              Variable: size
+              AdditiveExpression: +
+                Left:
+                  Variable: size
+                Right:
+                  Integer: 1
+  Function: pop: Void type
+    CompoundStatement
+      If
+        RelationalExpression: >
+          Left:
+            Variable: size
+          Right:
+            Integer: 0
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Variable: size
+              AdditiveExpression: -
+                Left:
+                  Variable: size
+                Right:
+                  Integer: 1
+  Function: top: Int type
+    CompoundStatement
+      VariableDeclaration: valueToReturn: Int type
+      If
+        RelationalExpression: ==
+          Left:
+            Variable: size
+          Right:
+            Integer: 0
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Variable: valueToReturn
+              Variable: SENTINELVALUE
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Variable: valueToReturn
+              Subscript: stack
+                Index:
+                  AdditiveExpression: -
+                    Left:
+                      Variable: size
+                    Right:
+                      Integer: 1
+      Return
+        Variable: valueToReturn
+  Function: main: Void type
+    CompoundStatement
+      VariableDeclaration: number: Int type
+      VariableDeclaration: index: Int type
+      VariableDeclaration: valueBeingPopped: Int type
+      ExpressionStatement
+        Assignment
+          Variable: size
+          Integer: 0
+      ExpressionStatement
+        Assignment
+          Variable: capacity
+          Integer: 20
+      ExpressionStatement
+        Assignment
+          Variable: SENTINELVALUE
+          Integer: 99999
+      While
+        RelationalExpression: <
+          Left:
+            Variable: size
+          Right:
+            Variable: capacity
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Variable: number
+              AdditiveExpression: -
+                Left:
+                  MultiplicativeExpression: /
+                    Left:
+                      AdditiveExpression: +
+                        Left:
+                          MultiplicativeExpression: *
+                            Left:
+                              Variable: index
+                            Right:
+                              Integer: 4
+                        Right:
+                          Integer: 1
+                    Right:
+                      Integer: 2
+                Right:
+                  Integer: 1
+          ExpressionStatement
+            FunctionCall: push
+              Arguments:
+                Variable: number
+          ExpressionStatement
+            Assignment
+              Variable: index
+              AdditiveExpression: +
+                Left:
+                  Variable: index
+                Right:
+                  Integer: 1
+      While
+        RelationalExpression: !=
+          Left:
+            Variable: size
+          Right:
+            Integer: 0
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Variable: valueBeingPopped
