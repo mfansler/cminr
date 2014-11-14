@@ -50,12 +50,14 @@ public:
 
   void visit (ExpressionNode* node);
   void visit (AssignmentExpressionNode* node);
-  void visit (VariableExpressionNode* node);
-  void visit (SubscriptExpressionNode* node);
-  void visit (CallExpressionNode* node);
   void visit (AdditiveExpressionNode* node);
   void visit (MultiplicativeExpressionNode* node);
   void visit (RelationalExpressionNode* node);
   void visit (UnaryExpressionNode* node);
-  void visit (IntegerLiteralExpressionNode* node);  
+  void visit (IntegerLiteralExpressionNode* node);
+
+  void visit (ReferenceNode* node);
+  void visit (VariableExpressionNode* node);
+  void visit (SubscriptExpressionNode* node);
+  void visit (CallExpressionNode* node);
 };

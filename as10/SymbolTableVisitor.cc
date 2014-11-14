@@ -35,21 +35,19 @@ using std::unordered_map;
 
 SymbolTableVisitor::SymbolTableVisitor () {}
 
-SymbolTableVisitor::~SymbolTableVisitor () {}
+SymbolTableVisitor::~SymbolTableVisitor () {
+  symbolTable.clear ();
+}
 
 void SymbolTableVisitor::visit (ProgramNode* node)
 {
   level = 0;
-  outFile << "Program Node\n";
   
   for (DeclarationNode* d : node->children)
     d->accept (this);
 }
   
-void SymbolTableVisitor::visit (DeclarationNode* node)
-{
-  outFile << indent () << "Declaration: " << node->identifier << endl;
-}
+void SymbolTableVisitor::visit (DeclarationNode* node) {}
 
 void SymbolTableVisitor::visit (FunctionDeclarationNode* node)
 {

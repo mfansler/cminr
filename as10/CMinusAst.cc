@@ -314,62 +314,6 @@ void AssignmentExpressionNode::accept (IVisitor* visitor)
 }
 
 /********************************************************************/
-// VariableExpressionNode Methods
-
-VariableExpressionNode::VariableExpressionNode (string id)
-{
-  identifier = id;
-}
-
-VariableExpressionNode::~VariableExpressionNode () {}
-
-void VariableExpressionNode::accept (IVisitor* visitor)
-{
-  visitor->visit (this);
-}
-
-/********************************************************************/
-// SubscriptExpressionNode Methods
-
-SubscriptExpressionNode::SubscriptExpressionNode (string id,
-						  ExpressionNode* index)
-  : VariableExpressionNode (id)
-{
-  this->index = index;
-}
-
-SubscriptExpressionNode::~SubscriptExpressionNode ()
-{
-  delete index;
-}
-
-void SubscriptExpressionNode::accept (IVisitor* visitor)
-{
-  visitor->visit (this);
-}
-
-/********************************************************************/
-// CallExpressionNode Methods
-
-CallExpressionNode::CallExpressionNode (string id, vector<ExpressionNode*> args)
-{
-  identifier = id;
-  arguments = args;
-}
-
-CallExpressionNode::~CallExpressionNode ()
-{
-  for (ExpressionNode* e : arguments)
-    delete e;
-  arguments.clear ();
-}
-
-void CallExpressionNode::accept (IVisitor* visitor)
-{
-  visitor->visit (this);
-}
-
-/********************************************************************/
 // AdditiveExpressionNode Methods
 
 AdditiveExpressionNode::AdditiveExpressionNode (AdditiveOperatorType addop,
@@ -472,3 +416,73 @@ void IntegerLiteralExpressionNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
+
+/********************************************************************/
+// ReferenceNode Methods
+
+ReferenceNode::~ReferenceNode () {
+  // deleting reference nodes should not trigger declaration deletion
+  // delete declaration;
+}
+
+void ReferenceNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
+}
+
+/********************************************************************/
+// VariableExpressionNode Methods
+
+VariableExpressionNode::VariableExpressionNode (string id)
+{
+  identifier = id;
+}
+
+VariableExpressionNode::~VariableExpressionNode () {}
+
+void VariableExpressionNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
+}
+
+/********************************************************************/
+// SubscriptExpressionNode Methods
+
+SubscriptExpressionNode::SubscriptExpressionNode (string id,
+						  ExpressionNode* index)
+  : VariableExpressionNode (id)
+{
+  this->index = index;
+}
+
+SubscriptExpressionNode::~SubscriptExpressionNode ()
+{
+  delete index;
+}
+
+void SubscriptExpressionNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
+}
+
+/********************************************************************/
+// CallExpressionNode Methods
+
+CallExpressionNode::CallExpressionNode (string id, vector<ExpressionNode*> args)
+{
+  identifier = id;
+  arguments = args;
+}
+
+CallExpressionNode::~CallExpressionNode ()
+{
+  for (ExpressionNode* e : arguments)
+    delete e;
+  arguments.clear ();
+}
+
+void CallExpressionNode::accept (IVisitor* visitor)
+{
+  visitor->visit (this);
+}
+

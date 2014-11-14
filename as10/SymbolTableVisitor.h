@@ -9,32 +9,30 @@
 		 returning error information.
 */
 
+#ifndef __C_MINUS_SYMBOL_TABLE_VISITOR_H__
+#define __C_MINUS_SYMBOL_TABLE_VISITOR_H__
+
 /********************************************************************/
 // System Includes
-
-#include <string>
-#include <vector>
-#include <unordered_map>
 
 /********************************************************************/
 // Local Includes
 
 #include "CMinusAst.h"
+#include "SymbolTable.h"
 
 /********************************************************************/
 // Using delcarations
 
-using std::string;
-using std::vector;
-using std::unordered_map;
 
 /********************************************************************/
 // Class Definition
 
 class SymbolTableVisitor : public IVisitor
 {
-  int depth;
-  vector<unordered_map<string, 
+  int level;
+  SymbolTable symbolTable;
+
 public:
   SymbolTableVisitor ();
   ~SymbolTableVisitor ();
@@ -57,12 +55,16 @@ public:
 
   void visit (ExpressionNode* node);
   void visit (AssignmentExpressionNode* node);
-  void visit (VariableExpressionNode* node);
-  void visit (SubscriptExpressionNode* node);
-  void visit (CallExpressionNode* node);
   void visit (AdditiveExpressionNode* node);
   void visit (MultiplicativeExpressionNode* node);
   void visit (RelationalExpressionNode* node);
   void visit (UnaryExpressionNode* node);
-  void visit (IntegerLiteralExpressionNode* node);  
+  void visit (IntegerLiteralExpressionNode* node);
+
+  void visit (ReferenceNode* node);
+  void visit (VariableExpressionNode* node);
+  void visit (SubscriptExpressionNode* node);
+  void visit (CallExpressionNode* node);
 };
+
+#endif

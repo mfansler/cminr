@@ -36,6 +36,7 @@ struct DeclarationNode;
 struct FunctionDeclarationNode;
 struct VariableDeclarationNode;
 struct ArrayDeclarationNode;
+struct ParameterNode;
 
 // Statement Nodes
 struct StatementNode;
@@ -49,17 +50,17 @@ struct ExpressionStatementNode;
 // Expression Nodes
 struct ExpressionNode;
 struct AssignmentExpressionNode;
-struct VariableExpressionNode;
-struct SubscriptExpressionNode;
-struct CallExpressionNode;
 struct AdditiveExpressionNode;
 struct MultiplicativeExpressionNode;
 struct RelationalExpressionNode;
 struct UnaryExpressionNode;
 struct IntegerLiteralExpressionNode;
 
-// Other
-struct ParameterNode;
+// Reference Nodes
+struct ReferenceNode;
+struct VariableExpressionNode;
+struct SubscriptExpressionNode;
+struct CallExpressionNode;
 
 /********************************************************************/
 //  Enum Classes
@@ -113,14 +114,16 @@ public:
 
   virtual void visit (ExpressionNode* node) = 0;
   virtual void visit (AssignmentExpressionNode* node) = 0;
-  virtual void visit (VariableExpressionNode* node) = 0;
-  virtual void visit (SubscriptExpressionNode* node) = 0;
-  virtual void visit (CallExpressionNode* node) = 0;
   virtual void visit (AdditiveExpressionNode* node) = 0;
   virtual void visit (MultiplicativeExpressionNode* node) = 0;
   virtual void visit (RelationalExpressionNode* node) = 0;
   virtual void visit (UnaryExpressionNode* node) = 0;
-  virtual void visit (IntegerLiteralExpressionNode* node) = 0;  
+  virtual void visit (IntegerLiteralExpressionNode* node) = 0;
+
+  virtual void visit (ReferenceNode* node) = 0;
+  virtual void visit (VariableExpressionNode* node) = 0;
+  virtual void visit (SubscriptExpressionNode* node) = 0;
+  virtual void visit (CallExpressionNode* node) = 0;
 };
 
 struct Node
@@ -130,6 +133,9 @@ struct Node
   virtual void
   accept (IVisitor* visitor) = 0;
 };
+
+/********************************************************************/
+// ROOT NODE CLASS
 
 struct ProgramNode : Node
 {
@@ -155,6 +161,8 @@ struct DeclarationNode : Node
   
   ValueType valueType;
   string identifier;
+
+  int nestLevel;
 };
 
 struct FunctionDeclarationNode : DeclarationNode
@@ -322,40 +330,6 @@ struct AssignmentExpressionNode : ExpressionNode
   ExpressionNode* expression;
 };
 
-struct VariableExpressionNode : ExpressionNode
-{
-  VariableExpressionNode (string id);
-  ~VariableExpressionNode ();
-
-  void
-  accept (IVisitor* visitor);
-  
-  string identifier;
-};
-
-struct SubscriptExpressionNode : VariableExpressionNode
-{
-  SubscriptExpressionNode (string id, ExpressionNode* index);
-  ~SubscriptExpressionNode ();
-
-  void
-  accept (IVisitor* visitor);
-
-  ExpressionNode* index;
-};
-
-struct CallExpressionNode : ExpressionNode
-{
-  CallExpressionNode (string id, vector<ExpressionNode*> args);
-  ~CallExpressionNode ();
-
-  void
-  accept (IVisitor* visitor);
-  
-  string identifier;
-  vector<ExpressionNode*> arguments;
-};
-
 struct AdditiveExpressionNode : ExpressionNode
 {
   AdditiveExpressionNode (AdditiveOperatorType addop,
@@ -424,6 +398,51 @@ struct IntegerLiteralExpressionNode : ExpressionNode
   accept (IVisitor* visitor);
 
   int value;
+};
+
+/********************************************************************/
+// Reference Nodes
+
+struct ReferenceNode : ExpressionNode
+{
+  virtual ~ReferenceNode ();
+
+  void
+  accept (IVisitor* visitor);
+
+  string identifier;
+  DeclarationNode* declaration;
+};
+
+struct VariableExpressionNode : ReferenceNode
+{
+  VariableExpressionNode (string id);
+  ~VariableExpressionNode ();
+
+  void
+  accept (IVisitor* visitor);
+};
+
+struct SubscriptExpressionNode : VariableExpressionNode
+{
+  SubscriptExpressionNode (string id, ExpressionNode* index);
+  ~SubscriptExpressionNode ();
+
+  void
+  accept (IVisitor* visitor);
+
+  ExpressionNode* index;
+};
+
+struct CallExpressionNode : ReferenceNode
+{
+  CallExpressionNode (string id, vector<ExpressionNode*> args);
+  ~CallExpressionNode ();
+
+  void
+  accept (IVisitor* visitor);
+  
+  vector<ExpressionNode*> arguments;
 };
 
 #endif

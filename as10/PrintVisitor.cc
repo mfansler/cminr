@@ -370,3 +370,8 @@ void PrintVisitor::visit (IntegerLiteralExpressionNode* node)
 {
   outFile << indent () << "Integer: " << node->value << endl;
 }
+
+void PrintVisitor::visit (ReferenceNode* node)
+{
+  outFile << indent () << "Reference: " << node->identifier << endl;
+}
