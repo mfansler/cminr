@@ -30,8 +30,8 @@
 
 class SymbolTableVisitor : public IVisitor
 {
-  int level;
   SymbolTable symbolTable;
+  bool inFunctionBody = false;
 
 public:
   SymbolTableVisitor ();

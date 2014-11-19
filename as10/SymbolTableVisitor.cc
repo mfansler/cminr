@@ -25,10 +25,6 @@
 /********************************************************************/
 // Using declarations
 
-using std::cout;
-using std::endl;
-using std::vector;
-using std::unordered_map;
 
 /********************************************************************/
 // Class Methods
@@ -41,8 +37,6 @@ SymbolTableVisitor::~SymbolTableVisitor () {
 
 void SymbolTableVisitor::visit (ProgramNode* node)
 {
-  level = 0;
-  
   for (DeclarationNode* d : node->children)
     d->accept (this);
 }
@@ -51,313 +45,171 @@ void SymbolTableVisitor::visit (DeclarationNode* node) {}
 
 void SymbolTableVisitor::visit (FunctionDeclarationNode* node)
 {
-  outFile << indent () << "Function: " << node->identifier << ": ";
-  switch (node->valueType)
+  if (!symbolTable.insert (node))
   {
-  case ValueType::INT:
-    outFile << "Int type\n";
-    break;
-  case ValueType::VOID:
-    outFile << "Void type\n";
-    break;
-  case ValueType::ARRAY:
-    outFile << "Array type\n";
-    break;
+    cout << "Multiple declaration error: "
+	 << node->identifier << " at ("
+	 << node->rowNumber << ", "
+	 << node->columnNumber << ") previously declared\n";
   }
   
-  ++depth;
+  symbolTable.enterScope ();
+
   for (ParameterNode* p : node->parameters)
     p->accept (this);
 
+  inFunctionBody = true;
   node->functionBody->accept (this);
-  --depth;
+  inFunctionBody = false;
+
+  symbolTable.exitScope ();
 }
 
 void SymbolTableVisitor::visit (VariableDeclarationNode* node)
 {
-  outFile  << indent () << "VariableDeclaration: " << node->identifier << ": ";
-  switch (node->valueType)
+  if (!symbolTable.insert (node))
   {
-  case ValueType::INT:
-    outFile << "Int type\n";
-    break;
-  case ValueType::VOID:
-    outFile << "Void type\n";
-    break;
-  case ValueType::ARRAY:
-    outFile << "Array type\n";
-    break;
+    cout << "Multiple declaration error: "
+	 << node->identifier << " at ("
+	 << node->rowNumber << ", "
+	 << node->columnNumber << ") previously declared\n";
   }
 }
 
 void SymbolTableVisitor::visit (ArrayDeclarationNode* node)
 {
-  outFile << indent () << "Variable: " << node->identifier
-       << "[" << node->size << "]: ";
-  switch (node->valueType)
+  if (!symbolTable.insert (node))
   {
-  case ValueType::INT:
-    outFile << "Int type\n";
-    break;
-  case ValueType::VOID:
-    outFile << "Void type\n";
-    break;
-  case ValueType::ARRAY:
-    outFile << "Array type\n";
-    break;
+    cout << "Multiple declaration error: "
+	 << node->identifier << " at ("
+	 << node->rowNumber << ", "
+	 << node->columnNumber << ") previously declared\n";
   }
-  
 }
 
 void SymbolTableVisitor::visit (ParameterNode* node)
 {
-  outFile << indent () << "Parameter: " << node->identifier;
-  if (node->isArray)
-    outFile << "[]";
-  switch (node->valueType)
+  if (!symbolTable.insert (node))
   {
-  case ValueType::INT:
-    outFile << ": Int type\n";
-    break;
-  case ValueType::VOID:
-    outFile << ": Void type\n";
-    break;
-  case ValueType::ARRAY:
-    outFile << ": Array type\n";
-    break;
+    cout << "Multiple declaration error: "
+	 << node->identifier << " at ("
+	 << node->rowNumber << ", "
+	 << node->columnNumber << ") previously declared\n";
   }
 }
 
-void SymbolTableVisitor::visit (StatementNode* node)
-{
-  outFile << indent () << "Statement" << endl;
-}
+void SymbolTableVisitor::visit (StatementNode* node) {}
 
 void SymbolTableVisitor::visit (CompoundStatementNode* node)
 {
-  outFile << indent () << "CompoundStatement" << endl;
-
-  ++depth;
+  if (!isFunctionBody)
+    symbolTable.enterScope ();
+  
   for (auto l : node->localDeclarations)
     l->accept (this);
   for (auto s : node->statements)
     s->accept (this);
-  --depth;
+  
+  if (!isFunctionBody)
+    symbolTable.exitScope ();
 }
 
 void SymbolTableVisitor::visit (IfStatementNode* node)
 {
-  outFile << indent () << "If\n";
-
-  ++depth;
   node->conditionalExpression->accept (this);
   node->thenStatement->accept (this);
+  
   if (node->elseStatement != nullptr)
     node->elseStatement->accept (this);
-  --depth;
 }
 
 void SymbolTableVisitor::visit (WhileStatementNode* node)
 {
-  outFile << indent () << "While\n";
-
-  ++depth;
   node->conditionalExpression->accept (this);
   node->body->accept (this);
-  --depth;
 }
 
 void SymbolTableVisitor::visit (ForStatementNode* node)
 {
-  outFile << indent () << "For\n";
-
-  ++depth;
   node->initializer->accept (this);
   node->condition->accept (this);
   node->updater->accept (this);
   node->body->accept (this);
-  --depth;
 }
 
 void SymbolTableVisitor::visit (ReturnStatementNode* node)
 {
-  outFile << indent () << "Return\n";
-
   if (node->expression != nullptr)
-  {
-    ++depth;
     node->expression->accept (this);
-    --depth;
-  }
 }
 
 void SymbolTableVisitor::visit (ExpressionStatementNode* node)
 {
-  outFile << indent () << "ExpressionStatement\n";
-
   if (node->expression != nullptr)
-  {
-    ++depth;
     node->expression->accept (this);
-    --depth;
-  }
 }
 
-void SymbolTableVisitor::visit (ExpressionNode* node)
-{
-  outFile << indent () << "Expression" << endl;
-}
+void SymbolTableVisitor::visit (ExpressionNode* node) {}
 
 void SymbolTableVisitor::visit (AssignmentExpressionNode* node)
 {
-  outFile << indent () << "Assignment\n";
-
-  ++depth;
   node->variable->accept (this);
   node->expression->accept (this);
-  --depth;
 }
 
 void SymbolTableVisitor::visit (VariableExpressionNode* node)
 {
-  outFile << indent () << "Variable: " << node->identifier << endl;
+  node->declaration = symbolTable.lookup (node->identifier);
+  if (node->declaration == nullptr)
+  {
+    cout << "Undeclared reference error: "
+	 << node->identifier << " at ("
+	 << node->rowNumber << ", "
+	 << node->columnNumber << ")\n";
+  }
 }
 
 void SymbolTableVisitor::visit (SubscriptExpressionNode* node)
 {
-  outFile << indent () << "Subscript: " << node->identifier << endl;
-
-  ++depth;
-  outFile << indent () << "Index:\n";
-  ++depth;
   node->index->accept (this);
-  depth -= 2;
 }
 
 void SymbolTableVisitor::visit (CallExpressionNode* node)
 {
-  outFile << indent () << "FunctionCall: " << node->identifier;
-
-  if (node->arguments.size() > 0)
+  node->declaration = symbolTable.lookup (node->identifier);
+  if (node->declaration == nullptr)
   {
-    ++depth;
-    outFile << endl << indent () << "Arguments:\n";
-    ++depth;
-    for (auto a : node->arguments)
-      a->accept (this);
-    depth -= 2;
+    cout << "Error: Call to undeclared function: "
+	 << node->identifier << " at ("
+	 << node->rowNumber << ", "
+	 << node->columnNumber << ")\n";
   }
-  else
-    outFile << "()\n";
+  
+  for (auto a : node->arguments)
+    a->accept (this);
 }
 
 void SymbolTableVisitor::visit (AdditiveExpressionNode* node)
 {
-  outFile << indent () << "AdditiveExpression: ";
-
-  switch (node->addOperator)
-  {
-  case AdditiveOperatorType::PLUS:
-    outFile << "+\n";
-    break;
-  case AdditiveOperatorType::MINUS:
-    outFile << "-\n";
-    break;
-  }
-
-  ++depth;
-  outFile << indent () << "Left:\n";
-  ++depth;
   node->left->accept (this);
-  --depth;
-  outFile << indent () << "Right:\n";
-  ++depth;
   node->right->accept (this);
-  depth -= 2;
 }
 
 void SymbolTableVisitor::visit (MultiplicativeExpressionNode* node)
 {
-  outFile << indent () << "MultiplicativeExpression: ";
-
-  switch (node->multOperator)
-  {
-  case MultiplicativeOperatorType::TIMES:
-    outFile << "*\n";
-    break;
-  case MultiplicativeOperatorType::DIVIDE:
-    outFile << "/\n";
-    break;
-  }
-
-  ++depth;
-  outFile << indent () << "Left:\n";
-  ++depth;
   node->left->accept (this);
-  --depth;
-  outFile << indent () << "Right:\n";
-  ++depth;
   node->right->accept (this);
-  depth -= 2;
 }
 
 void SymbolTableVisitor::visit (RelationalExpressionNode* node)
 {
-  outFile << indent () << "RelationalExpression: ";
-
-  switch (node->relationalOperator)
-  {
-  case RelationalOperatorType::EQ:
-    outFile << "==\n";
-    break;
-  case RelationalOperatorType::NEQ:
-    outFile << "!=\n";
-    break;
-  case RelationalOperatorType::LT:
-    outFile << "<\n";
-    break;
-  case RelationalOperatorType::LTE:
-    outFile << "<=\n";
-    break;
-  case RelationalOperatorType::GT:
-    outFile << ">\n";
-    break;
-  case RelationalOperatorType::GTE:
-    outFile << ">=\n";
-    break;
-  }
-
-  ++depth;
-  outFile << indent () << "Left:\n";
-  ++depth;
   node->left->accept (this);
-  --depth;
-  outFile << indent () << "Right:\n";
-  ++depth;
   node->right->accept (this);
-  depth -= 2;
 }
 
 void SymbolTableVisitor::visit (UnaryExpressionNode* node)
 {
-  outFile << indent () << "UnaryExpression: ";
-
-  switch (node->unaryOperator)
-  {
-  case UnaryOperatorType::INCREMENT:
-    outFile << "++\n";
-    break;
-  case UnaryOperatorType::DECREMENT:
-    outFile << "--\n";
-    break;
-  }
-
-  ++depth;
   node->variable->accept (this);
-  --depth;
 }
 
-void SymbolTableVisitor::visit (IntegerLiteralExpressionNode* node)
-{
-  outFile << indent () << "Integer: " << node->value << endl;
-}
+void SymbolTableVisitor::visit (IntegerLiteralExpressionNode* node) {}

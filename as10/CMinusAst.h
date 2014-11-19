@@ -132,6 +132,9 @@ struct Node
   
   virtual void
   accept (IVisitor* visitor) = 0;
+
+  int rowNumber = 0;
+  int columnNumber = 0;
 };
 
 /********************************************************************/
