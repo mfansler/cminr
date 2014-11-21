@@ -154,12 +154,12 @@ declaration
 var-declaration
 	: type-specifier ID SEMI
 	{
-	  $$ = new VariableDeclarationNode ($2);
+	  $$ = new VariableDeclarationNode ($2, lineCount, colCount);
 	  free ($2);
 	}
 	| type-specifier ID LBRACK NUM RBRACK SEMI
 	{
-	  $$ = new ArrayDeclarationNode ($2, $4);
+	  $$ = new ArrayDeclarationNode ($2, $4, lineCount, colCount);
 	  free ($2);
 	}
 	;
@@ -178,7 +178,7 @@ type-specifier
 fun-declaration
 	: type-specifier ID LPAREN params RPAREN compound-stmt
 	{
-	  $$ = new FunctionDeclarationNode ($1, $2, *$4, $6);
+	  $$ = new FunctionDeclarationNode ($1, $2, *$4, $6, lineCount, colCount);
 	  free ($2);
 	}
 	;
@@ -210,12 +210,12 @@ param-list
 param
 	: type-specifier ID
 	{
-	  $$ = new ParameterNode ($2, false);
+	  $$ = new ParameterNode ($2, false, lineCount, colCount);
 	  free ($2);
 	}
 	| type-specifier ID LBRACK RBRACK
 	{
-	  $$ = new ParameterNode ($2, true);
+	  $$ = new ParameterNode ($2, true, lineCount, colCount);
 	  free ($2);
 	}
 	;
@@ -223,7 +223,7 @@ param
 compound-stmt
 	: LBRACE local-declarations statement-list RBRACE
 	{
-	  $$ = new CompoundStatementNode (*$2, *$3);
+	  $$ = new CompoundStatementNode (*$2, *$3, lineCount, colCount);
 	}
 	;
 
@@ -281,58 +281,58 @@ statement
 expression-stmt
 	: expression SEMI
 	{
-	  $$ = new ExpressionStatementNode ($1);
+	  $$ = new ExpressionStatementNode ($1, lineCount, colCount);
 	}
 	| SEMI
 	{
-	  $$ = new ExpressionStatementNode (nullptr);
+	  $$ = new ExpressionStatementNode (nullptr, lineCount, colCount);
 	}
 	;
 
 selection-stmt
 	: IF LPAREN expression RPAREN statement
 	{
-	  $$ = new IfStatementNode ($3, $5);
+	  $$ = new IfStatementNode ($3, $5, nullptr, lineCount, colCount);
 	}
 	| IF LPAREN expression RPAREN statement ELSE statement
 	{
-	  $$ = new IfStatementNode ($3, $5, $7);
+	  $$ = new IfStatementNode ($3, $5, $7, lineCount, colCount);
 	}
 	;
 
 iteration-stmt
 	: WHILE LPAREN expression RPAREN statement
 	{
-	  $$ = new WhileStatementNode ($3, $5);
+	  $$ = new WhileStatementNode ($3, $5, lineCount, colCount);
 	}
 	;
 
 for-stmt
 	: FOR LPAREN expression-stmt expression-stmt expression RPAREN statement
 	{
-	  $$ = new ForStatementNode ($3->expression, $4->expression, $5, $7);
+	  $$ = new ForStatementNode ($3->expression, $4->expression, $5, $7, lineCount, colCount);
 	}
 	| FOR LPAREN expression-stmt expression-stmt RPAREN statement
 	{
-	  $$ = new ForStatementNode ($3->expression, $4->expression, nullptr, $6); 
+	  $$ = new ForStatementNode ($3->expression, $4->expression, nullptr, $6, lineCount, colCount); 
 	}
 	;
 
 return-stmt
 	: RETURN SEMI
 	{
-	  $$ = new ReturnStatementNode ();
+	  $$ = new ReturnStatementNode (nullptr, lineCount, colCount);
 	}
 	| RETURN expression SEMI
 	{
-	  $$ = new ReturnStatementNode ($2);
+	  $$ = new ReturnStatementNode ($2, lineCount, colCount);
 	}
 	;
 
 expression
 	: var ASSIGN expression
 	{
-	  $$ = new AssignmentExpressionNode ($1, $3);
+	  $$ = new AssignmentExpressionNode ($1, $3, lineCount, colCount);
 	}
 	| simple-expression
 	{
@@ -343,12 +343,12 @@ expression
 var
 	: ID
 	{
-	  $$ = new VariableExpressionNode ($1);
+	  $$ = new VariableExpressionNode ($1, lineCount, colCount);
 	  free ($1);
 	}
 	| ID LBRACK expression RBRACK
 	{
-	  $$ = new SubscriptExpressionNode ($1, $3);
+	  $$ = new SubscriptExpressionNode ($1, $3, lineCount, colCount);
 	  free ($1);
 	}
 	;
@@ -356,7 +356,7 @@ var
 simple-expression
 	: additive-expression relop additive-expression
 	{
-	  $$ = new RelationalExpressionNode ($2, $1, $3);
+	  $$ = new RelationalExpressionNode ($2, $1, $3, lineCount, colCount);
 	}
 	| additive-expression
 	{
@@ -394,7 +394,7 @@ relop
 additive-expression
 	: additive-expression addop term
 	{
-	  $$ = new AdditiveExpressionNode ($2, $1, $3);
+	  $$ = new AdditiveExpressionNode ($2, $1, $3, lineCount, colCount);
 	}
 	| term
 	{
@@ -416,7 +416,7 @@ addop
 term
 	: term mulop factor
 	{
-	  $$ = new MultiplicativeExpressionNode ($2, $1, $3);
+	  $$ = new MultiplicativeExpressionNode ($2, $1, $3, lineCount, colCount);
 	}
 	| factor
 	{
@@ -450,22 +450,22 @@ factor
 	}
 	| INCREMENT var
 	{
-	  $$ = new UnaryExpressionNode (UnaryOperatorType::INCREMENT, $2);
+	  $$ = new UnaryExpressionNode (UnaryOperatorType::INCREMENT, $2, lineCount, colCount);
 	}
 	| DECREMENT var
 	{
-	  $$ = new UnaryExpressionNode (UnaryOperatorType::DECREMENT, $2);
+	  $$ = new UnaryExpressionNode (UnaryOperatorType::DECREMENT, $2, lineCount, colCount);
 	}
 	| NUM
 	{
-	  $$ = new IntegerLiteralExpressionNode ($1);
+	  $$ = new IntegerLiteralExpressionNode ($1, lineCount, colCount);
 	}
 	;
 
 call
 	: ID LPAREN args RPAREN
 	{
-	  $$ = new CallExpressionNode ($1, *$3);
+	  $$ = new CallExpressionNode ($1, *$3, lineCount, colCount);
 	  free ($1);
 	}
 	;

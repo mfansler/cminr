@@ -189,7 +189,7 @@ struct FunctionDeclarationNode : DeclarationNode
 
 struct VariableDeclarationNode : DeclarationNode
 {
-  VariableDeclarationNode (string id);
+  VariableDeclarationNode (string id, int row = 1, int col = 0);
   
   ~VariableDeclarationNode ();
 
@@ -199,7 +199,7 @@ struct VariableDeclarationNode : DeclarationNode
 
 struct ArrayDeclarationNode : VariableDeclarationNode
 {
-  ArrayDeclarationNode (string id, size_t size);
+  ArrayDeclarationNode (string id, size_t size, int row = 1, int col = 0);
 
   ~ArrayDeclarationNode ();
 
@@ -211,7 +211,7 @@ struct ArrayDeclarationNode : VariableDeclarationNode
 
 struct ParameterNode : DeclarationNode
 {
-  ParameterNode (string id, bool array);
+  ParameterNode (string id, bool array, int row = 1, int col = 0);
   ~ParameterNode ();
 
   void
@@ -225,16 +225,18 @@ struct ParameterNode : DeclarationNode
 
 struct StatementNode : Node
 {
+  StatementNode (int row = 1, int col = 0);
   virtual ~StatementNode ();
 
   void
-  accept (IVisitor* visitor);
+  accept (IVisitor* visitor) = 0;
 };
 
 struct CompoundStatementNode : StatementNode
 {
   CompoundStatementNode (vector<VariableDeclarationNode*> decls,
-			 vector<StatementNode*> stmts);
+			 vector<StatementNode*> stmts,
+			 int row = 1, int col = 0);
   ~CompoundStatementNode ();
 
   void
@@ -248,7 +250,8 @@ struct IfStatementNode : StatementNode
 {
   IfStatementNode (ExpressionNode* expr,
                    StatementNode* thenStmt,
-                   StatementNode* elseStmt = nullptr);
+                   StatementNode* elseStmt = nullptr,
+		   int row = 1, int col = 0);
   
   ~IfStatementNode ();
 
@@ -262,7 +265,8 @@ struct IfStatementNode : StatementNode
 
 struct WhileStatementNode : StatementNode
 {
-  WhileStatementNode (ExpressionNode* expr, StatementNode* stmt);
+  WhileStatementNode (ExpressionNode* expr, StatementNode* stmt,
+		      int row = 1, int col = 0);
   
   ~WhileStatementNode ();
 
@@ -278,7 +282,8 @@ struct ForStatementNode : StatementNode
   ForStatementNode (ExpressionNode* e1,
                     ExpressionNode* e2,
                     ExpressionNode* e3,
-                    StatementNode* s);
+                    StatementNode* s,
+		    int row = 1, int col = 0);
   
   ~ForStatementNode ();
 
@@ -293,7 +298,7 @@ struct ForStatementNode : StatementNode
 
 struct ReturnStatementNode : StatementNode
 {
-  ReturnStatementNode (ExpressionNode* expr = nullptr);
+  ReturnStatementNode (ExpressionNode* expr = nullptr, int row = 1, int col = 0);
   
   ~ReturnStatementNode ();
 
@@ -305,7 +310,7 @@ struct ReturnStatementNode : StatementNode
 
 struct ExpressionStatementNode : StatementNode
 {
-  ExpressionStatementNode (ExpressionNode* expr);
+  ExpressionStatementNode (ExpressionNode* expr, int row = 1, int col = 0);
   ~ExpressionStatementNode ();
 
   void
@@ -319,15 +324,17 @@ struct ExpressionStatementNode : StatementNode
 
 struct ExpressionNode : Node
 {
+  ExpressionNode (int row = 1, int col = 0);
   virtual ~ExpressionNode ();
 
   void
-  accept (IVisitor* visitor);
+  accept (IVisitor* visitor) = 0;
 };
 
 struct AssignmentExpressionNode : ExpressionNode
 {
-  AssignmentExpressionNode (VariableExpressionNode* v, ExpressionNode* e);
+  AssignmentExpressionNode (VariableExpressionNode* v, ExpressionNode* e,
+			    int row = 1, int col = 0);
   
   ~AssignmentExpressionNode ();
 
@@ -342,7 +349,8 @@ struct AdditiveExpressionNode : ExpressionNode
 {
   AdditiveExpressionNode (AdditiveOperatorType addop,
 			  ExpressionNode* l,
-			  ExpressionNode* r);
+			  ExpressionNode* r,
+			  int row = 1, int col = 0);
   ~AdditiveExpressionNode ();
 
   void
@@ -356,8 +364,9 @@ struct AdditiveExpressionNode : ExpressionNode
 struct MultiplicativeExpressionNode : ExpressionNode
 {
   MultiplicativeExpressionNode (MultiplicativeOperatorType multop,
-                                        ExpressionNode* l,
-                                        ExpressionNode* r);
+				ExpressionNode* l,
+				ExpressionNode* r,
+				int row = 1, int col = 0);
   ~MultiplicativeExpressionNode ();
 
   void
@@ -372,7 +381,8 @@ struct RelationalExpressionNode : ExpressionNode
 {
   RelationalExpressionNode (RelationalOperatorType relop,
 			    ExpressionNode* l,
-			    ExpressionNode* r);
+			    ExpressionNode* r,
+			    int row = 1, int col = 0);
   ~RelationalExpressionNode ();
 
   void
@@ -386,8 +396,8 @@ struct RelationalExpressionNode : ExpressionNode
 
 struct UnaryExpressionNode : ExpressionNode
 {
-  UnaryExpressionNode (UnaryOperatorType unop,
-		       VariableExpressionNode* v);
+  UnaryExpressionNode (UnaryOperatorType unop, VariableExpressionNode* v,
+		       int row = 1, int col = 0);
   ~UnaryExpressionNode ();
 
   void
@@ -399,7 +409,7 @@ struct UnaryExpressionNode : ExpressionNode
 
 struct IntegerLiteralExpressionNode : ExpressionNode
 {
-  IntegerLiteralExpressionNode (int v);
+  IntegerLiteralExpressionNode (int v, int row = 1, int col = 0);
   ~IntegerLiteralExpressionNode ();
 
   void
@@ -413,10 +423,11 @@ struct IntegerLiteralExpressionNode : ExpressionNode
 
 struct ReferenceNode : ExpressionNode
 {
+  ReferenceNode (string id, int row = 1, int col = 0);
   virtual ~ReferenceNode ();
 
   void
-  accept (IVisitor* visitor);
+  accept (IVisitor* visitor) = 0;
 
   string identifier;
   DeclarationNode* declaration;
@@ -424,7 +435,7 @@ struct ReferenceNode : ExpressionNode
 
 struct VariableExpressionNode : ReferenceNode
 {
-  VariableExpressionNode (string id);
+  VariableExpressionNode (string id, int row = 1, int col = 0);
   ~VariableExpressionNode ();
 
   void
@@ -433,7 +444,8 @@ struct VariableExpressionNode : ReferenceNode
 
 struct SubscriptExpressionNode : VariableExpressionNode
 {
-  SubscriptExpressionNode (string id, ExpressionNode* index);
+  SubscriptExpressionNode (string id, ExpressionNode* index,
+			   int row = 1, int col = 0);
   ~SubscriptExpressionNode ();
 
   void
@@ -444,7 +456,8 @@ struct SubscriptExpressionNode : VariableExpressionNode
 
 struct CallExpressionNode : ReferenceNode
 {
-  CallExpressionNode (string id, vector<ExpressionNode*> args);
+  CallExpressionNode (string id, vector<ExpressionNode*> args,
+		      int row = 1, int col = 0);
   ~CallExpressionNode ();
 
   void

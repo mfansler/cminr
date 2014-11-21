@@ -101,8 +101,8 @@ FunctionDeclarationNode::accept (IVisitor* visitor)
 /********************************************************************/
 // VariableDeclarationNode methods
 
-VariableDeclarationNode::VariableDeclarationNode (string id)
-  : DeclarationNode (ValueType::INT, id)
+VariableDeclarationNode::VariableDeclarationNode (string id, int row, int col)
+  : DeclarationNode (ValueType::INT, id, row, col)
 {}
 
 VariableDeclarationNode::~VariableDeclarationNode () {}
@@ -116,8 +116,9 @@ VariableDeclarationNode::accept (IVisitor* visitor)
 /********************************************************************/
 // ArrayDeclarationNode methods
 
-ArrayDeclarationNode::ArrayDeclarationNode (string id, size_t size)
-  : VariableDeclarationNode (id), size (size)
+ArrayDeclarationNode::ArrayDeclarationNode (string id, size_t size,
+					    int row, int col)
+  : VariableDeclarationNode (id, row, col), size (size)
 {}
 
 ArrayDeclarationNode::~ArrayDeclarationNode () {}
@@ -131,8 +132,8 @@ ArrayDeclarationNode::accept (IVisitor* visitor)
 /********************************************************************/
 // ParameterNode Methods
 
-ParameterNode::ParameterNode (string id, bool array)
-  : DeclarationNode (ValueType::INT, id), isArray (array)
+ParameterNode::ParameterNode (string id, bool array, int row, int col)
+  : DeclarationNode (ValueType::INT, id, row, col), isArray (array)
 {}
 
 ParameterNode::~ParameterNode () {}
@@ -146,6 +147,8 @@ ParameterNode::accept (IVisitor* visitor)
 /********************************************************************/
 // StatementNode Methods
 
+StatementNode::StatementNode (int row, int col) : Node (row, col) {}
+
 StatementNode::~StatementNode () {}
 
 void
@@ -158,11 +161,10 @@ StatementNode::accept (IVisitor* visitor)
 // CompoundStatementNode Methods
 
 CompoundStatementNode::CompoundStatementNode (vector<VariableDeclarationNode*> decls,
-					      vector<StatementNode*> stmts)
-{
-  localDeclarations = decls;
-  statements = stmts;
-}
+					      vector<StatementNode*> stmts,
+					      int row, int col)
+  : StatementNode (row, col), localDeclarations (decls), statements (stmts)
+{}
 
 CompoundStatementNode::~CompoundStatementNode ()
 {
@@ -186,12 +188,13 @@ CompoundStatementNode::accept (IVisitor* visitor)
 
 IfStatementNode::IfStatementNode (ExpressionNode* expr,
 				  StatementNode* thenStmt,
-				  StatementNode* elseStmt)
-{
-  conditionalExpression = expr;
-  thenStatement = thenStmt;
-  elseStatement = elseStmt;
-}
+				  StatementNode* elseStmt,
+				  int row, int col)
+  : StatementNode (row, col)
+  , conditionalExpression (expr)
+  , thenStatement (thenStmt)
+  , elseStatement (elseStmt)
+{}
 
 IfStatementNode::~IfStatementNode ()
 {
@@ -210,11 +213,12 @@ IfStatementNode::accept (IVisitor* visitor)
 // WhileStatementNode Methods
 
 WhileStatementNode::WhileStatementNode (ExpressionNode* expr,
-					StatementNode* stmt)
-{
-  conditionalExpression = expr;
-  body = stmt;
-}
+					StatementNode* stmt,
+					int row, int col)
+  : StatementNode (row, col)
+  , conditionalExpression (expr)
+  , body (stmt)
+{}
 
 WhileStatementNode::~WhileStatementNode ()
 {
@@ -235,13 +239,14 @@ WhileStatementNode::accept (IVisitor* visitor)
 ForStatementNode::ForStatementNode (ExpressionNode* e1,
 				    ExpressionNode* e2,
 				    ExpressionNode* e3,
-				    StatementNode* s)
-{
-  initializer = e1;
-  condition = e2;
-  updater = e3;
-  body = s;
-}
+				    StatementNode* s,
+				    int row, int col)
+  : StatementNode (row, col)
+  , initializer (e1)
+  , condition (e2)
+  , updater (e3)
+  , body (s)
+{}
 
 ForStatementNode::~ForStatementNode ()
 {
@@ -260,10 +265,10 @@ ForStatementNode::accept (IVisitor* visitor)
 /********************************************************************/
 // ReturnStatementNode Methods
 
-ReturnStatementNode::ReturnStatementNode (ExpressionNode* expr)
-{
-  expression = expr;
-}
+ReturnStatementNode::ReturnStatementNode (ExpressionNode* expr,
+					  int row, int col)
+  : StatementNode (row, col), expression (expr)
+{}
 
 ReturnStatementNode::~ReturnStatementNode ()
 {
@@ -279,10 +284,10 @@ ReturnStatementNode::accept (IVisitor* visitor)
 /********************************************************************/
 // ExpressionStatementNode Methods
 
-ExpressionStatementNode::ExpressionStatementNode (ExpressionNode* expr)
-{
-  expression = expr;
-}
+ExpressionStatementNode::ExpressionStatementNode (ExpressionNode* expr,
+						  int row, int col)
+  : StatementNode (row, col), expression (expr)
+{}
 
 ExpressionStatementNode::~ExpressionStatementNode ()
 {
@@ -298,6 +303,8 @@ ExpressionStatementNode::accept (IVisitor* visitor)
 /********************************************************************/
 // ExpressionNode Methods
 
+ExpressionNode::ExpressionNode (int row, int col) : Node (row, col) {}
+
 ExpressionNode::~ExpressionNode () {}
 
 void
@@ -310,11 +317,10 @@ ExpressionNode::accept (IVisitor* visitor)
 // AssignmentExpressionNode Methods
 
 AssignmentExpressionNode::AssignmentExpressionNode (VariableExpressionNode* v,
-						    ExpressionNode* e)
-{
-  variable = v;
-  expression = e;
-}
+						    ExpressionNode* e,
+						    int row, int col)
+  : ExpressionNode (row, col), variable (v), expression (e)
+{}
 
 AssignmentExpressionNode::~AssignmentExpressionNode ()
 {
@@ -333,12 +339,10 @@ AssignmentExpressionNode::accept (IVisitor* visitor)
 
 AdditiveExpressionNode::AdditiveExpressionNode (AdditiveOperatorType addop,
 						ExpressionNode* l,
-						ExpressionNode* r)
-{
-  addOperator = addop;
-  left = l;
-  right = r;
-}
+						ExpressionNode* r,
+						int row, int col)
+  : ExpressionNode (row, col), addOperator (addop), left (l), right (r)
+{}
 
 AdditiveExpressionNode::~AdditiveExpressionNode ()
 {
@@ -357,12 +361,10 @@ AdditiveExpressionNode::accept (IVisitor* visitor)
 
 MultiplicativeExpressionNode::MultiplicativeExpressionNode (MultiplicativeOperatorType multop,
 							    ExpressionNode* l,
-							    ExpressionNode* r)
-{
-  multOperator = multop;
-  left = l;
-  right = r;
-}
+							    ExpressionNode* r,
+							    int row, int col)
+  : ExpressionNode (row, col), multOperator (multop), left (l), right (r)
+{}
 
 MultiplicativeExpressionNode::~MultiplicativeExpressionNode ()
 {
@@ -381,12 +383,10 @@ MultiplicativeExpressionNode::accept (IVisitor* visitor)
 
 RelationalExpressionNode::RelationalExpressionNode (RelationalOperatorType relop,
 						    ExpressionNode* l,
-						    ExpressionNode* r)
-{
-  relationalOperator = relop;
-  left = l;
-  right = r;
-}
+						    ExpressionNode* r,
+						    int row, int col)
+  : ExpressionNode (row, col), relationalOperator (relop), left (l), right (r)
+{}
 
 RelationalExpressionNode::~RelationalExpressionNode ()
 {
@@ -404,12 +404,10 @@ RelationalExpressionNode::accept (IVisitor* visitor)
 // UnaryExpressionNode Methods
 
 UnaryExpressionNode::UnaryExpressionNode (UnaryOperatorType unop,
-					  VariableExpressionNode* v) :
-  unaryOperator (unop), variable (v)
-{
-  unaryOperator = unop;
-  variable = v;
-}
+					  VariableExpressionNode* v,
+					  int row, int col)
+  : ExpressionNode (row, col), unaryOperator (unop), variable (v)
+{}
 
 UnaryExpressionNode::~UnaryExpressionNode ()
 {
@@ -425,10 +423,9 @@ UnaryExpressionNode::accept (IVisitor* visitor)
 /********************************************************************/
 // IntegerLiteralExpressionNode Methods
 
-IntegerLiteralExpressionNode::IntegerLiteralExpressionNode (int v)
-{
-  value = v;
-}
+IntegerLiteralExpressionNode::IntegerLiteralExpressionNode (int v, int row, int col)
+  : ExpressionNode (row, col), value (v)
+{}
 
 IntegerLiteralExpressionNode::~IntegerLiteralExpressionNode () {}
 
@@ -441,8 +438,12 @@ IntegerLiteralExpressionNode::accept (IVisitor* visitor)
 /********************************************************************/
 // ReferenceNode Methods
 
+ReferenceNode::ReferenceNode (string id, int row, int col)
+  : ExpressionNode (row, col), identifier (id)
+{}
+    
 ReferenceNode::~ReferenceNode () {
-  // deleting reference nodes should not trigger declaration deletion
+  // deleting reference nodes should NOT trigger declaration deletion
   // delete declaration;
 }
 
@@ -455,10 +456,9 @@ ReferenceNode::accept (IVisitor* visitor)
 /********************************************************************/
 // VariableExpressionNode Methods
 
-VariableExpressionNode::VariableExpressionNode (string id)
-{
-  identifier = id;
-}
+VariableExpressionNode::VariableExpressionNode (string id, int row, int col)
+  : ReferenceNode (id, row, col)
+{}
 
 VariableExpressionNode::~VariableExpressionNode () {}
 
@@ -472,11 +472,10 @@ VariableExpressionNode::accept (IVisitor* visitor)
 // SubscriptExpressionNode Methods
 
 SubscriptExpressionNode::SubscriptExpressionNode (string id,
-						  ExpressionNode* index)
-  : VariableExpressionNode (id)
-{
-  this->index = index;
-}
+						  ExpressionNode* index,
+						  int row, int col)
+  : VariableExpressionNode (id, row, col), index (index)
+{}
 
 SubscriptExpressionNode::~SubscriptExpressionNode ()
 {
@@ -492,11 +491,10 @@ SubscriptExpressionNode::accept (IVisitor* visitor)
 /********************************************************************/
 // CallExpressionNode Methods
 
-CallExpressionNode::CallExpressionNode (string id, vector<ExpressionNode*> args)
-{
-  identifier = id;
-  arguments = args;
-}
+CallExpressionNode::CallExpressionNode (string id, vector<ExpressionNode*> args,
+					int row, int col)
+  : ReferenceNode (id, row, col), arguments (args)
+{}
 
 CallExpressionNode::~CallExpressionNode ()
 {
