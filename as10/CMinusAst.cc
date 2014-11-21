@@ -57,6 +57,12 @@ ProgramNode::accept (IVisitor* visitor)
 /********************************************************************/
 // DeclarationNode Methods
 
+DeclarationNode::DeclarationNode (ValueType t, string id, int row, int col)
+  : Node (row, col)
+  , valueType (t)
+  , identifier (id)
+{}
+
 DeclarationNode::~DeclarationNode () {}
 
 void
@@ -71,13 +77,12 @@ DeclarationNode::accept (IVisitor* visitor)
 FunctionDeclarationNode::FunctionDeclarationNode (ValueType t,
 						  string id,
 						  vector <ParameterNode*> params,
-						  CompoundStatementNode* csNode)
-{
-  valueType = t;
-  identifier = id;
-  parameters = params;
-  functionBody = csNode;
-}
+						  CompoundStatementNode* csNode,
+						  int row, int col)
+  : DeclarationNode (t, id, row, col)
+  , parameters (params)
+  , functionBody (csNode)
+{}
 
 FunctionDeclarationNode::~FunctionDeclarationNode ()
 {
@@ -97,10 +102,8 @@ FunctionDeclarationNode::accept (IVisitor* visitor)
 // VariableDeclarationNode methods
 
 VariableDeclarationNode::VariableDeclarationNode (string id)
-{
-  valueType = ValueType::INT;
-  identifier = id;
-}
+  : DeclarationNode (ValueType::INT, id)
+{}
 
 VariableDeclarationNode::~VariableDeclarationNode () {}
 
@@ -114,10 +117,8 @@ VariableDeclarationNode::accept (IVisitor* visitor)
 // ArrayDeclarationNode methods
 
 ArrayDeclarationNode::ArrayDeclarationNode (string id, size_t size)
-  : VariableDeclarationNode (id)
-{
-  this->size = size;
-}
+  : VariableDeclarationNode (id), size (size)
+{}
 
 ArrayDeclarationNode::~ArrayDeclarationNode () {}
 
@@ -130,12 +131,9 @@ ArrayDeclarationNode::accept (IVisitor* visitor)
 /********************************************************************/
 // ParameterNode Methods
 
-ParameterNode::ParameterNode (string id, bool array) : DeclarationNode ()
-{
-  identifier = id;
-  isArray = array;
-  valueType = ValueType::INT;
-}
+ParameterNode::ParameterNode (string id, bool array)
+  : DeclarationNode (ValueType::INT, id), isArray (array)
+{}
 
 ParameterNode::~ParameterNode () {}
 
@@ -406,7 +404,8 @@ RelationalExpressionNode::accept (IVisitor* visitor)
 // UnaryExpressionNode Methods
 
 UnaryExpressionNode::UnaryExpressionNode (UnaryOperatorType unop,
-					  VariableExpressionNode* v)
+					  VariableExpressionNode* v) :
+  unaryOperator (unop), variable (v)
 {
   unaryOperator = unop;
   variable = v;

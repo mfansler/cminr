@@ -159,6 +159,7 @@ struct ProgramNode : Node
 
 struct DeclarationNode : Node
 {
+  DeclarationNode (ValueType t, string id, int row = 1, int col = 0);
   virtual ~DeclarationNode ();
 
   virtual void
@@ -173,7 +174,9 @@ struct DeclarationNode : Node
 struct FunctionDeclarationNode : DeclarationNode
 {
   FunctionDeclarationNode (ValueType t, string id,
-    vector<ParameterNode*> params, CompoundStatementNode* csNode);
+			   vector<ParameterNode*> params,
+			   CompoundStatementNode* csNode,
+			   int row = 1, int col = 0);
 
   ~FunctionDeclarationNode ();
 
