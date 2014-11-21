@@ -28,13 +28,25 @@ using std::cout;
 /********************************************************************/
 // Class Methods
 
-SymbolTableVisitor::SymbolTableVisitor () {}
+SymbolTableVisitor::SymbolTableVisitor ()
+{
+  // insert stub 'input ()' method into global scope
+  vector<ParameterNode*> params;
+  FunctionDeclarationNode fInput (ValueType::INT, "input", params, nullptr);
+  symbolTable.insert (&fInput);
+
+  // insert stub 'output (int value)' method into global scope
+  ParameterNode* pValue = new ParameterNode ("value", false);
+  params.push_back (pValue);
+  FunctionDeclarationNode fOutput (ValueType::VOID, "output", params, nullptr);
+  symbolTable.insert (&fOutput);
+}
 
 SymbolTableVisitor::~SymbolTableVisitor () {}
 
 void
 SymbolTableVisitor::visit (ProgramNode* node)
-{  
+{
   for (DeclarationNode* d : node->children)
     d->accept (this);
 }

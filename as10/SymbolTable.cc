@@ -61,6 +61,8 @@ SymbolTable::exitScope ()
 bool
 SymbolTable::insert (DeclarationNode* declarationPtr)
 {
+  declarationPtr->nestLevel = m_nestLevel;
+  
   auto result = m_table.back ()->insert ({declarationPtr->identifier, declarationPtr});
   return result.second;
 }

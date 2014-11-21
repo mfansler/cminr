@@ -128,13 +128,15 @@ public:
 
 struct Node
 {
+  Node (int r = 1, int c = 0);
+  
   virtual ~Node ();
   
   virtual void
   accept (IVisitor* visitor) = 0;
 
-  int rowNumber = 0;
-  int columnNumber = 0;
+  int rowNumber;
+  int columnNumber;
 };
 
 /********************************************************************/

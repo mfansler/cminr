@@ -28,6 +28,8 @@ using std::vector;
 /********************************************************************/
 // Node Methods
 
+Node::Node (int r, int c) : rowNumber(r), columnNumber (c) {}
+
 Node::~Node () {}
 
 /********************************************************************/
@@ -46,7 +48,8 @@ ProgramNode::~ProgramNode ()
   children.clear ();
 }
 
-void ProgramNode::accept (IVisitor* visitor)
+void
+ProgramNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -56,7 +59,8 @@ void ProgramNode::accept (IVisitor* visitor)
 
 DeclarationNode::~DeclarationNode () {}
 
-void DeclarationNode::accept (IVisitor* visitor)
+void
+DeclarationNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -83,7 +87,8 @@ FunctionDeclarationNode::~FunctionDeclarationNode ()
   parameters.clear ();
 }
 
-void FunctionDeclarationNode::accept (IVisitor* visitor)
+void
+FunctionDeclarationNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -99,7 +104,8 @@ VariableDeclarationNode::VariableDeclarationNode (string id)
 
 VariableDeclarationNode::~VariableDeclarationNode () {}
 
-void VariableDeclarationNode::accept (IVisitor* visitor)
+void
+VariableDeclarationNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -115,7 +121,8 @@ ArrayDeclarationNode::ArrayDeclarationNode (string id, size_t size)
 
 ArrayDeclarationNode::~ArrayDeclarationNode () {}
 
-void ArrayDeclarationNode::accept (IVisitor* visitor)
+void
+ArrayDeclarationNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -132,7 +139,8 @@ ParameterNode::ParameterNode (string id, bool array) : DeclarationNode ()
 
 ParameterNode::~ParameterNode () {}
 
-void ParameterNode::accept (IVisitor* visitor)
+void
+ParameterNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -142,7 +150,8 @@ void ParameterNode::accept (IVisitor* visitor)
 
 StatementNode::~StatementNode () {}
 
-void StatementNode::accept (IVisitor* visitor)
+void
+StatementNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -168,7 +177,8 @@ CompoundStatementNode::~CompoundStatementNode ()
   statements.clear ();
 }
 
-void CompoundStatementNode::accept (IVisitor* visitor)
+void
+CompoundStatementNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -192,7 +202,8 @@ IfStatementNode::~IfStatementNode ()
   delete elseStatement;
 }
 
-void IfStatementNode::accept (IVisitor* visitor)
+void
+IfStatementNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -213,7 +224,8 @@ WhileStatementNode::~WhileStatementNode ()
   delete body;
 }
 
-void WhileStatementNode::accept (IVisitor* visitor)
+void
+WhileStatementNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -241,7 +253,8 @@ ForStatementNode::~ForStatementNode ()
   delete body;
 }
 
-void ForStatementNode::accept (IVisitor* visitor)
+void
+ForStatementNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -259,7 +272,8 @@ ReturnStatementNode::~ReturnStatementNode ()
   delete expression;
 }
 
-void ReturnStatementNode::accept (IVisitor* visitor)
+void
+ReturnStatementNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -277,7 +291,8 @@ ExpressionStatementNode::~ExpressionStatementNode ()
   delete expression;
 }
 
-void ExpressionStatementNode::accept (IVisitor* visitor)
+void
+ExpressionStatementNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -287,7 +302,8 @@ void ExpressionStatementNode::accept (IVisitor* visitor)
 
 ExpressionNode::~ExpressionNode () {}
 
-void ExpressionNode::accept (IVisitor* visitor)
+void
+ExpressionNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -308,7 +324,8 @@ AssignmentExpressionNode::~AssignmentExpressionNode ()
   delete expression;
 }
 
-void AssignmentExpressionNode::accept (IVisitor* visitor)
+void
+AssignmentExpressionNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -331,7 +348,8 @@ AdditiveExpressionNode::~AdditiveExpressionNode ()
   delete right;
 }
 
-void AdditiveExpressionNode::accept (IVisitor* visitor)
+void
+AdditiveExpressionNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -354,7 +372,8 @@ MultiplicativeExpressionNode::~MultiplicativeExpressionNode ()
   delete right;
 }
 
-void MultiplicativeExpressionNode::accept (IVisitor* visitor)
+void
+MultiplicativeExpressionNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -377,7 +396,8 @@ RelationalExpressionNode::~RelationalExpressionNode ()
   delete right;
 }
 
-void RelationalExpressionNode::accept (IVisitor* visitor)
+void
+RelationalExpressionNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -397,7 +417,8 @@ UnaryExpressionNode::~UnaryExpressionNode ()
   delete variable;
 }
 
-void UnaryExpressionNode::accept (IVisitor* visitor)
+void
+UnaryExpressionNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -412,7 +433,8 @@ IntegerLiteralExpressionNode::IntegerLiteralExpressionNode (int v)
 
 IntegerLiteralExpressionNode::~IntegerLiteralExpressionNode () {}
 
-void IntegerLiteralExpressionNode::accept (IVisitor* visitor)
+void
+IntegerLiteralExpressionNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -425,7 +447,8 @@ ReferenceNode::~ReferenceNode () {
   // delete declaration;
 }
 
-void ReferenceNode::accept (IVisitor* visitor)
+void
+ReferenceNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -440,7 +463,8 @@ VariableExpressionNode::VariableExpressionNode (string id)
 
 VariableExpressionNode::~VariableExpressionNode () {}
 
-void VariableExpressionNode::accept (IVisitor* visitor)
+void
+VariableExpressionNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -460,7 +484,8 @@ SubscriptExpressionNode::~SubscriptExpressionNode ()
   delete index;
 }
 
-void SubscriptExpressionNode::accept (IVisitor* visitor)
+void
+SubscriptExpressionNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
@@ -481,7 +506,8 @@ CallExpressionNode::~CallExpressionNode ()
   arguments.clear ();
 }
 
-void CallExpressionNode::accept (IVisitor* visitor)
+void
+CallExpressionNode::accept (IVisitor* visitor)
 {
   visitor->visit (this);
 }
