@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 36 "CMinParser.yy" /* yacc.c:1909  */
+#line 33 "CMinParser.yy" /* yacc.c:1909  */
 
   #include "CMinusAst.h"
 
@@ -90,7 +90,7 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 47 "CMinParser.yy" /* yacc.c:1909  */
+#line 44 "CMinParser.yy" /* yacc.c:1909  */
 
   // literals
   char* name;

@@ -57,7 +57,7 @@ public:
 private:
   
   // Current nest level; 0 is global
-  int  m_nestLevel;
+  int  m_nestLevel = 0;
 
   // The symbol table is a vector of scope tables
   std::vector<std::unique_ptr<ScopeTable>> m_table;
