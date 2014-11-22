@@ -8,16 +8,16 @@ Program Node
     CompoundStatement
       ExpressionStatement
         Assignment
-          Subscript: x
+          Subscript: x: Int type
             Index:
-              Subscript: x
+              Subscript: x: Int type
                 Index:
                   Integer: 0
-          Variable: x
+          Variable: x: Int type
       Return
-        Subscript: x
+        Subscript: x: Int type
           Index:
-            Variable: x
+            Variable: x: Int type
   Function: bidingTime: Void type
     CompoundStatement
       ExpressionStatement
@@ -32,31 +32,31 @@ Program Node
         MultiplicativeExpression: *
           Left:
             Assignment
-              Variable: x
-              Variable: y
+              Variable: x: Int type
+              Variable: y: Int type
           Right:
             Assignment
-              Variable: y
-              Variable: x
+              Variable: y: Int type
+              Variable: x: Int type
         CompoundStatement
           Return
             RelationalExpression: ==
               Left:
-                Variable: x
+                Variable: x: Int type
               Right:
-                Variable: y
+                Variable: y: Int type
         CompoundStatement
           Return
             AdditiveExpression: +
               Left:
                 RelationalExpression: !=
                   Left:
-                    Variable: x
+                    Variable: x: Int type
                   Right:
-                    Variable: y
+                    Variable: y: Int type
               Right:
                 RelationalExpression: !=
                   Left:
-                    Variable: y
+                    Variable: y: Int type
                   Right:
-                    Variable: x
+                    Variable: x: Int type

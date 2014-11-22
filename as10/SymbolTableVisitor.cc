@@ -55,6 +55,8 @@ SymbolTableVisitor::emitMultipleDeclaration (DeclarationNode* node)
        << node->columnNumber << ") previously declared at ("
        << prev->rowNumber << ","
        << prev->columnNumber << ")\n";
+
+  errorEmitted = true;
 }
 
 void
@@ -64,6 +66,8 @@ SymbolTableVisitor::emitUndeclaredReference (ReferenceNode* node)
 	 << node->identifier << " at ("
 	 << node->rowNumber << ", "
 	 << node->columnNumber << ")\n";
+
+  errorEmitted = true;
 }
 
 /********************************************************************/
@@ -74,6 +78,8 @@ SymbolTableVisitor::visit (ProgramNode* node)
 {
   for (DeclarationNode* d : node->children)
     d->accept (this);
+
+  node->isValid = !errorEmitted;
 }
   
 void

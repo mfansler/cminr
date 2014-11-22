@@ -25,6 +25,7 @@ class SymbolTableVisitor : public IVisitor
 {
   SymbolTable symbolTable;
   bool isFunctionBody = false;
+  bool errorEmitted = false;
 
   void emitMultipleDeclaration (DeclarationNode* node);
   void emitUndeclaredReference (ReferenceNode* node);

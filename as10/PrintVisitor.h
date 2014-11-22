@@ -2,9 +2,10 @@
   Filename   : PrintVisitor.h
   Author     : Merv Fansler
   Course     : CSCI 435
-  Assignment : Assignment 9, A Happy Little AST
+  Assignment : Assignment 10, A Happy Little AST
   Description: Implements the IVisitor interface, printing Node information
-                 as it traverse the AST's built by the Bison parser.
+                 as it traverse the AST's built by the Bison parser and
+		 annotated by the SymbolTableVisitor.
 */
 
 /********************************************************************/
@@ -12,6 +13,7 @@
 
 #include <string>
 #include <fstream>
+#include <map>
 
 /********************************************************************/
 // Local Includes
@@ -24,12 +26,19 @@
 class PrintVisitor : public IVisitor
 {
   int depth;
-  std::ofstream outFile;
+  std::ofstream &outFile;
+  std::map<ValueType, std::string> vtString =
+    {
+      {	ValueType::INT  , "Int type"   },
+      {	ValueType::VOID , "Void type"  },
+      {	ValueType::ARRAY, "Array type" }
+    };
+
   
   std::string indent ();
 
 public:
-  PrintVisitor (std::string ofname);
+  PrintVisitor (std::ofstream &strm);
   ~PrintVisitor ();
   
   void visit (ProgramNode* node);

@@ -18,6 +18,7 @@
 
 #include "CMinusAst.h"
 #include "SymbolTableVisitor.h"
+#include "PrintVisitor.h"
 
 /******************************************************************************/
 // External references
@@ -32,12 +33,23 @@ extern FILE* yyin;
 
 int
 main (int argc, char* argv[])
-{ 
+{
+  std::string outFileName;
+  
   ++argv, --argc;
   if (argc > 0)
+  {
     yyin = fopen (argv[0], "r");
+
+    outFileName = std::string (argv[0]);
+    outFileName = outFileName.replace (outFileName.end () - 2, outFileName.end (), "ast");
+  }
   else
+  {
     yyin = stdin;
+
+    outFileName = "Default.ast";
+  }
   
   ProgramNode* root = nullptr;
   
@@ -49,6 +61,19 @@ main (int argc, char* argv[])
 
     SymbolTableVisitor stv;
     root->accept (&stv);
+
+    if (root->isValid)
+    {
+      std::cout << "Writing tree to: " << outFileName << std::endl;
+
+      std::ofstream outFile;
+      outFile.open (outFileName);
+      PrintVisitor treePrinter (outFile);
+
+      root->accept (&treePrinter);
+
+      outFile.close ();
+    }
   }
   else
   {

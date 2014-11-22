@@ -2,8 +2,8 @@
 #  Filename    : Makefile
 #  Author      : Merv Fansler
 #  Course      : CSCI 435
-#  Assignment  : Assignment 8, C- Parser_2
-#  Description : Build and clean commands for C- parser
+#  Assignment  : Assignment 10, Symbol Table Builder
+#  Description : Build and clean commands for C- compiler
 #  Reference   : Modeled after example from G. Zoppetti 
 ########################################################
 # Variables
@@ -39,7 +39,7 @@ LDLIBS   := -lfl
 	bison -dv $< -o $@
 
 CMinDriver : CMinusAst.o SymbolTable.o SymbolTableVisitor.o \
-	     CMinDriver.o CMinParser.o CMinLexer.o
+	     PrintVisitor.o CMinDriver.o CMinParser.o CMinLexer.o
 
 #############################################################
 

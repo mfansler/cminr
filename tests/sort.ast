@@ -10,58 +10,58 @@ Program Node
       VariableDeclaration: k: Int type
       ExpressionStatement
         Assignment
-          Variable: k
-          Variable: low
+          Variable: k: Int type
+          Variable: low: Int type
       ExpressionStatement
         Assignment
-          Variable: x
-          Subscript: a
+          Variable: x: Int type
+          Subscript: a: Int type
             Index:
-              Variable: low
+              Variable: low: Int type
       ExpressionStatement
         Assignment
-          Variable: i
+          Variable: i: Int type
           AdditiveExpression: +
             Left:
-              Variable: low
+              Variable: low: Int type
             Right:
               Integer: 1
       While
         RelationalExpression: <
           Left:
-            Variable: i
+            Variable: i: Int type
           Right:
-            Variable: high
+            Variable: high: Int type
         CompoundStatement
           If
             RelationalExpression: <
               Left:
-                Subscript: a
+                Subscript: a: Int type
                   Index:
-                    Variable: i
+                    Variable: i: Int type
               Right:
-                Variable: x
+                Variable: x: Int type
             CompoundStatement
               ExpressionStatement
                 Assignment
-                  Variable: x
-                  Subscript: a
+                  Variable: x: Int type
+                  Subscript: a: Int type
                     Index:
-                      Variable: i
+                      Variable: i: Int type
               ExpressionStatement
                 Assignment
-                  Variable: k
-                  Variable: i
+                  Variable: k: Int type
+                  Variable: i: Int type
           ExpressionStatement
             Assignment
-              Variable: i
+              Variable: i: Int type
               AdditiveExpression: +
                 Left:
-                  Variable: i
+                  Variable: i: Int type
                 Right:
                   Integer: 1
       Return
-        Variable: k
+        Variable: k: Int type
   Function: sort: Void type
     Parameter: a[]: Int type
     Parameter: low: Int type
@@ -71,54 +71,54 @@ Program Node
       VariableDeclaration: k: Int type
       ExpressionStatement
         Assignment
-          Variable: i
-          Variable: low
+          Variable: i: Int type
+          Variable: low: Int type
       While
         RelationalExpression: <
           Left:
-            Variable: i
+            Variable: i: Int type
           Right:
             AdditiveExpression: -
               Left:
-                Variable: high
+                Variable: high: Int type
               Right:
                 Integer: 1
         CompoundStatement
           VariableDeclaration: t: Int type
           ExpressionStatement
             Assignment
-              Variable: k
-              FunctionCall: minloc
+              Variable: k: Int type
+              FunctionCall: minloc: Int type
                 Arguments:
-                  Variable: a
-                  Variable: i
-                  Variable: high
+                  Variable: a: Int type
+                  Variable: i: Int type
+                  Variable: high: Int type
           ExpressionStatement
             Assignment
-              Variable: t
-              Subscript: a
+              Variable: t: Int type
+              Subscript: a: Int type
                 Index:
-                  Variable: k
+                  Variable: k: Int type
           ExpressionStatement
             Assignment
-              Subscript: a
+              Subscript: a: Int type
                 Index:
-                  Variable: k
-              Subscript: a
+                  Variable: k: Int type
+              Subscript: a: Int type
                 Index:
-                  Variable: i
+                  Variable: i: Int type
           ExpressionStatement
             Assignment
-              Subscript: a
+              Subscript: a: Int type
                 Index:
-                  Variable: i
-              Variable: t
+                  Variable: i: Int type
+              Variable: t: Int type
           ExpressionStatement
             Assignment
-              Variable: i
+              Variable: i: Int type
               AdditiveExpression: +
                 Left:
-                  Variable: i
+                  Variable: i: Int type
                 Right:
                   Integer: 1
   Function: main: Void type
@@ -126,57 +126,57 @@ Program Node
       VariableDeclaration: i: Int type
       ExpressionStatement
         Assignment
-          Variable: i
+          Variable: i: Int type
           Integer: 0
       While
         RelationalExpression: <
           Left:
-            Variable: i
+            Variable: i: Int type
           Right:
             Integer: 10
         CompoundStatement
           ExpressionStatement
             Assignment
-              Subscript: x
+              Subscript: x: Int type
                 Index:
-                  Variable: i
-              FunctionCall: input()
+                  Variable: i: Int type
+              FunctionCall: input: ()
           ExpressionStatement
             Assignment
-              Variable: i
+              Variable: i: Int type
               AdditiveExpression: +
                 Left:
-                  Variable: i
+                  Variable: i: Int type
                 Right:
                   Integer: 1
       ExpressionStatement
-        FunctionCall: sort
+        FunctionCall: sort: Void type
           Arguments:
-            Variable: x
+            Variable: x: Int type
             Integer: 0
             Integer: 10
       ExpressionStatement
         Assignment
-          Variable: i
+          Variable: i: Int type
           Integer: 0
       While
         RelationalExpression: <
           Left:
-            Variable: i
+            Variable: i: Int type
           Right:
             Integer: 10
         CompoundStatement
           ExpressionStatement
-            FunctionCall: output
+            FunctionCall: output: Void type
               Arguments:
-                Subscript: x
+                Subscript: x: Int type
                   Index:
-                    Variable: i
+                    Variable: i: Int type
           ExpressionStatement
             Assignment
-              Variable: i
+              Variable: i: Int type
               AdditiveExpression: +
                 Left:
-                  Variable: i
+                  Variable: i: Int type
                 Right:
                   Integer: 1

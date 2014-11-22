@@ -152,6 +152,7 @@ struct ProgramNode : Node
   accept (IVisitor* visitor);
   
   vector<DeclarationNode*> children;
+  bool isValid;
 };
 
 /********************************************************************/

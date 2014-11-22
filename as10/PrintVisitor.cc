@@ -27,22 +27,18 @@ using std::endl;
 /********************************************************************/
 // Class Methods
 
-PrintVisitor::PrintVisitor (std::string ofname)
-{
-  outFile.open (ofname);
-}
+PrintVisitor::PrintVisitor (std::ofstream &strm) : outFile (strm) {}
 
-PrintVisitor::~PrintVisitor ()
-{
-  outFile.close ();
-}
+PrintVisitor::~PrintVisitor () {}
 
-std::string PrintVisitor::indent ()
+std::string
+PrintVisitor::indent ()
 {
   return std::string (depth*2, ' ');
 }
 
-void PrintVisitor::visit (ProgramNode* node)
+void
+PrintVisitor::visit (ProgramNode* node)
 {
   depth = 0;
   outFile << "Program Node\n";
@@ -53,26 +49,17 @@ void PrintVisitor::visit (ProgramNode* node)
   --depth;
 }
   
-void PrintVisitor::visit (DeclarationNode* node)
+void
+PrintVisitor::visit (DeclarationNode* node)
 {
   outFile << indent () << "Declaration: " << node->identifier << endl;
 }
 
-void PrintVisitor::visit (FunctionDeclarationNode* node)
+void
+PrintVisitor::visit (FunctionDeclarationNode* node)
 {
-  outFile << indent () << "Function: " << node->identifier << ": ";
-  switch (node->valueType)
-  {
-  case ValueType::INT:
-    outFile << "Int type\n";
-    break;
-  case ValueType::VOID:
-    outFile << "Void type\n";
-    break;
-  case ValueType::ARRAY:
-    outFile << "Array type\n";
-    break;
-  }
+  outFile << indent () << "Function: " << node->identifier << ": "
+	  << vtString[node->valueType] << endl;
   
   ++depth;
   for (ParameterNode* p : node->parameters)
@@ -82,67 +69,37 @@ void PrintVisitor::visit (FunctionDeclarationNode* node)
   --depth;
 }
 
-void PrintVisitor::visit (VariableDeclarationNode* node)
+void
+PrintVisitor::visit (VariableDeclarationNode* node)
 {
-  outFile  << indent () << "VariableDeclaration: " << node->identifier << ": ";
-  switch (node->valueType)
-  {
-  case ValueType::INT:
-    outFile << "Int type\n";
-    break;
-  case ValueType::VOID:
-    outFile << "Void type\n";
-    break;
-  case ValueType::ARRAY:
-    outFile << "Array type\n";
-    break;
-  }
+  outFile << indent () << "VariableDeclaration: " << node->identifier << ": "
+	  << vtString[node->valueType] << endl;
 }
 
-void PrintVisitor::visit (ArrayDeclarationNode* node)
+void
+PrintVisitor::visit (ArrayDeclarationNode* node)
 {
   outFile << indent () << "Variable: " << node->identifier
-       << "[" << node->size << "]: ";
-  switch (node->valueType)
-  {
-  case ValueType::INT:
-    outFile << "Int type\n";
-    break;
-  case ValueType::VOID:
-    outFile << "Void type\n";
-    break;
-  case ValueType::ARRAY:
-    outFile << "Array type\n";
-    break;
-  }
-  
+       << "[" << node->size << "]: " << vtString[node->valueType] << endl;  
 }
 
-void PrintVisitor::visit (ParameterNode* node)
+void
+PrintVisitor::visit (ParameterNode* node)
 {
   outFile << indent () << "Parameter: " << node->identifier;
   if (node->isArray)
     outFile << "[]";
-  switch (node->valueType)
-  {
-  case ValueType::INT:
-    outFile << ": Int type\n";
-    break;
-  case ValueType::VOID:
-    outFile << ": Void type\n";
-    break;
-  case ValueType::ARRAY:
-    outFile << ": Array type\n";
-    break;
-  }
+  outFile << ": " << vtString[node->valueType] << endl;
 }
 
-void PrintVisitor::visit (StatementNode* node)
+void
+PrintVisitor::visit (StatementNode* node)
 {
   outFile << indent () << "Statement" << endl;
 }
 
-void PrintVisitor::visit (CompoundStatementNode* node)
+void
+PrintVisitor::visit (CompoundStatementNode* node)
 {
   outFile << indent () << "CompoundStatement" << endl;
 
@@ -154,7 +111,8 @@ void PrintVisitor::visit (CompoundStatementNode* node)
   --depth;
 }
 
-void PrintVisitor::visit (IfStatementNode* node)
+void
+PrintVisitor::visit (IfStatementNode* node)
 {
   outFile << indent () << "If\n";
 
@@ -166,7 +124,8 @@ void PrintVisitor::visit (IfStatementNode* node)
   --depth;
 }
 
-void PrintVisitor::visit (WhileStatementNode* node)
+void
+PrintVisitor::visit (WhileStatementNode* node)
 {
   outFile << indent () << "While\n";
 
@@ -176,7 +135,8 @@ void PrintVisitor::visit (WhileStatementNode* node)
   --depth;
 }
 
-void PrintVisitor::visit (ForStatementNode* node)
+void
+PrintVisitor::visit (ForStatementNode* node)
 {
   outFile << indent () << "For\n";
 
@@ -188,7 +148,8 @@ void PrintVisitor::visit (ForStatementNode* node)
   --depth;
 }
 
-void PrintVisitor::visit (ReturnStatementNode* node)
+void
+PrintVisitor::visit (ReturnStatementNode* node)
 {
   outFile << indent () << "Return\n";
 
@@ -200,7 +161,8 @@ void PrintVisitor::visit (ReturnStatementNode* node)
   }
 }
 
-void PrintVisitor::visit (ExpressionStatementNode* node)
+void
+PrintVisitor::visit (ExpressionStatementNode* node)
 {
   outFile << indent () << "ExpressionStatement\n";
 
@@ -212,12 +174,14 @@ void PrintVisitor::visit (ExpressionStatementNode* node)
   }
 }
 
-void PrintVisitor::visit (ExpressionNode* node)
+void
+PrintVisitor::visit (ExpressionNode* node)
 {
   outFile << indent () << "Expression" << endl;
 }
 
-void PrintVisitor::visit (AssignmentExpressionNode* node)
+void
+PrintVisitor::visit (AssignmentExpressionNode* node)
 {
   outFile << indent () << "Assignment\n";
 
@@ -227,40 +191,8 @@ void PrintVisitor::visit (AssignmentExpressionNode* node)
   --depth;
 }
 
-void PrintVisitor::visit (VariableExpressionNode* node)
-{
-  outFile << indent () << "Variable: " << node->identifier << endl;
-}
-
-void PrintVisitor::visit (SubscriptExpressionNode* node)
-{
-  outFile << indent () << "Subscript: " << node->identifier << endl;
-
-  ++depth;
-  outFile << indent () << "Index:\n";
-  ++depth;
-  node->index->accept (this);
-  depth -= 2;
-}
-
-void PrintVisitor::visit (CallExpressionNode* node)
-{
-  outFile << indent () << "FunctionCall: " << node->identifier;
-
-  if (node->arguments.size() > 0)
-  {
-    ++depth;
-    outFile << endl << indent () << "Arguments:\n";
-    ++depth;
-    for (auto a : node->arguments)
-      a->accept (this);
-    depth -= 2;
-  }
-  else
-    outFile << "()\n";
-}
-
-void PrintVisitor::visit (AdditiveExpressionNode* node)
+void
+PrintVisitor::visit (AdditiveExpressionNode* node)
 {
   outFile << indent () << "AdditiveExpression: ";
 
@@ -285,7 +217,8 @@ void PrintVisitor::visit (AdditiveExpressionNode* node)
   depth -= 2;
 }
 
-void PrintVisitor::visit (MultiplicativeExpressionNode* node)
+void
+PrintVisitor::visit (MultiplicativeExpressionNode* node)
 {
   outFile << indent () << "MultiplicativeExpression: ";
 
@@ -310,7 +243,8 @@ void PrintVisitor::visit (MultiplicativeExpressionNode* node)
   depth -= 2;
 }
 
-void PrintVisitor::visit (RelationalExpressionNode* node)
+void
+PrintVisitor::visit (RelationalExpressionNode* node)
 {
   outFile << indent () << "RelationalExpression: ";
 
@@ -347,7 +281,8 @@ void PrintVisitor::visit (RelationalExpressionNode* node)
   depth -= 2;
 }
 
-void PrintVisitor::visit (UnaryExpressionNode* node)
+void
+PrintVisitor::visit (UnaryExpressionNode* node)
 {
   outFile << indent () << "UnaryExpression: ";
 
@@ -366,12 +301,61 @@ void PrintVisitor::visit (UnaryExpressionNode* node)
   --depth;
 }
 
-void PrintVisitor::visit (IntegerLiteralExpressionNode* node)
+void
+PrintVisitor::visit (IntegerLiteralExpressionNode* node)
 {
   outFile << indent () << "Integer: " << node->value << endl;
 }
 
-void PrintVisitor::visit (ReferenceNode* node)
+void
+PrintVisitor::visit (ReferenceNode* node)
 {
-  outFile << indent () << "Reference: " << node->identifier << endl;
+  outFile << indent () << "Reference: " << node->identifier;
+  if (node->declaration)
+    outFile << ": " << vtString[node->declaration->valueType];
+  outFile << endl;
+}
+
+void
+PrintVisitor::visit (VariableExpressionNode* node)
+{
+  outFile << indent () << "Variable: " << node->identifier;
+  if (node->declaration)
+    outFile << ": " << vtString[node->declaration->valueType];
+  outFile << endl;
+}
+
+void
+PrintVisitor::visit (SubscriptExpressionNode* node)
+{
+  outFile << indent () << "Subscript: " << node->identifier;
+  if (node->declaration)
+    outFile << ": " << vtString[node->declaration->valueType];
+  outFile << endl;
+  
+  ++depth;
+  outFile << indent () << "Index:\n";
+  ++depth;
+  node->index->accept (this);
+  depth -= 2;
+}
+
+void
+PrintVisitor::visit (CallExpressionNode* node)
+{
+  outFile << indent () << "FunctionCall: " << node->identifier;
+  if (node->declaration)
+    outFile << ": " << vtString[node->declaration->valueType];
+  
+  if (node->arguments.size() > 0)
+  {
+    ++depth;
+    outFile << endl << indent () << "Arguments:\n";
+    ++depth;
+    for (auto a : node->arguments)
+      a->accept (this);
+    depth -= 2;
+  }
+  else
+    outFile << "()\n";
 }

@@ -36,9 +36,8 @@ Node::~Node () {}
 // ProgramNode Methods
 
 ProgramNode::ProgramNode (vector<DeclarationNode*> children)
-{
-  this->children = children;
-}
+  : children (children)
+{}
 
 ProgramNode::~ProgramNode ()
 {
