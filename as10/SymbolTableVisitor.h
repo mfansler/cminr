@@ -13,17 +13,10 @@
 #define __C_MINUS_SYMBOL_TABLE_VISITOR_H__
 
 /********************************************************************/
-// System Includes
-
-/********************************************************************/
 // Local Includes
 
 #include "CMinusAst.h"
 #include "SymbolTable.h"
-
-/********************************************************************/
-// Using delcarations
-
 
 /********************************************************************/
 // Class Definition
@@ -31,8 +24,11 @@
 class SymbolTableVisitor : public IVisitor
 {
   SymbolTable symbolTable;
-  bool inFunctionBody = false;
+  bool isFunctionBody = false;
 
+  void emitMultipleDeclaration (DeclarationNode* node);
+  void emitUndeclaredReference (ReferenceNode* node);
+  
 public:
   SymbolTableVisitor ();
   ~SymbolTableVisitor ();

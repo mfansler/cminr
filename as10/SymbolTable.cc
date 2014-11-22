@@ -10,23 +10,9 @@
 */
 
 /********************************************************************/
-// System Includes
-
-#include <vector>
-#include <string>
-#include <unordered_map>
-// For unique_ptr
-#include <memory>
-
-/********************************************************************/
 // Local Includes
 
 #include "SymbolTable.h"
-
-/********************************************************************/
-// Using Declarations
-
-using ScopeTable = std::unordered_map<std::string, DeclarationNode*>;
 
 /********************************************************************/
 // SymbolTable Methods
@@ -42,6 +28,7 @@ SymbolTable::~SymbolTable ()
   m_table.clear ();    
 }
 
+// Adjust the nest level; add a new scope table
 void
 SymbolTable::enterScope ()
 {
@@ -51,6 +38,8 @@ SymbolTable::enterScope ()
   m_table.push_back (std::move (scope));
 }
 
+
+// Adjust the nest level; remove most recent scope table
 void
 SymbolTable::exitScope ()
 {
@@ -58,6 +47,9 @@ SymbolTable::exitScope ()
   --m_nestLevel;
 }
 
+// Add a (name, declarationPtr) entry to table
+// If successful set nest level in *declarationPtr
+// Return true if successful, false o/w
 bool
 SymbolTable::insert (DeclarationNode* declarationPtr)
 {
@@ -67,11 +59,13 @@ SymbolTable::insert (DeclarationNode* declarationPtr)
   return result.second;
 }
 
+// Lookup a name corresponding to a Use node
+// Return corresponding declaration pointer on success,
+//   nullptr o/w
 DeclarationNode* 
 SymbolTable::lookup (std::string name)
 {
-  auto scope = m_table.rbegin ();
-  for (; scope != m_table.rend (); ++scope)
+  for (auto scope = m_table.rbegin (); scope != m_table.rend (); ++scope)
   {
     auto result = (*scope)->find (name);
     if ( result != (*scope)->end ())

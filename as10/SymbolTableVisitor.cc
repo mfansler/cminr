@@ -45,6 +45,31 @@ SymbolTableVisitor::SymbolTableVisitor ()
 SymbolTableVisitor::~SymbolTableVisitor () {}
 
 void
+SymbolTableVisitor::emitMultipleDeclaration (DeclarationNode* node)
+{
+  DeclarationNode* prev = symbolTable.lookup (node->identifier);
+  
+  cout << "Error: multiple declarations: "
+       << node->identifier << " at ("
+       << node->rowNumber << ", "
+       << node->columnNumber << ") previously declared at ("
+       << prev->rowNumber << ","
+       << prev->columnNumber << ")\n";
+}
+
+void
+SymbolTableVisitor::emitUndeclaredReference (ReferenceNode* node)
+{
+  cout << "Error: undeclared reference: "
+	 << node->identifier << " at ("
+	 << node->rowNumber << ", "
+	 << node->columnNumber << ")\n";
+}
+
+/********************************************************************/
+// Visit methods
+
+void
 SymbolTableVisitor::visit (ProgramNode* node)
 {
   for (DeclarationNode* d : node->children)
@@ -58,22 +83,17 @@ void
 SymbolTableVisitor::visit (FunctionDeclarationNode* node)
 {
   if (!symbolTable.insert (node))
-  {
-    cout << "Multiple declaration error: "
-	 << node->identifier << " at ("
-	 << node->rowNumber << ", "
-	 << node->columnNumber << ") previously declared\n";
-  }
+    emitMultipleDeclaration (node);
   
   symbolTable.enterScope ();
 
   for (ParameterNode* p : node->parameters)
     p->accept (this);
 
-  inFunctionBody = true;
+  // set flag so compound statement does not generate new scope
+  isFunctionBody = true;
   node->functionBody->accept (this);
-  inFunctionBody = false;
-
+  
   symbolTable.exitScope ();
 }
 
@@ -81,36 +101,21 @@ void
 SymbolTableVisitor::visit (VariableDeclarationNode* node)
 {
   if (!symbolTable.insert (node))
-  {
-    cout << "Multiple declaration error: "
-	 << node->identifier << " at ("
-	 << node->rowNumber << ", "
-	 << node->columnNumber << ") previously declared\n";
-  }
+    emitMultipleDeclaration (node);
 }
 
 void
 SymbolTableVisitor::visit (ArrayDeclarationNode* node)
 {
   if (!symbolTable.insert (node))
-  {
-    cout << "Multiple declaration error: "
-	 << node->identifier << " at ("
-	 << node->rowNumber << ", "
-	 << node->columnNumber << ") previously declared\n";
-  }
+    emitMultipleDeclaration (node);
 }
 
 void
 SymbolTableVisitor::visit (ParameterNode* node)
 {
   if (!symbolTable.insert (node))
-  {
-    cout << "Multiple declaration error: "
-	 << node->identifier << " at ("
-	 << node->rowNumber << ", "
-	 << node->columnNumber << ") previously declared\n";
-  }
+    emitMultipleDeclaration (node);
 }
 
 void
@@ -119,15 +124,20 @@ SymbolTableVisitor::visit (StatementNode* node) {}
 void
 SymbolTableVisitor::visit (CompoundStatementNode* node)
 {
-  if (!inFunctionBody)
+  bool newScope = !isFunctionBody;
+
+  if (newScope)
     symbolTable.enterScope ();
+
+  // nested compound statements can create new scopes
+  isFunctionBody = false;
   
   for (auto l : node->localDeclarations)
     l->accept (this);
   for (auto s : node->statements)
     s->accept (this);
   
-  if (!inFunctionBody)
+  if (newScope)
     symbolTable.exitScope ();
 }
 
@@ -219,17 +229,16 @@ SymbolTableVisitor::visit (VariableExpressionNode* node)
 {
   node->declaration = symbolTable.lookup (node->identifier);
   if (node->declaration == nullptr)
-  {
-    cout << "Undeclared reference error: "
-	 << node->identifier << " at ("
-	 << node->rowNumber << ", "
-	 << node->columnNumber << ")\n";
-  }
+    emitUndeclaredReference (node);
 }
 
 void
 SymbolTableVisitor::visit (SubscriptExpressionNode* node)
 {
+  node->declaration = symbolTable.lookup (node->identifier);
+  if (node->declaration == nullptr)
+    emitUndeclaredReference (node);
+  
   node->index->accept (this);
 }
 
@@ -238,12 +247,7 @@ SymbolTableVisitor::visit (CallExpressionNode* node)
 {
   node->declaration = symbolTable.lookup (node->identifier);
   if (node->declaration == nullptr)
-  {
-    cout << "Error: Call to undeclared function: "
-	 << node->identifier << " at ("
-	 << node->rowNumber << ", "
-	 << node->columnNumber << ")\n";
-  }
+    emitUndeclaredReference (node);
   
   for (auto a : node->arguments)
     a->accept (this);
