@@ -2,7 +2,7 @@
   Filename   : SymbolTableVisitor.cc
   Author     : Merv Fansler
   Course     : CSCI 435
-  Assignment : Assignment 10,  
+  Assignment : Assignment 11, Semantic Analyzer 
   Description: Structure used to traverse C- AST's via Visitor Pattern,
                  building a symbol table and annotating usages
 		 (expressions) with corresponding declarations, or
@@ -32,14 +32,16 @@ SymbolTableVisitor::SymbolTableVisitor ()
 {
   // insert stub 'input ()' method into global scope
   vector<ParameterNode*> params;
-  FunctionDeclarationNode fInput (ValueType::INT, "input", params, nullptr);
-  symbolTable.insert (&fInput);
+  FunctionDeclarationNode* fInput =
+    new FunctionDeclarationNode(ValueType::INT, "input", params, nullptr);
+  symbolTable.insert (fInput);
 
   // insert stub 'output (int value)' method into global scope
   ParameterNode* pValue = new ParameterNode (ValueType::INT, "value", false);
   params.push_back (pValue);
-  FunctionDeclarationNode fOutput (ValueType::VOID, "output", params, nullptr);
-  symbolTable.insert (&fOutput);
+  FunctionDeclarationNode* fOutput =
+    new FunctionDeclarationNode(ValueType::VOID, "output", params, nullptr);
+  symbolTable.insert (fOutput);
 }
 
 SymbolTableVisitor::~SymbolTableVisitor () {}

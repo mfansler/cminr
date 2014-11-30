@@ -28,10 +28,7 @@ using std::cout;
 /********************************************************************/
 // Class Methods
 
-SemanticAnalysisVisitor::SemanticAnalysisVisitor ()
-{
-  
-}
+SemanticAnalysisVisitor::SemanticAnalysisVisitor () {}
 
 SemanticAnalysisVisitor::~SemanticAnalysisVisitor () {}
 

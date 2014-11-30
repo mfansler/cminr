@@ -2,7 +2,7 @@
   Filename   : PrintVisitor.h
   Author     : Merv Fansler
   Course     : CSCI 435
-  Assignment : Assignment 10, A Happy Little AST
+  Assignment : Assignment 11, Semantic Analyzer
   Description: Implements the IVisitor interface, printing Node information
                  as it traverse the AST's built by the Bison parser and
 		 annotated by the SymbolTableVisitor.

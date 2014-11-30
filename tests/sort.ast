@@ -1,7 +1,7 @@
 Program Node
   Variable: x[10]: Int type
   Function: minloc: Int type
-    Parameter: a[]: Int type
+    Parameter: a []: Int type
     Parameter: low: Int type
     Parameter: high: Int type
     CompoundStatement
@@ -25,7 +25,7 @@ Program Node
             Left:
               Variable: low: Int type
             Right:
-              Integer: 1
+              Integer: 1: Int type
       While
         RelationalExpression: <
           Left:
@@ -59,11 +59,11 @@ Program Node
                 Left:
                   Variable: i: Int type
                 Right:
-                  Integer: 1
+                  Integer: 1: Int type
       Return
         Variable: k: Int type
   Function: sort: Void type
-    Parameter: a[]: Int type
+    Parameter: a []: Int type
     Parameter: low: Int type
     Parameter: high: Int type
     CompoundStatement
@@ -82,7 +82,7 @@ Program Node
               Left:
                 Variable: high: Int type
               Right:
-                Integer: 1
+                Integer: 1: Int type
         CompoundStatement
           VariableDeclaration: t: Int type
           ExpressionStatement
@@ -90,7 +90,7 @@ Program Node
               Variable: k: Int type
               FunctionCall: minloc: Int type
                 Arguments:
-                  Variable: a: Int type
+                  Variable: a: Array type
                   Variable: i: Int type
                   Variable: high: Int type
           ExpressionStatement
@@ -120,27 +120,27 @@ Program Node
                 Left:
                   Variable: i: Int type
                 Right:
-                  Integer: 1
+                  Integer: 1: Int type
   Function: main: Void type
     CompoundStatement
       VariableDeclaration: i: Int type
       ExpressionStatement
         Assignment
           Variable: i: Int type
-          Integer: 0
+          Integer: 0: Int type
       While
         RelationalExpression: <
           Left:
             Variable: i: Int type
           Right:
-            Integer: 10
+            Integer: 10: Int type
         CompoundStatement
           ExpressionStatement
             Assignment
               Subscript: x: Int type
                 Index:
                   Variable: i: Int type
-              FunctionCall: input: ()
+              FunctionCall: input: Int type ()
           ExpressionStatement
             Assignment
               Variable: i: Int type
@@ -148,23 +148,23 @@ Program Node
                 Left:
                   Variable: i: Int type
                 Right:
-                  Integer: 1
+                  Integer: 1: Int type
       ExpressionStatement
         FunctionCall: sort: Void type
           Arguments:
-            Variable: x: Int type
-            Integer: 0
-            Integer: 10
+            Variable: x: Array type
+            Integer: 0: Int type
+            Integer: 10: Int type
       ExpressionStatement
         Assignment
           Variable: i: Int type
-          Integer: 0
+          Integer: 0: Int type
       While
         RelationalExpression: <
           Left:
             Variable: i: Int type
           Right:
-            Integer: 10
+            Integer: 10: Int type
         CompoundStatement
           ExpressionStatement
             FunctionCall: output: Void type
@@ -179,4 +179,4 @@ Program Node
                 Left:
                   Variable: i: Int type
                 Right:
-                  Integer: 1
+                  Integer: 1: Int type

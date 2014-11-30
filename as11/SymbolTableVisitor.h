@@ -2,7 +2,7 @@
   Filename   : SymbolTableVisitor.h
   Author     : Merv Fansler
   Course     : CSCI 435
-  Assignment : Assignment 10, 
+  Assignment : Assignment 11, Semantic Analyzer
   Description: Structure used to traverse C- AST's via Visitor Pattern,
                  building a symbol table and annotating usages
 		 (expressions) with corresponding declarations, or
@@ -24,9 +24,12 @@
 class SymbolTableVisitor : public IVisitor
 {
   SymbolTable symbolTable;
+
+  // state variables
   bool isFunctionBody = false;
   bool errorEmitted = false;
 
+  // error methods
   void emitMultipleDeclaration (DeclarationNode* node);
   void emitUndeclaredReference (ReferenceNode* node);
   

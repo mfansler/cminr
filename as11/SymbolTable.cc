@@ -2,7 +2,7 @@
   Filename   : SymbolTableVisitor.cc
   Author     : Merv Fansler
   Course     : CSCI 435
-  Assignment : Assignment 10,  
+  Assignment : Assignment 11, Semantic Analyzer
   Description: Structure used to traverse C- AST's via Visitor Pattern,
                  building a symbol table and annotating usages
 		 (expressions) with corresponding declarations, or
@@ -37,7 +37,6 @@ SymbolTable::enterScope ()
   std::unique_ptr<ScopeTable> scope (new ScopeTable);
   m_table.push_back (std::move (scope));
 }
-
 
 // Adjust the nest level; remove most recent scope table
 void

@@ -67,6 +67,8 @@ class SemanticAnalysisVisitor : public IVisitor
       { RelationalOperatorType::NEQ, "!=" }
     };
 
+  // Type utilites
+  
   bool
   isArray (DeclarationNode* node);
   
@@ -99,15 +101,6 @@ class SemanticAnalysisVisitor : public IVisitor
   emitNotAFunctionError (CallExpressionNode* node);
 
   void
-  emitArgumentCountError (CallExpressionNode* node,
-			       FunctionDeclarationNode* decl);
-
-  void
-  emitArgumentTypeError (CallExpressionNode* node,
-			      FunctionDeclarationNode* decl,
-			      int index);
-
-  void
   emitVoidError (DeclarationNode* node);
 
   void
@@ -118,6 +111,15 @@ class SemanticAnalysisVisitor : public IVisitor
 
   void
   emitMainError (DeclarationNode* node);
+
+  void
+  emitArgumentCountError (CallExpressionNode* node,
+			       FunctionDeclarationNode* decl);
+
+  void
+  emitArgumentTypeError (CallExpressionNode* node,
+			      FunctionDeclarationNode* decl,
+			      int index);
   
 public:
   SemanticAnalysisVisitor ();

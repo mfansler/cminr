@@ -2,7 +2,7 @@
   Filename   : PrintVisitor.cc
   Author     : Merv Fansler
   Course     : CSCI 435
-  Assignment : Assignment 9, A Happy Little AST
+  Assignment : Assignment 11, Semantic Analyzer
   Description: Implements the IVisitor interface, printing Node information
                  as it traverse the AST's built by the Bison parser.
 */
@@ -88,7 +88,7 @@ PrintVisitor::visit (ParameterNode* node)
 {
   outFile << indent () << "Parameter: " << node->identifier;
   if (node->isArray)
-    outFile << "[]";
+    outFile << " []";
   outFile << ": " << vtString[node->valueType] << endl;
 }
 
@@ -295,7 +295,7 @@ PrintVisitor::visit (UnaryExpressionNode* node)
     outFile << "--\n";
     break;
   }
-
+  
   ++depth;
   node->variable->accept (this);
   --depth;
@@ -304,34 +304,29 @@ PrintVisitor::visit (UnaryExpressionNode* node)
 void
 PrintVisitor::visit (IntegerLiteralExpressionNode* node)
 {
-  outFile << indent () << "Integer: " << node->value << endl;
+  outFile << indent () << "Integer: " << node->value
+	  << ": " << vtString[node->valueType] << endl;
 }
 
 void
 PrintVisitor::visit (ReferenceNode* node)
 {
-  outFile << indent () << "Reference: " << node->identifier;
-  if (node->declaration)
-    outFile << ": " << vtString[node->declaration->valueType];
-  outFile << endl;
+  outFile << indent () << "Reference: " << node->identifier
+	  << ": " << vtString[node->valueType] << endl;
 }
 
 void
 PrintVisitor::visit (VariableExpressionNode* node)
 {
-  outFile << indent () << "Variable: " << node->identifier;
-  if (node->declaration)
-    outFile << ": " << vtString[node->declaration->valueType];
-  outFile << endl;
+  outFile << indent () << "Variable: " << node->identifier
+	  << ": " << vtString[node->valueType] << endl;
 }
 
 void
 PrintVisitor::visit (SubscriptExpressionNode* node)
 {
-  outFile << indent () << "Subscript: " << node->identifier;
-  if (node->declaration)
-    outFile << ": " << vtString[node->declaration->valueType];
-  outFile << endl;
+  outFile << indent () << "Subscript: " << node->identifier
+	  << ": " << vtString[node->valueType] << endl;
   
   ++depth;
   outFile << indent () << "Index:\n";
@@ -343,9 +338,8 @@ PrintVisitor::visit (SubscriptExpressionNode* node)
 void
 PrintVisitor::visit (CallExpressionNode* node)
 {
-  outFile << indent () << "FunctionCall: " << node->identifier;
-  if (node->declaration)
-    outFile << ": " << vtString[node->declaration->valueType];
+  outFile << indent () << "FunctionCall: " << node->identifier
+	  << ": " << vtString[node->valueType];
   
   if (node->arguments.size() > 0)
   {
@@ -357,5 +351,5 @@ PrintVisitor::visit (CallExpressionNode* node)
     depth -= 2;
   }
   else
-    outFile << "()\n";
+    outFile << " ()\n";
 }
