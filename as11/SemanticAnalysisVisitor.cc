@@ -41,7 +41,7 @@ SemanticAnalysisVisitor::emitUnaryOperationError (UnaryExpressionNode* node)
   cout << "Error: unary operator "
        << uOpString[node->unaryOperator] << " requires INT variable; found "
        << node->variable->identifier << " of type "
-       << vtString[node->variable->valueType] << " at ("
+       << vtString[node->variable->evalType] << " at ("
        << node->rowNumber << ","
        << node->columnNumber << ")\n";
 
@@ -52,8 +52,8 @@ void
 SemanticAnalysisVisitor::emitAssignmentError (AssignmentExpressionNode* node)
 {
   cout << "Error: invalid assignment of expression of type "
-       << vtString[node->expression->valueType] << " to variable of type "
-       << vtString[node->variable->valueType] << " at ("
+       << vtString[node->expression->evalType] << " to variable of type "
+       << vtString[node->variable->evalType] << " at ("
        << node->rowNumber << ","
        << node->columnNumber << ")\n";
 
@@ -64,9 +64,9 @@ void
 SemanticAnalysisVisitor::emitAdditiveOperationError (AdditiveExpressionNode* node)
 {
   cout << "Error: invalid additive operation; found "
-       << vtString[node->left->valueType] << " "
+       << vtString[node->left->evalType] << " "
        << aOpString[node->addOperator] << " "
-       << vtString[node->right->valueType] << " at ("
+       << vtString[node->right->evalType] << " at ("
        << node->rowNumber << ","
        << node->columnNumber << ")\n";
 
@@ -77,9 +77,9 @@ void
 SemanticAnalysisVisitor::emitMultiplicativeOperationError (MultiplicativeExpressionNode* node)
 {
   cout << "Error: invalid multiplicative operation; found "
-       << vtString[node->left->valueType] << " "
+       << vtString[node->left->evalType] << " "
        << mOpString[node->multOperator] << " "
-       << vtString[node->right->valueType] << " at ("
+       << vtString[node->right->evalType] << " at ("
        << node->rowNumber << ","
        << node->columnNumber << ")\n";
 
@@ -90,9 +90,9 @@ void
 SemanticAnalysisVisitor::emitRelationalOperationError (RelationalExpressionNode* node)
 {
   cout << "Error: invalid relational operation; found "
-       << vtString[node->left->valueType] << " "
+       << vtString[node->left->evalType] << " "
        << rOpString[node->relationalOperator] << " "
-       << vtString[node->right->valueType] << " at ("
+       << vtString[node->right->evalType] << " at ("
        << node->rowNumber << ","
        << node->columnNumber << ")\n";
 
@@ -103,7 +103,7 @@ void
 SemanticAnalysisVisitor::emitSubscriptTypeError (SubscriptExpressionNode* node)
 {
   cout << "Error: invalid index type: found index type "
-       << vtString[node->index->valueType] << " expected type INT at ("
+       << vtString[node->index->evalType] << " expected type INT at ("
        << node->rowNumber << ","
        << node->columnNumber << ")\n";
 
@@ -150,15 +150,9 @@ SemanticAnalysisVisitor::emitArgumentTypeError (CallExpressionNode* node,
 						FunctionDeclarationNode* decl,
 						int index)
 {
-  ValueType expected;
-  if (decl->parameters[index]->isArray)
-    expected = ValueType::ARRAY;
-  else
-    expected = decl->parameters[index]->valueType;
-  
   cout << "Error: invalid argument type: expected "
-       << vtString[expected]  << ", found "
-       << vtString[node->arguments[index]->valueType] << " at ("
+       << vtString[decl->parameters[index]->evalType] << ", found "
+       << vtString[node->arguments[index]->evalType] << " at ("
        << node->arguments[index]->rowNumber << ","
        << node->arguments[index]->columnNumber << ")\n";
 
@@ -171,7 +165,7 @@ SemanticAnalysisVisitor::emitVoidError (DeclarationNode* node)
   cout << "Error: variable declared with VOID type at ("
        << node->rowNumber << ","
        << node->columnNumber << ")\n";
-
+  
   errorEmitted = true;
 }
 
@@ -213,21 +207,18 @@ SemanticAnalysisVisitor::emitMainError (DeclarationNode* node)
 
 // Tests whether a declared variable is an array
 bool
-SemanticAnalysisVisitor::isArray (DeclarationNode* node)
+SemanticAnalysisVisitor::isArray (ValueType t)
 {
-  ParameterNode* p = dynamic_cast<ParameterNode*> (node);
-  ArrayDeclarationNode* a = dynamic_cast<ArrayDeclarationNode*> (node);
-  return a || (p && p->isArray);
+  return (t == ValueType::INT_ARRAY ||
+	  t == ValueType::VOID_ARRAY);
 }
 
 // Tests whether a declaration is a function
 bool
-SemanticAnalysisVisitor::isFunction (DeclarationNode* node)
+SemanticAnalysisVisitor::isFunction (ValueType t)
 {
-  FunctionDeclarationNode* f =
-    dynamic_cast<FunctionDeclarationNode*> (node);
-  
-  return (f != nullptr);
+  return (t == ValueType::INT_FUNCTION ||
+	  t == ValueType::VOID_FUNCTION);
 }
 
 /********************************************************************/
@@ -265,9 +256,21 @@ SemanticAnalysisVisitor::visit (DeclarationNode* node) {}
 void
 SemanticAnalysisVisitor::visit (FunctionDeclarationNode* node)
 {
+  switch (node->valueType)
+  {
+  case ValueType::VOID:
+    node->evalType = ValueType::VOID_FUNCTION;
+    break;
+  case ValueType::INT:
+    node->evalType = ValueType::INT_FUNCTION;
+    break;
+  default:
+    node->evalType = node->valueType;
+  }
+  
   for (ParameterNode* p : node->parameters)
     p->accept (this);
-
+  
   // set state variables
   expectedReturnType = node->valueType;
   returnCalled = false;
@@ -283,20 +286,48 @@ SemanticAnalysisVisitor::visit (VariableDeclarationNode* node)
 {
   if (node->valueType == ValueType::VOID)
     emitVoidError (node);
+  
+  node->evalType = node->valueType;
 }
 
 void
 SemanticAnalysisVisitor::visit (ArrayDeclarationNode* node)
 {
-  if (node->valueType == ValueType::VOID)
+  switch (node->valueType)
+  {
+  case ValueType::VOID:
     emitVoidError (node);
+    node->evalType = ValueType::VOID_ARRAY;
+    break;
+  case ValueType::INT:
+    node->evalType = ValueType::INT_ARRAY;
+    break;
+  default:
+    node->evalType = node->valueType;
+  }
 }
 
 void
 SemanticAnalysisVisitor::visit (ParameterNode* node)
 {
-  if (node->valueType == ValueType::VOID)
+  switch (node->valueType)
+  {
+  case ValueType::VOID:
     emitVoidError (node);
+    if (node->isArray)
+      node->evalType = ValueType::VOID_ARRAY;
+    else
+      node->evalType = ValueType::VOID;
+    break;
+  case ValueType::INT:
+    if (node->isArray)
+      node->evalType = ValueType::INT_ARRAY;
+    else
+      node->evalType = ValueType::INT;
+    break;
+  default:
+    node->evalType = node->valueType;
+  }
 }
 
 void
@@ -344,8 +375,8 @@ SemanticAnalysisVisitor::visit (ReturnStatementNode* node)
   {
     node->expression->accept (this);
 
-    if (node->expression->valueType != expectedReturnType)
-      emitReturnTypeError (node, node->expression->valueType);
+    if (node->expression->evalType != expectedReturnType)
+      emitReturnTypeError (node, node->expression->evalType);
   }
   else if (expectedReturnType != ValueType::VOID)
     emitReturnTypeError (node, ValueType::VOID);
@@ -372,11 +403,11 @@ SemanticAnalysisVisitor::visit (AssignmentExpressionNode* node)
   node->variable->accept (this);
   node->expression->accept (this);
 
-  if (node->variable->valueType != ValueType::INT ||
-      node->expression->valueType != ValueType::INT)
+  if (node->variable->evalType != ValueType::INT ||
+      node->expression->evalType != ValueType::INT)
     emitAssignmentError (node);
 
-  node->valueType = ValueType::INT;
+  node->evalType = ValueType::INT;
 }
 
 void
@@ -385,11 +416,11 @@ SemanticAnalysisVisitor::visit (AdditiveExpressionNode* node)
   node->left->accept (this);
   node->right->accept (this);
 
-  if (node->left->valueType != ValueType::INT ||
-      node->right->valueType != ValueType::INT)
+  if (node->left->evalType != ValueType::INT ||
+      node->right->evalType != ValueType::INT)
     emitAdditiveOperationError (node);
 
-  node->valueType = ValueType::INT;
+  node->evalType = ValueType::INT;
 }
 
 void
@@ -398,11 +429,11 @@ SemanticAnalysisVisitor::visit (MultiplicativeExpressionNode* node)
   node->left->accept (this);
   node->right->accept (this);
 
-  if (node->left->valueType != ValueType::INT ||
-      node->right->valueType != ValueType::INT)
+  if (node->left->evalType != ValueType::INT ||
+      node->right->evalType != ValueType::INT)
     emitMultiplicativeOperationError (node);
 
-  node->valueType = ValueType::INT;
+  node->evalType = ValueType::INT;
 }
 
 void
@@ -411,11 +442,11 @@ SemanticAnalysisVisitor::visit (RelationalExpressionNode* node)
   node->left->accept (this);
   node->right->accept (this);
 
-  if (node->left->valueType != ValueType::INT ||
-      node->right->valueType != ValueType::INT)
+  if (node->left->evalType != ValueType::INT ||
+      node->right->evalType != ValueType::INT)
     emitRelationalOperationError (node);
 
-  node->valueType = ValueType::INT;
+  node->evalType = ValueType::INT;
 }
 
 void
@@ -423,16 +454,16 @@ SemanticAnalysisVisitor::visit (UnaryExpressionNode* node)
 {
   node->variable->accept (this);
 
-  if (node->variable->valueType != ValueType::INT)
+  if (node->variable->evalType != ValueType::INT)
     emitUnaryOperationError (node);
 
-  node->valueType = ValueType::INT;
+  node->evalType = ValueType::INT;
 }
 
 void
 SemanticAnalysisVisitor::visit (IntegerLiteralExpressionNode* node)
 {
-  node->valueType = ValueType::INT;
+  node->evalType = ValueType::INT;
 }
 
 void
@@ -441,27 +472,25 @@ SemanticAnalysisVisitor::visit (ReferenceNode* node) {}
 void
 SemanticAnalysisVisitor::visit (VariableExpressionNode* node)
 {
-  if (isArray (node->declaration))
-    node->valueType = ValueType::ARRAY;
-  else
-    node->valueType = node->declaration->valueType;
+  node->evalType = node->declaration->evalType;
 
-  if (isFunction (node->declaration))
+  if (isFunction (node->evalType))
     emitFunctionAsVariableError (node);
 }
 
 void
 SemanticAnalysisVisitor::visit (SubscriptExpressionNode* node)
 {
-  node->index->accept (this);
-
-  if (!isArray (node->declaration))
+  if (!isArray (node->declaration->evalType))
     emitSubscriptOperationError (node);
 
-  if (node->index->valueType != ValueType::INT)
+  node->index->accept (this);
+
+  if (node->index->evalType != ValueType::INT)
     emitSubscriptTypeError (node);
 
-  node->valueType = node->declaration->valueType;
+  // this evaluates as array element type (valueType)
+  node->evalType = node->declaration->valueType;
 }
 
 void
@@ -470,7 +499,8 @@ SemanticAnalysisVisitor::visit (CallExpressionNode* node)
   for (auto a : node->arguments)
     a->accept (this);
 
-  FunctionDeclarationNode* decl = dynamic_cast<FunctionDeclarationNode*> (node->declaration);
+  FunctionDeclarationNode* decl =
+    dynamic_cast<FunctionDeclarationNode*> (node->declaration);
   
   if (decl == nullptr)
   {
@@ -489,13 +519,14 @@ SemanticAnalysisVisitor::visit (CallExpressionNode* node)
     {
       if (decl->parameters[i]->isArray)
       {
-	if (node->arguments[i]->valueType != ValueType::ARRAY)
+	if (!isArray (node->arguments[i]->evalType))
 	  emitArgumentTypeError (node, decl, i);
       }
-      else if (decl->parameters[i]->valueType != node->arguments[i]->valueType)
+      else if (decl->parameters[i]->evalType != node->arguments[i]->evalType)
       	emitArgumentTypeError (node, decl, i);
     }
   }
 
-  node->valueType = node->declaration->valueType;
+  // this evaluates as function return type (valueType)
+  node->evalType = node->declaration->valueType;
 }

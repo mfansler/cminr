@@ -87,7 +87,7 @@ enum class UnaryOperatorType
 
 enum class ValueType
 {
-  VOID, INT, ARRAY
+  VOID, INT, INT_ARRAY, VOID_ARRAY, INT_FUNCTION, VOID_FUNCTION
 };
 
 /********************************************************************/
@@ -170,6 +170,8 @@ struct DeclarationNode : Node
   string identifier;
 
   int nestLevel;
+
+  ValueType evalType;
 };
 
 struct FunctionDeclarationNode : DeclarationNode
@@ -333,7 +335,7 @@ struct ExpressionNode : Node
   void
   accept (IVisitor* visitor) = 0;
 
-  ValueType valueType;
+  ValueType evalType;
 };
 
 struct AssignmentExpressionNode : ExpressionNode

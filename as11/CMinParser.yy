@@ -20,11 +20,6 @@
 
   void
   yyerror (ProgramNode* &root, const char*);
-
-  
-  // For debugging must do the following:
-     #define YYDEBUG 1
-  //   Set "yydebug" to 1 in driver
 %}
 
 /** Declarations **/ 

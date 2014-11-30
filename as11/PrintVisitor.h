@@ -29,9 +29,12 @@ class PrintVisitor : public IVisitor
   std::ofstream &outFile;
   std::map<ValueType, std::string> vtString =
     {
-      {	ValueType::INT  , "Int type"   },
-      {	ValueType::VOID , "Void type"  },
-      {	ValueType::ARRAY, "Array type" }
+      {	ValueType::INT          , "Int type"           },
+      {	ValueType::VOID         , "Void type"          },
+      { ValueType::INT_ARRAY    , "Int Array type"     },
+      { ValueType::VOID_ARRAY   , "Void Array type"    },
+      { ValueType::INT_FUNCTION , "Int Function type"  },
+      { ValueType::VOID_FUNCTION, "Void Function type" }
     };
 
   

@@ -34,13 +34,16 @@ SymbolTableVisitor::SymbolTableVisitor ()
   vector<ParameterNode*> params;
   FunctionDeclarationNode* fInput =
     new FunctionDeclarationNode(ValueType::INT, "input", params, nullptr);
+  fInput->evalType = ValueType::INT_FUNCTION;
   symbolTable.insert (fInput);
 
   // insert stub 'output (int value)' method into global scope
   ParameterNode* pValue = new ParameterNode (ValueType::INT, "value", false);
+  pValue->evalType = pValue->valueType;
   params.push_back (pValue);
   FunctionDeclarationNode* fOutput =
     new FunctionDeclarationNode(ValueType::VOID, "output", params, nullptr);
+  fOutput->evalType = ValueType::VOID_FUNCTION;
   symbolTable.insert (fOutput);
 }
 

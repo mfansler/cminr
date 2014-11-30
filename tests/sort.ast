@@ -90,7 +90,7 @@ Program Node
               Variable: k: Int type
               FunctionCall: minloc: Int type
                 Arguments:
-                  Variable: a: Array type
+                  Variable: a: Int Array type
                   Variable: i: Int type
                   Variable: high: Int type
           ExpressionStatement
@@ -152,7 +152,7 @@ Program Node
       ExpressionStatement
         FunctionCall: sort: Void type
           Arguments:
-            Variable: x: Array type
+            Variable: x: Int Array type
             Integer: 0: Int type
             Integer: 10: Int type
       ExpressionStatement

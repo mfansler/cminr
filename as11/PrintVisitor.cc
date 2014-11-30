@@ -305,28 +305,28 @@ void
 PrintVisitor::visit (IntegerLiteralExpressionNode* node)
 {
   outFile << indent () << "Integer: " << node->value
-	  << ": " << vtString[node->valueType] << endl;
+	  << ": " << vtString[node->evalType] << endl;
 }
 
 void
 PrintVisitor::visit (ReferenceNode* node)
 {
   outFile << indent () << "Reference: " << node->identifier
-	  << ": " << vtString[node->valueType] << endl;
+	  << ": " << vtString[node->evalType] << endl;
 }
 
 void
 PrintVisitor::visit (VariableExpressionNode* node)
 {
   outFile << indent () << "Variable: " << node->identifier
-	  << ": " << vtString[node->valueType] << endl;
+	  << ": " << vtString[node->evalType] << endl;
 }
 
 void
 PrintVisitor::visit (SubscriptExpressionNode* node)
 {
   outFile << indent () << "Subscript: " << node->identifier
-	  << ": " << vtString[node->valueType] << endl;
+	  << ": " << vtString[node->evalType] << endl;
   
   ++depth;
   outFile << indent () << "Index:\n";
@@ -339,7 +339,7 @@ void
 PrintVisitor::visit (CallExpressionNode* node)
 {
   outFile << indent () << "FunctionCall: " << node->identifier
-	  << ": " << vtString[node->valueType];
+	  << ": " << vtString[node->evalType];
   
   if (node->arguments.size() > 0)
   {

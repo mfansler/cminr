@@ -34,9 +34,12 @@ class SemanticAnalysisVisitor : public IVisitor
   
   std::map<ValueType, std::string> vtString =
     {
-      {	ValueType::INT  , "INT"   },
-      { ValueType::VOID , "VOID"  },
-      { ValueType::ARRAY, "ARRAY" }
+      {	ValueType::INT          , "INT"           },
+      { ValueType::VOID         , "VOID"          },
+      { ValueType::INT_ARRAY    , "INT_ARRAY"     },
+      { ValueType::VOID_ARRAY   , "VOID_ARRAY"    },
+      { ValueType::INT_FUNCTION , "INT_FUNCTION"  },
+      { ValueType::VOID_FUNCTION, "VOID_FUNCTION" }
     };
 
   std::map<UnaryOperatorType, std::string> uOpString =
@@ -70,10 +73,10 @@ class SemanticAnalysisVisitor : public IVisitor
   // Type utilites
   
   bool
-  isArray (DeclarationNode* node);
+  isArray (ValueType t);
   
   bool
-  isFunction (DeclarationNode* node);
+  isFunction (ValueType t);
   
   // Error emitting methods
   void
