@@ -1,0 +1,10 @@
+void a[20];
+
+void main(void x, void y[]) {
+  void a;
+  void b[10];
+
+  return;
+}
+
+   

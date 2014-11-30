@@ -25,7 +25,7 @@ SymbolTable::SymbolTable ()
 
 SymbolTable::~SymbolTable ()
 {
-  m_table.clear ();    
+  m_table.clear ();
 }
 
 // Adjust the nest level; add a new scope table

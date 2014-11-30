@@ -190,7 +190,7 @@ struct FunctionDeclarationNode : DeclarationNode
 
 struct VariableDeclarationNode : DeclarationNode
 {
-  VariableDeclarationNode (string id, int row = 1, int col = 0);
+  VariableDeclarationNode (ValueType t, string id, int row = 1, int col = 0);
   
   ~VariableDeclarationNode ();
 
@@ -200,7 +200,8 @@ struct VariableDeclarationNode : DeclarationNode
 
 struct ArrayDeclarationNode : VariableDeclarationNode
 {
-  ArrayDeclarationNode (string id, size_t size, int row = 1, int col = 0);
+  ArrayDeclarationNode (ValueType t, string id, size_t size,
+			int row = 1, int col = 0);
 
   ~ArrayDeclarationNode ();
 
@@ -212,7 +213,8 @@ struct ArrayDeclarationNode : VariableDeclarationNode
 
 struct ParameterNode : DeclarationNode
 {
-  ParameterNode (string id, bool array, int row = 1, int col = 0);
+  ParameterNode (ValueType t, string id, bool array = false,
+		 int row = 1, int col = 0);
   ~ParameterNode ();
 
   void
@@ -330,6 +332,8 @@ struct ExpressionNode : Node
 
   void
   accept (IVisitor* visitor) = 0;
+
+  ValueType valueType;
 };
 
 struct AssignmentExpressionNode : ExpressionNode

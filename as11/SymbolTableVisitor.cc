@@ -36,7 +36,7 @@ SymbolTableVisitor::SymbolTableVisitor ()
   symbolTable.insert (&fInput);
 
   // insert stub 'output (int value)' method into global scope
-  ParameterNode* pValue = new ParameterNode ("value", false);
+  ParameterNode* pValue = new ParameterNode (ValueType::INT, "value", false);
   params.push_back (pValue);
   FunctionDeclarationNode fOutput (ValueType::VOID, "output", params, nullptr);
   symbolTable.insert (&fOutput);

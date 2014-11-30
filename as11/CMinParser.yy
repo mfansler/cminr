@@ -2,7 +2,7 @@
   Filename   : CMinParser.yy
   Author     : Merv Fansler
   Course     : CSCI 435
-  Assignment : Assignment 10, 
+  Assignment : Assignment 11, Semantic Analyzer
   Description: Bison-based implementation of C- parser, building AST's
 */
 
@@ -154,12 +154,12 @@ declaration
 var-declaration
 	: type-specifier ID SEMI
 	{
-	  $$ = new VariableDeclarationNode ($2, lineCount, colCount);
+	  $$ = new VariableDeclarationNode ($1, $2, lineCount, colCount);
 	  free ($2);
 	}
 	| type-specifier ID LBRACK NUM RBRACK SEMI
 	{
-	  $$ = new ArrayDeclarationNode ($2, $4, lineCount, colCount);
+	  $$ = new ArrayDeclarationNode ($1, $2, $4, lineCount, colCount);
 	  free ($2);
 	}
 	;
@@ -210,12 +210,12 @@ param-list
 param
 	: type-specifier ID
 	{
-	  $$ = new ParameterNode ($2, false, lineCount, colCount);
+	  $$ = new ParameterNode ($1, $2, false, lineCount, colCount);
 	  free ($2);
 	}
 	| type-specifier ID LBRACK RBRACK
 	{
-	  $$ = new ParameterNode ($2, true, lineCount, colCount);
+	  $$ = new ParameterNode ($1, $2, true, lineCount, colCount);
 	  free ($2);
 	}
 	;

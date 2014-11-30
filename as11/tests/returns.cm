@@ -1,0 +1,24 @@
+/* Tests for matching returns */
+
+/* Error */
+int f(int x) {
+  return;
+}
+
+/* Error */
+int g(void) {
+  int q;
+
+  q=10;
+  ++q;
+}
+
+/* good */
+int h(int y) {
+  return y;
+}
+
+/* Error */
+void main(void) {
+  return 10;
+}

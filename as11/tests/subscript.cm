@@ -1,0 +1,27 @@
+int t[10];
+
+int f(int a, int v[]) {
+  int b;
+  int x[10];
+
+  b = v[0];
+  v[b] = a;
+ 
+  return v[a + b];
+}
+
+void main(int a) {
+
+  int y[10];
+  int b;
+
+  b = f(a,t);
+  b = f(t[a], t) * 2;
+  b = y[f(a,t)];
+
+  /* Errors */
+  b = a[b];
+  b = f(t,a);
+  
+  return;
+}

@@ -1,0 +1,3 @@
+Program Node
+  VariableDeclaration: x: Int type
+  VariableDeclaration: y: Int type

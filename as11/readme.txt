@@ -1,37 +1,21 @@
 Team: Merv Fansler
 
-Everything in the SymbolTreeVisitor works as specified as far as the tests I
-performed indicate. I did run into some errors with unique_ptr that took a while
-to actually figure out the issue. Specifically, when creating a new scope I was
-receiving a "method not found" when attempting to push the scope table wrapped
-in the unique_ptr onto the vector. The error was simple to resolve (have to
-"move" the unique_ptr, i.e., can't copy it), but the message produced by the
-compiler was dozens of lines of noise.
+Notes
+=====
 
-Switching to the member initialization syntax took a little bit, particularly
-because I decided to roll the (line,column) info into the ultimate base class
-and require every subclass have to pass the info up to its respective parent
-class.  Not too difficult, but time consuming.
+First off, I side-stepped some of the problems posed in the assignment: I used
+our insight from the RD parser that we could avoid void variables/arrays
+altogether by making them syntacticly invalid by adjusting the grammar.
 
-I thought storing a private flag for distinguishing function bodies from
-compound statements would be a quick and simple solution for keeping function
-parameters and local declarations in the same scope. While testing I found that
-I inadvertently created a bug that prevented subsequent compound statements from
-creating new scopes. It works now, but feels a bit more awkward than I'd prefer.
-My test for this was:
-
-    int main (int x) { int x; x = 50 * x; return x; } // multiple declaration
-
-    int main (int x) { { int x; x = 50 * x; } return x; } // acceptable
+Another issue that I dealt with in a noteworthy manner was FunctionDeclaration
+types.  It was recommended that we add INT_FUNCTION and VOID_FUNCTION types.
+That bothered me from the standpoint that we have FunctionDeclaration classes
+with returnType members which already store all that information. Adding those
+enum types just seems redundant to me.  Even though we were told that casting
+shouldn't be necessary, I am convinced that using dynamic_cast is the proper
+and safe way of testing whether the DeclarationNode pointer reference in a
+CallExpressionNode is a FunctionDeclaration pointer.  Because we are dealing
+with pointers no exceptions are thrown, rather, failure cases result in mere
+nullptr's that can easily be tested for.
 
 
-The PrintVisitor is mostly working. One thing that is not working is type info
-on "input" and "output" function calls. In the SymbolTableVisitor, I add those
-functions to the scope table, but not explicitly to the AST structure, hence,
-when it comes time for the declarations to be resolved in the PrintVisitor
-they are no longer available.  Not sure the best approach for resolving this.
-In our case, it might be simplest to just insert DeclarationNodes for those
-global functions directly into the ProgramNode declarations vector.  However,
-if the project grew that would be extremely wasteful. In C/C++ this is what
-header and extern declarations are for. Obviously, I'll be resolving this in
-the type checking assignment.

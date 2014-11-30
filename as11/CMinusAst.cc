@@ -100,8 +100,9 @@ FunctionDeclarationNode::accept (IVisitor* visitor)
 /********************************************************************/
 // VariableDeclarationNode methods
 
-VariableDeclarationNode::VariableDeclarationNode (string id, int row, int col)
-  : DeclarationNode (ValueType::INT, id, row, col)
+VariableDeclarationNode::VariableDeclarationNode (ValueType t, string id,
+						  int row, int col)
+  : DeclarationNode (t, id, row, col)
 {}
 
 VariableDeclarationNode::~VariableDeclarationNode () {}
@@ -115,9 +116,9 @@ VariableDeclarationNode::accept (IVisitor* visitor)
 /********************************************************************/
 // ArrayDeclarationNode methods
 
-ArrayDeclarationNode::ArrayDeclarationNode (string id, size_t size,
+ArrayDeclarationNode::ArrayDeclarationNode (ValueType t, string id, size_t size,
 					    int row, int col)
-  : VariableDeclarationNode (id, row, col), size (size)
+  : VariableDeclarationNode (t, id, row, col), size (size)
 {}
 
 ArrayDeclarationNode::~ArrayDeclarationNode () {}
@@ -131,8 +132,9 @@ ArrayDeclarationNode::accept (IVisitor* visitor)
 /********************************************************************/
 // ParameterNode Methods
 
-ParameterNode::ParameterNode (string id, bool array, int row, int col)
-  : DeclarationNode (ValueType::INT, id, row, col), isArray (array)
+ParameterNode::ParameterNode (ValueType t, string id, bool array,
+			      int row, int col)
+  : DeclarationNode (t, id, row, col), isArray (array)
 {}
 
 ParameterNode::~ParameterNode () {}
