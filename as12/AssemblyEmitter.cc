@@ -31,27 +31,42 @@ AssemblyEmitter::AssemblyEmitter (std::ofstream &strm) : outFile (strm) {}
 AssemblyEmitter::~AssemblyEmitter () {}
 
 void
-AssemblyEmitter::emitComment (const string comment)
+AssemblyEmitter::emitComment (const string& comment)
 {
-  outFile << setw (36) << " " << "# " << comment << endl;
+  outFile << setw (42) << " " << "# " << comment << endl;
+}
+
+void
+AssemblyEmitter::emitComment (std::initializer_list<string> comments)
+{
+  for (auto c : comments)
+    emitComment (c);
 }
 
 void
 AssemblyEmitter::emitSeparator (int numDividers)
 {
-  outFile << setfill ('#') << setw (80) << "#" << endl;
+  outFile << setfill ('#')
+	  << setw (80) << "#" << endl
+	  << setfill (' ');
 }
 
 void
-AssemblyEmitter::emitLabel (const string label, const string comment)
+AssemblyEmitter::emitLabel (const string& label, const string& comment)
 {
-  outFile << setw (36) << label + ":" << "# " << comment << endl;
+  outFile << setw (42) << label + ":" << "# " << comment << endl;
 }
 
 void
-AssemblyEmitter::emitInstruction (const string operation, const string operands,
-				  const string comment)
+AssemblyEmitter::emitInstruction (const string& operation, const string& operands,
+				  const string& comment)
 {
-  outFile << setw (10) << " " << setw (10) << operation << setw (16) << operands
+  outFile << setw (10) << " " << setw (10) << operation << setw (22) << operands
 	  << "# " << comment << endl;
+}
+
+void
+AssemblyEmitter::emitDeclaration (const string& name)
+{
+  outFile << ".globl " << name << endl;
 }

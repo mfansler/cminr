@@ -32,15 +32,56 @@ CodeGeneratorVisitor::CodeGeneratorVisitor (std::ofstream &strm) : emitter (strm
 CodeGeneratorVisitor::~CodeGeneratorVisitor () {}
 
 void
+CodeGeneratorVisitor::emitInputFunction ()
+{
+  emitter.emitSeparator ();
+  emitter.emitComment ("Input Routine");
+  emitter.emitDeclaration ("input");
+  emitter.emitInstruction (".type", "input, @function", "");
+
+  emitter.emitLabel ("input");
+
+  emitter.emitInstruction ("enter", "$0, $0");
+
+  emitter.emitInstruction ("subl", "$4, %esp", "create slot for result");
+  emitter.emitInstruction ("pushl", "%esp", "push slot's address");
+  emitter.emitInstruction ("pushl", "$.inStr", "push conversion spec");
+  emitter.emitInstruction ("call", "scanf", "read an integer");
+  emitter.emitInstruction ("movl", "8(%esp), %eax", "move int to %eax");
+
+  emitter.emitInstruction ("leave", "", "reset stack & frame pointers");
+  emitter.emitInstruction ("ret", "", "return to caller");
+}
+
+void
+CodeGeneratorVisitor::emitOutputFunction ()
+{
+
+}
+
+void
 CodeGeneratorVisitor::visit (ProgramNode* node)
 {
+  emitter.emitSeparator ();
+  emitter.emitComment ({"C- Compiled to IA-32 Code", "", "Compiler v. 0.1.0"});
+  emitter.emitSeparator ();
+
+  
   for (DeclarationNode* d : node->children)
     d->accept (this);
+
+  // emit extern functions as needed
+  if (inputFunctionReferenced)
+    emitInputFunction ();
+  
+  if (outputFunctionReferenced)
+    emitOutputFunction ();
 }
   
 void
 CodeGeneratorVisitor::visit (DeclarationNode* node)
 {
+  
 }
 
 void
@@ -242,6 +283,15 @@ CodeGeneratorVisitor::visit (SubscriptExpressionNode* node)
 void
 CodeGeneratorVisitor::visit (CallExpressionNode* node)
 {
+  if (node->declaration->identifier == "input" &&
+      node->declaration->nestLevel == 0)
+    inputFunctionReferenced = true;
+
+  if (node->declaration->identifier == "output" &&
+      node->declaration->nestLevel == 0)
+    outputFunctionReferenced = true;
+  
+  
   if (node->arguments.size() > 0)
   {
     for (auto a : node->arguments)

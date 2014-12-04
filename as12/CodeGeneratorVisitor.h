@@ -36,6 +36,17 @@ class CodeGeneratorVisitor : public IVisitor
       { ValueType::VOID_FUNCTION, "Void Function type" }
     };
 
+  // state variables
+  bool inputFunctionReferenced;
+  bool outputFunctionReferenced;
+
+  // global method emitters
+  void
+  emitInputFunction ();
+
+  void
+  emitOutputFunction ();
+  
 public:
   CodeGeneratorVisitor (std::ofstream &strm);
   ~CodeGeneratorVisitor ();

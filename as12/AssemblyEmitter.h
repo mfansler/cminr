@@ -14,6 +14,7 @@
 
 #include <string>
 #include <fstream>
+#include <initializer_list>
 
 /********************************************************************/
 // Using declarations
@@ -31,19 +32,25 @@ public:
 
   AssemblyEmitter (std::ofstream &strm);
   ~AssemblyEmitter ();
-  
-  void
-  emitComment (const string comment);
 
   void
-  emitSeparator (int numDividers);
+  emitComment (const string& comment);
 
   void
-  emitLabel (const string label, const string comment);
+  emitComment (std::initializer_list<string> comments);
 
   void
-  emitInstruction (const string operation, const string operands,
-		   const string comment);
+  emitSeparator (int numDividers = 1);
+
+  void
+  emitLabel (const string& label, const string& comment = "");
+
+  void
+  emitInstruction (const string& operation, const string& operands = "",
+		   const string& comment = "");
+
+  void
+  emitDeclaration (const string& name);
 
 };
   
