@@ -1,24 +1,33 @@
 ################################################################################
                                           # C- Compiled to IA-32 Code
-                                          # 
                                           # Compiler v. 0.1.0
 ################################################################################
+                                          # Global Variables
+                                          # 
+          .globl    x                     # 
+          .data                           # 
+          .align    4                     # 
+          .type     x, @object            # 
+          .size     x, 40                 # 
                                           # array
 ################################################################################
 .globl minloc
           .type     minloc, @function     # "minloc" is type function
 minloc:                                   # 
           enter     $0, $0                # save stack & frame ptrs
+                                          # local var
+                                          # local var
+                                          # local var
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
-          addl      %eax, %ebx            # evaluate additive expression
+          addl      %ebx, %eax            # evaluate additive expression
                                           # less than
                                           # less than
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
-          addl      %eax, %ebx            # evaluate additive expression
+          addl      %ebx, %eax            # evaluate additive expression
           leave                           # 
           ret                             # 
                                           # array
@@ -27,15 +36,22 @@ minloc:                                   #
           .type     sort, @function       # "sort" is type function
 sort:                                     # 
           enter     $0, $0                # save stack & frame ptrs
+                                          # local var
+                                          # local var
                                           # less than
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
-          subl      %eax, %ebx            # evaluate additive expression
+          subl      %ebx, %eax            # evaluate additive expression
+                                          # local var
+          pushl     %eax                  # push function argument onto stack
+          pushl     %eax                  # push function argument onto stack
+          pushl     %eax                  # push function argument onto stack
+          call      minloc                # invoke function
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
-          addl      %eax, %ebx            # evaluate additive expression
+          addl      %ebx, %eax            # evaluate additive expression
           leave                           # 
           ret                             # 
 ################################################################################
@@ -43,23 +59,30 @@ sort:                                     #
           .type     main, @function       # "main" is type function
 main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
+                                          # local var
           movl      $0, %eax              # integer literal
                                           # less than
           movl      $10, %eax             # integer literal
-                                          # function ()
+          call      input                 # invoke function
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
-          addl      %eax, %ebx            # evaluate additive expression
-          movl      $0, %eax              # integer literal
+          addl      %ebx, %eax            # evaluate additive expression
           movl      $10, %eax             # integer literal
+          pushl     %eax                  # push function argument onto stack
+          movl      $0, %eax              # integer literal
+          pushl     %eax                  # push function argument onto stack
+          pushl     %eax                  # push function argument onto stack
+          call      sort                  # invoke function
           movl      $0, %eax              # integer literal
                                           # less than
           movl      $10, %eax             # integer literal
+          pushl     %eax                  # push function argument onto stack
+          call      output                # invoke function
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
-          addl      %eax, %ebx            # evaluate additive expression
+          addl      %ebx, %eax            # evaluate additive expression
           leave                           # 
           ret                             # 
 ################################################################################

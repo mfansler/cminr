@@ -13,6 +13,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 /********************************************************************/
 // Local Includes
@@ -28,7 +29,11 @@ using std::to_string;
 /********************************************************************/
 // Class Methods
 
-CodeGeneratorVisitor::CodeGeneratorVisitor (std::ofstream &strm) : emitter (strm) {}
+CodeGeneratorVisitor::CodeGeneratorVisitor (std::ofstream &strm)
+  : emitter (strm)
+  , inputFunctionReferenced (false)
+  , outputFunctionReferenced (false)
+{}
 
 CodeGeneratorVisitor::~CodeGeneratorVisitor () {}
 
@@ -89,12 +94,29 @@ void
 CodeGeneratorVisitor::visit (ProgramNode* node)
 {
   emitter.emitSeparator ();
-  emitter.emitComment ({"C- Compiled to IA-32 Code", "", "Compiler v. 0.1.0"});
+  emitter.emitComment ({"C- Compiled to IA-32 Code", "Compiler v. 0.1.0"});
   emitter.emitSeparator ();
 
+  // function to test for VariableDeclarations
+  auto isVariableDeclaration = [] (DeclarationNode* d)
+    {
+      return d->evalType == ValueType::INT || d->evalType == ValueType::INT_ARRAY;
+    };
+
+  // hoist global variable declarations, preserving relative order
+  auto fnIter = std::stable_partition (node->children.begin (),
+				       node->children.end (),
+				       isVariableDeclaration);
   
-  for (DeclarationNode* d : node->children)
-    d->accept (this);
+  // declare variables
+  emitter.emitComment ({"Global Variables", ""});
+  
+  for (auto varIter = node->children.begin (); varIter != fnIter; ++varIter)
+    (*varIter)->accept (this);
+  
+  // declare functions
+  for (; fnIter != node->children.end (); ++fnIter)
+    (*fnIter)->accept (this);
 
   // emit extern functions as needed
   if (inputFunctionReferenced)
@@ -105,10 +127,7 @@ CodeGeneratorVisitor::visit (ProgramNode* node)
 }
   
 void
-CodeGeneratorVisitor::visit (DeclarationNode* node)
-{
-  
-}
+CodeGeneratorVisitor::visit (DeclarationNode* node) {}
 
 void
 CodeGeneratorVisitor::visit (FunctionDeclarationNode* node)
@@ -131,11 +150,35 @@ CodeGeneratorVisitor::visit (FunctionDeclarationNode* node)
 void
 CodeGeneratorVisitor::visit (VariableDeclarationNode* node)
 {
+  if (node->nestLevel == 0)
+  {
+    emitter.emitInstruction (".globl", node->identifier);
+    emitter.emitInstruction (".data");
+    emitter.emitInstruction (".align", "4");
+    emitter.emitInstruction (".type", node->identifier + ", @object");
+    emitter.emitInstruction (".size", node->identifier + ", 4");
+  }
+  else
+  {
+    emitter.emitComment ("local var");
+  }
 }
 
 void
 CodeGeneratorVisitor::visit (ArrayDeclarationNode* node)
 {
+  if (node->nestLevel == 0)
+  {
+    emitter.emitInstruction (".globl", node->identifier);
+    emitter.emitInstruction (".data");
+    emitter.emitInstruction (".align", "4");
+    emitter.emitInstruction (".type", node->identifier + ", @object");
+    emitter.emitInstruction (".size", node->identifier + ", " + to_string(4 * node->size)); 
+  }
+  else
+  {
+    emitter.emitComment ("local array");
+  }
 }
 
 void
