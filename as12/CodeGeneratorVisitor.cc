@@ -33,6 +33,7 @@ CodeGeneratorVisitor::CodeGeneratorVisitor (std::ofstream &strm)
   : emitter (strm)
   , inputFunctionReferenced (false)
   , outputFunctionReferenced (false)
+  , retrieveVariableAddress (false)
 {}
 
 CodeGeneratorVisitor::~CodeGeneratorVisitor () {}
@@ -159,6 +160,8 @@ CodeGeneratorVisitor::visit (VariableDeclarationNode* node)
     emitter.emitInstruction (".align", "4");
     emitter.emitInstruction (".type", node->identifier + ", @object");
     emitter.emitInstruction (".size", node->identifier + ", 4");
+    emitter.emitLabel (node->identifier);
+    emitter.emitInstruction (".zero", "4");
   }
   else
   {
@@ -176,6 +179,8 @@ CodeGeneratorVisitor::visit (ArrayDeclarationNode* node)
     emitter.emitInstruction (".align", "4");
     emitter.emitInstruction (".type", node->identifier + ", @object");
     emitter.emitInstruction (".size", node->identifier + ", " + to_string(4 * node->size)); 
+    emitter.emitLabel (node->identifier);
+    emitter.emitInstruction (".zero", to_string(4 * node->size), "initialize to zero");
   }
   else
   {
@@ -255,8 +260,14 @@ CodeGeneratorVisitor::visit (ExpressionNode* node)
 void
 CodeGeneratorVisitor::visit (AssignmentExpressionNode* node)
 {
-  node->variable->accept (this);
   node->expression->accept (this);
+  emitter.emitInstruction ("pushl", "%eax", "save assigning value");
+
+  //retrieveVariableAddress = true;
+  node->variable->accept (this);
+  
+  emitter.emitInstruction ("popl", node->variable->asmReference, "pop value into variable");
+  emitter.emitInstruction ("movl", node->variable->asmReference + ", %eax", "pass result");
 }
 
 void
@@ -346,12 +357,30 @@ CodeGeneratorVisitor::visit (ReferenceNode* node)
 void
 CodeGeneratorVisitor::visit (VariableExpressionNode* node)
 {
+  if (node->declaration->nestLevel == 0)
+  {
+    emitter.emitInstruction ("movl", node->identifier + ", %eax",
+			     "load global variable value");
+    node->asmReference = node->identifier;
+  }
+  else
+  {
+    node->asmReference = "";
+    emitter.emitComment ("local variable");
+  }
 }
 
 void
 CodeGeneratorVisitor::visit (SubscriptExpressionNode* node)
 {
   node->index->accept (this);
+  emitter.emitInstruction ("movl", "%eax, %ebx", "store index value in EBX");
+  
+  if (node->declaration->nestLevel == 0)
+  {
+    
+  }
+  node->asmReference = "";
 }
 
 void

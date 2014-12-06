@@ -52,5 +52,6 @@ clean :
 	$(RM) a.out core
 	$(RM) *.o *.d *~ *.hh *.output
 	$(RM) CMinParser.cc CMinLexer.cc CMinDriver
+	$(RM) Default*
 
 #############################################################

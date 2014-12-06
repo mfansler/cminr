@@ -1,13 +1,19 @@
-int y = 10;
+int y = 42;
+int z;
+int a[10];
 
 int main () {
   int x;
 
-  x = 1;
+  z = 0;
+
+  a[z] = 5;
+  
+  x = a[2];
 
   x++;
 
   y = 2 * x;
 
-  return 0;
+  return z;
 }

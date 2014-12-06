@@ -45,6 +45,7 @@ class CodeGeneratorVisitor : public IVisitor
   // state variables
   bool inputFunctionReferenced;
   bool outputFunctionReferenced;
+  bool retrieveVariableAddress;
 
   // global method emitters
   void

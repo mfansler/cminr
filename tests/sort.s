@@ -9,6 +9,8 @@
           .align    4                     # 
           .type     x, @object            # 
           .size     x, 40                 # 
+x:                                        # 
+          .zero     40                    # initialize to zero
 ################################################################################
                                           # array
 ################################################################################
@@ -19,26 +21,61 @@ minloc:                                   #
                                           # local var
                                           # local var
                                           # local var
+                                          # local variable
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
+                                          # local variable
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
+                                          # local variable
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
           addl      %ebx, %eax            # evaluate additive expression
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
                                           # relational expression
+                                          # local variable
           pushl     %eax                  # stash left operand
+                                          # local variable
           popl      %ebx                  # restore left operand
           cmpl      %eax, %ebx            # comparision
           setl      %al                   # relation
           movzbl    %al,%eax              # return result
                                           # relational expression
+                                          # local variable
           pushl     %eax                  # stash left operand
+                                          # local variable
           popl      %ebx                  # restore left operand
           cmpl      %eax, %ebx            # comparision
           setl      %al                   # relation
           movzbl    %al,%eax              # return result
+                                          # local variable
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
+                                          # local variable
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
+                                          # local variable
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
           addl      %ebx, %eax            # evaluate additive expression
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
+                                          # local variable
           leave                           # 
           ret                             # 
                                           # array
@@ -49,8 +86,15 @@ sort:                                     #
           enter     $0, $0                # save stack & frame ptrs
                                           # local var
                                           # local var
+                                          # local variable
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
                                           # relational expression
+                                          # local variable
           pushl     %eax                  # stash left operand
+                                          # local variable
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
@@ -60,14 +104,41 @@ sort:                                     #
           setl      %al                   # relation
           movzbl    %al,%eax              # return result
                                           # local var
+                                          # local variable
           pushl     %eax                  # push function argument onto stack
+                                          # local variable
           pushl     %eax                  # push function argument onto stack
+                                          # local variable
           pushl     %eax                  # push function argument onto stack
           call      minloc                # invoke function
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
+                                          # local variable
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
+                                          # local variable
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
+                                          # local variable
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
+                                          # local variable
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
           addl      %ebx, %eax            # evaluate additive expression
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
           leave                           # 
           ret                             # 
 ################################################################################
@@ -77,7 +148,12 @@ main:                                     #
           enter     $0, $0                # save stack & frame ptrs
                                           # local var
           movl      $0, %eax              # integer literal
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
                                           # relational expression
+                                          # local variable
           pushl     %eax                  # stash left operand
           movl      $10, %eax             # integer literal
           popl      %ebx                  # restore left operand
@@ -85,30 +161,51 @@ main:                                     #
           setl      %al                   # relation
           movzbl    %al,%eax              # return result
           call      input                 # invoke function
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
+                                          # local variable
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
           addl      %ebx, %eax            # evaluate additive expression
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
           movl      $10, %eax             # integer literal
           pushl     %eax                  # push function argument onto stack
           movl      $0, %eax              # integer literal
           pushl     %eax                  # push function argument onto stack
+          movl      (x), %eax             # load global variable reference
           pushl     %eax                  # push function argument onto stack
           call      sort                  # invoke function
           movl      $0, %eax              # integer literal
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
                                           # relational expression
+                                          # local variable
           pushl     %eax                  # stash left operand
           movl      $10, %eax             # integer literal
           popl      %ebx                  # restore left operand
           cmpl      %eax, %ebx            # comparision
           setl      %al                   # relation
           movzbl    %al,%eax              # return result
+                                          # local variable
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
+                                          # local variable
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
           addl      %ebx, %eax            # evaluate additive expression
+          pushl     %eax                  # save assigning value
+                                          # local variable
+          popl      (%eax)                # pop value into variable
+          movl      (%eax), %eax          # pass result
           leave                           # 
           ret                             # 
 ################################################################################

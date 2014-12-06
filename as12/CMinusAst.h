@@ -447,6 +447,8 @@ struct VariableExpressionNode : ReferenceNode
 
   void
   accept (IVisitor* visitor);
+
+  string asmReference;
 };
 
 struct SubscriptExpressionNode : VariableExpressionNode

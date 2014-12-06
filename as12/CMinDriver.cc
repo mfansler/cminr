@@ -103,7 +103,7 @@ main (int argc, char* argv[])
 	// Linking Assembly
 	cout << "Writing executable to: " << fileNameBase << endl;
 
-	string gccCall = "gcc -m32 " + fileNameBase + ".s " + "-o " + fileNameBase;
+	string gccCall = "gcc -m32 -g " + fileNameBase + ".s " + "-o " + fileNameBase;
 	int result = system (gccCall.data ());
 
 	if (result == -1)

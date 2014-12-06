@@ -1,0 +1,16 @@
+Program Node
+  VariableDeclaration: x: Int type
+  Function: main: Void type
+    CompoundStatement
+      ExpressionStatement
+        Assignment
+          Variable: x: Int type
+          FunctionCall: input: Int type ()
+      ExpressionStatement
+        FunctionCall: output: Void type
+          Arguments:
+            MultiplicativeExpression: *
+              Left:
+                Variable: x: Int type
+              Right:
+                Variable: x: Int type
