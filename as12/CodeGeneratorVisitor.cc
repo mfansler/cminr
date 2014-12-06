@@ -113,6 +113,8 @@ CodeGeneratorVisitor::visit (ProgramNode* node)
   
   for (auto varIter = node->children.begin (); varIter != fnIter; ++varIter)
     (*varIter)->accept (this);
+
+  emitter.emitSeparator ();
   
   // declare functions
   for (; fnIter != node->children.end (); ++fnIter)
@@ -299,36 +301,23 @@ CodeGeneratorVisitor::visit (MultiplicativeExpressionNode* node)
 void
 CodeGeneratorVisitor::visit (RelationalExpressionNode* node)
 {
-  switch (node->relationalOperator)
-  {
-  case RelationalOperatorType::EQ:
-    emitter.emitComment ("equals");
-    break;
-  case RelationalOperatorType::NEQ:
-    emitter.emitComment ("not equals");
-    break;
-  case RelationalOperatorType::LT:
-    emitter.emitComment ("less than");
-    break;
-  case RelationalOperatorType::LTE:
-    emitter.emitComment ("less than or equal to");
-    break;
-  case RelationalOperatorType::GT:
-    emitter.emitComment ("greater than");
-    break;
-  case RelationalOperatorType::GTE:
-    emitter.emitComment ("greater than or equal to");
-    break;
-  }
-
+  // evaluate operands
+  emitter.emitComment ("relational expression");
   node->left->accept (this);
+  emitter.emitInstruction ("pushl", "%eax", "stash left operand");
   node->right->accept (this);
+  emitter.emitInstruction ("popl", "%ebx", "restore left operand");
+
+  // compare results
+  emitter.emitInstruction ("cmpl", "%eax, %ebx", "comparision");
+  emitter.emitInstruction (relInstruction[node->relationalOperator], "%al", "relation");
+
+  emitter.emitInstruction ("movzbl", "%al,%eax", "return result");
 }
 
 void
 CodeGeneratorVisitor::visit (UnaryExpressionNode* node)
 {
-
   switch (node->unaryOperator)
   {
   case UnaryOperatorType::INCREMENT:

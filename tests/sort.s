@@ -9,6 +9,7 @@
           .align    4                     # 
           .type     x, @object            # 
           .size     x, 40                 # 
+################################################################################
                                           # array
 ################################################################################
 .globl minloc
@@ -22,8 +23,18 @@ minloc:                                   #
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
           addl      %ebx, %eax            # evaluate additive expression
-                                          # less than
-                                          # less than
+                                          # relational expression
+          pushl     %eax                  # stash left operand
+          popl      %ebx                  # restore left operand
+          cmpl      %eax, %ebx            # comparision
+          setl      %al                   # relation
+          movzbl    %al,%eax              # return result
+                                          # relational expression
+          pushl     %eax                  # stash left operand
+          popl      %ebx                  # restore left operand
+          cmpl      %eax, %ebx            # comparision
+          setl      %al                   # relation
+          movzbl    %al,%eax              # return result
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
@@ -38,11 +49,16 @@ sort:                                     #
           enter     $0, $0                # save stack & frame ptrs
                                           # local var
                                           # local var
-                                          # less than
+                                          # relational expression
+          pushl     %eax                  # stash left operand
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
           subl      %ebx, %eax            # evaluate additive expression
+          popl      %ebx                  # restore left operand
+          cmpl      %eax, %ebx            # comparision
+          setl      %al                   # relation
+          movzbl    %al,%eax              # return result
                                           # local var
           pushl     %eax                  # push function argument onto stack
           pushl     %eax                  # push function argument onto stack
@@ -61,8 +77,13 @@ main:                                     #
           enter     $0, $0                # save stack & frame ptrs
                                           # local var
           movl      $0, %eax              # integer literal
-                                          # less than
+                                          # relational expression
+          pushl     %eax                  # stash left operand
           movl      $10, %eax             # integer literal
+          popl      %ebx                  # restore left operand
+          cmpl      %eax, %ebx            # comparision
+          setl      %al                   # relation
+          movzbl    %al,%eax              # return result
           call      input                 # invoke function
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
@@ -75,8 +96,13 @@ main:                                     #
           pushl     %eax                  # push function argument onto stack
           call      sort                  # invoke function
           movl      $0, %eax              # integer literal
-                                          # less than
+                                          # relational expression
+          pushl     %eax                  # stash left operand
           movl      $10, %eax             # integer literal
+          popl      %ebx                  # restore left operand
+          cmpl      %eax, %ebx            # comparision
+          setl      %al                   # relation
+          movzbl    %al,%eax              # return result
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
           pushl     %eax                  # push left operand to stack

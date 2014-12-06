@@ -32,6 +32,16 @@ class CodeGeneratorVisitor : public IVisitor
       {	AdditiveOperatorType::MINUS, "subl" }
     };
 
+  std::map<RelationalOperatorType, std::string> relInstruction =
+    {
+      { RelationalOperatorType::EQ , "sete"  },
+      { RelationalOperatorType::NEQ, "setne" },
+      { RelationalOperatorType::GT , "setg"  },
+      { RelationalOperatorType::GTE, "setge" },
+      { RelationalOperatorType::LT , "setl"  },
+      { RelationalOperatorType::LTE, "setle" }
+    };
+      
   // state variables
   bool inputFunctionReferenced;
   bool outputFunctionReferenced;
