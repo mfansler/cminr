@@ -3,63 +3,25 @@
                                           # 
                                           # Compiler v. 0.1.0
 ################################################################################
-                                          # array
-################################################################################
-.globl minloc
-          .type     minloc, @function     # "minloc" is type function
-minloc:                                   # 
-          enter     $0, $0                # save stack & frame ptrs
-          pushl     %eax                  # push left operand to stack
-          movl      $1, %eax              # integer literal
-          popl      %ebx                  # pop left operand to EBX
-          addl      %eax, %ebx            # evaluate additive expression
-                                          # less than
-                                          # less than
-          pushl     %eax                  # push left operand to stack
-          movl      $1, %eax              # integer literal
-          popl      %ebx                  # pop left operand to EBX
-          addl      %eax, %ebx            # evaluate additive expression
-          leave                           # 
-          ret                             # 
-                                          # array
-################################################################################
-.globl sort
-          .type     sort, @function       # "sort" is type function
-sort:                                     # 
-          enter     $0, $0                # save stack & frame ptrs
-                                          # less than
-          pushl     %eax                  # push left operand to stack
-          movl      $1, %eax              # integer literal
-          popl      %ebx                  # pop left operand to EBX
-          subl      %eax, %ebx            # evaluate additive expression
-          pushl     %eax                  # push left operand to stack
-          movl      $1, %eax              # integer literal
-          popl      %ebx                  # pop left operand to EBX
-          addl      %eax, %ebx            # evaluate additive expression
-          leave                           # 
-          ret                             # 
 ################################################################################
 .globl main
           .type     main, @function       # "main" is type function
 main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
-          movl      $0, %eax              # integer literal
-                                          # less than
-          movl      $10, %eax             # integer literal
-                                          # function ()
+          movl      $1, %eax              # integer literal
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
-          addl      %eax, %ebx            # evaluate additive expression
-          movl      $0, %eax              # integer literal
-          movl      $10, %eax             # integer literal
-          movl      $0, %eax              # integer literal
-                                          # less than
-          movl      $10, %eax             # integer literal
+          addl      %ebx, %eax            # evaluate additive expression
+          pushl     %eax                  # push function argument onto stack
+          call      output                # invoke function
+          movl      $1, %eax              # integer literal
           pushl     %eax                  # push left operand to stack
           movl      $1, %eax              # integer literal
           popl      %ebx                  # pop left operand to EBX
-          addl      %eax, %ebx            # evaluate additive expression
+          subl      %ebx, %eax            # evaluate additive expression
+          pushl     %eax                  # push function argument onto stack
+          call      output                # invoke function
           leave                           # 
           ret                             # 
 ################################################################################

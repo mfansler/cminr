@@ -1,0 +1,11 @@
+Program Node
+  Function: main: Void type
+    CompoundStatement
+      ExpressionStatement
+        FunctionCall: output: Void type
+          Arguments:
+            AdditiveExpression: +
+              Left:
+                FunctionCall: input: Int type ()
+              Right:
+                FunctionCall: input: Int type ()

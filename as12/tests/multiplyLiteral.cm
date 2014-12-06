@@ -1,0 +1,6 @@
+void main (void)
+{
+  output (5 * 5);
+  output (10 / 2);
+  output (355 / 113);
+}

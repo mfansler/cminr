@@ -26,14 +26,10 @@
 class CodeGeneratorVisitor : public IVisitor
 {
   AssemblyEmitter emitter;
-  std::map<ValueType, std::string> vtString =
+  std::map<AdditiveOperatorType, std::string> opString =
     {
-      {	ValueType::INT          , "Int type"           },
-      {	ValueType::VOID         , "Void type"          },
-      { ValueType::INT_ARRAY    , "Int Array type"     },
-      { ValueType::VOID_ARRAY   , "Void Array type"    },
-      { ValueType::INT_FUNCTION , "Int Function type"  },
-      { ValueType::VOID_FUNCTION, "Void Function type" }
+      {	AdditiveOperatorType::PLUS , "addl" },
+      {	AdditiveOperatorType::MINUS, "subl" }
     };
 
   // state variables

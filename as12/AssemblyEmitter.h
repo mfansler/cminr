@@ -50,7 +50,12 @@ public:
 		   const string& comment = "");
 
   void
-  emitDeclaration (const string& name);
+  emitFunctionDeclaration (const string& name);
+
+  void emitEnter (const string& a = "0", const string& b = "0");
+
+  void emitConstDeclaration (const string& name, const string& type,
+			     const string& value);
 
 };
   

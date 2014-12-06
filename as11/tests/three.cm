@@ -1,0 +1,6 @@
+void main(void)
+{
+        int isArr[5];
+
+        isArr=4;
+}

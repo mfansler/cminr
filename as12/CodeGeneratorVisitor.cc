@@ -23,6 +23,7 @@
 // Using declarations
 
 using std::endl;
+using std::to_string;
 
 /********************************************************************/
 // Class Methods
@@ -35,13 +36,18 @@ void
 CodeGeneratorVisitor::emitInputFunction ()
 {
   emitter.emitSeparator ();
-  emitter.emitComment ("Input Routine");
-  emitter.emitDeclaration ("input");
-  emitter.emitInstruction (".type", "input, @function", "");
 
+  emitter.emitComment ("Conversion string");
+  emitter.emitInstruction (".section", ".rodata");
+  emitter.emitConstDeclaration (".inStr", ".string", "\"%d\"");
+  
+  emitter.emitSeparator ();
+  
+  emitter.emitComment ("Input Routine");
+  emitter.emitFunctionDeclaration ("input");
   emitter.emitLabel ("input");
 
-  emitter.emitInstruction ("enter", "$0, $0");
+  emitter.emitEnter ();
 
   emitter.emitInstruction ("subl", "$4, %esp", "create slot for result");
   emitter.emitInstruction ("pushl", "%esp", "push slot's address");
@@ -56,7 +62,27 @@ CodeGeneratorVisitor::emitInputFunction ()
 void
 CodeGeneratorVisitor::emitOutputFunction ()
 {
+  emitter.emitSeparator ();
 
+  emitter.emitComment ("Conversion string");
+  emitter.emitInstruction (".section", ".rodata");
+  emitter.emitConstDeclaration (".outStr", ".string", "\"%d\\n\"");
+  
+  emitter.emitSeparator ();
+
+  emitter.emitComment ("Output Routine");
+  emitter.emitFunctionDeclaration ("output");
+
+  emitter.emitLabel ("output");
+
+  emitter.emitEnter ();
+
+  emitter.emitInstruction ("pushl", "8(%ebp)", "retrieve the integer to output");
+  emitter.emitInstruction ("pushl", "$.outStr", "push conversion spec");
+  emitter.emitInstruction ("call", "printf", "call printf");
+  
+  emitter.emitInstruction ("leave", "", "reset stack & frame pointers");
+  emitter.emitInstruction ("ret", "", "return to caller");
 }
 
 void
@@ -86,11 +112,20 @@ CodeGeneratorVisitor::visit (DeclarationNode* node)
 
 void
 CodeGeneratorVisitor::visit (FunctionDeclarationNode* node)
-{
+{  
   for (ParameterNode* p : node->parameters)
     p->accept (this);
 
+  emitter.emitSeparator ();
+  emitter.emitFunctionDeclaration (node->identifier);
+  emitter.emitLabel (node->identifier);
+
+  emitter.emitEnter ();
+  
   node->functionBody->accept (this);
+
+  emitter.emitInstruction ("leave");
+  emitter.emitInstruction ("ret");
 }
 
 void
@@ -182,35 +217,40 @@ CodeGeneratorVisitor::visit (AssignmentExpressionNode* node)
 void
 CodeGeneratorVisitor::visit (AdditiveExpressionNode* node)
 {
-  switch (node->addOperator)
-  {
-  case AdditiveOperatorType::PLUS:
-    emitter.emitComment ("Addition!");
-    break;
-  case AdditiveOperatorType::MINUS:
-    emitter.emitComment ("Subtraction");
-    break;
-  }
-
   node->left->accept (this);
+
+  emitter.emitInstruction ("pushl", "%eax", "push left operand to stack");
+  
   node->right->accept (this);
+
+  emitter.emitInstruction ("popl", "%ebx", "pop left operand to EBX");
+  emitter.emitInstruction (opString[node->addOperator], "%ebx, %eax",
+			   "evaluate additive expression"); 
 }
 
 void
 CodeGeneratorVisitor::visit (MultiplicativeExpressionNode* node)
 {
+  node->right->accept (this);
+  
+  emitter.emitInstruction ("pushl", "%eax", "push right operand to stack");
+
+  node->left->accept (this);
+  
   switch (node->multOperator)
   {
   case MultiplicativeOperatorType::TIMES:
-    emitter.emitComment ("Multiplication");
+    emitter.emitInstruction ("popl", "%ebx", "restore right operand");
+    emitter.emitInstruction ("imul", "%ebx, %eax", "evaluate multiplication");
     break;
+
   case MultiplicativeOperatorType::DIVIDE:
-    emitter.emitComment ("Division");
+    emitter.emitInstruction ("popl", "%ebx", "restore divisor");
+    emitter.emitInstruction ("cdq", "", "change Double EAX to Quad EDX:EAX");
+    emitter.emitComment ("see: http://stackoverflow.com/a/19853558");
+    emitter.emitInstruction ("idivl", "%ebx", "divide EDX:EAX by EBX");
     break;
   }
-
-  node->left->accept (this);
-  node->right->accept (this);
 }
 
 void
@@ -262,6 +302,8 @@ CodeGeneratorVisitor::visit (UnaryExpressionNode* node)
 void
 CodeGeneratorVisitor::visit (IntegerLiteralExpressionNode* node)
 {
+  emitter.emitInstruction ("movl", "$" + to_string (node->value) + ", %eax",
+			   "integer literal");
 }
 
 void
@@ -283,20 +325,20 @@ CodeGeneratorVisitor::visit (SubscriptExpressionNode* node)
 void
 CodeGeneratorVisitor::visit (CallExpressionNode* node)
 {
-  if (node->declaration->identifier == "input" &&
-      node->declaration->nestLevel == 0)
-    inputFunctionReferenced = true;
+  // flag any uses of external methods
+  inputFunctionReferenced = inputFunctionReferenced ||
+    node->declaration->identifier == "input";
 
-  if (node->declaration->identifier == "output" &&
-      node->declaration->nestLevel == 0)
-    outputFunctionReferenced = true;
-  
-  
-  if (node->arguments.size() > 0)
+  outputFunctionReferenced = outputFunctionReferenced ||
+    node->declaration->identifier == "output";
+
+  // push arguments on stack in reverse order
+  for (auto rit = node->arguments.rbegin (); rit != node->arguments.rend (); ++rit)
   {
-    for (auto a : node->arguments)
-      a->accept (this);
+    (*rit)->accept (this);
+    emitter.emitInstruction ("pushl", "%eax", "push function argument onto stack");
   }
-  else
-    emitter.emitComment ("function ()");
+
+  emitter.emitInstruction ("call", node->declaration->identifier,
+			   "invoke function");
 }

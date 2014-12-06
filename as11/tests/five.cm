@@ -1,0 +1,10 @@
+void foo(int f, int oo[])
+{
+}
+
+void main(void)
+{
+  int bar;
+  int baz[2];
+  foo(baz, bar);
+}

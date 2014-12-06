@@ -1,0 +1,10 @@
+int notVar(void)
+{
+        return 1;
+}
+
+void main(void)
+{
+        int isVar;
+        isVar = notVar + 1;
+}
