@@ -291,13 +291,13 @@ CodeGeneratorVisitor::visit (AssignmentExpressionNode* node)
 void
 CodeGeneratorVisitor::visit (AdditiveExpressionNode* node)
 {
-  node->left->accept (this);
-
-  emitter.emitInstruction ("pushl", "%eax", "push left operand to stack");
-  
   node->right->accept (this);
 
-  emitter.emitInstruction ("popl", "%ebx", "pop left operand to EBX");
+  emitter.emitInstruction ("pushl", "%eax", "push right operand to stack");
+  
+  node->left->accept (this);
+
+  emitter.emitInstruction ("popl", "%ebx", "pop right operand to EBX");
   emitter.emitInstruction (opString[node->addOperator], "%ebx, %eax",
 			   "evaluate additive expression"); 
 }
@@ -347,17 +347,11 @@ CodeGeneratorVisitor::visit (RelationalExpressionNode* node)
 void
 CodeGeneratorVisitor::visit (UnaryExpressionNode* node)
 {
-  switch (node->unaryOperator)
-  {
-  case UnaryOperatorType::INCREMENT:
-    emitter.emitComment ("++");
-    break;
-  case UnaryOperatorType::DECREMENT:
-    emitter.emitComment ("--");
-    break;
-  }
-  
   node->variable->accept (this);
+  emitter.emitInstruction (unaryInstruction[node->unaryOperator],
+			   node->variable->asmReference,
+			   "increment/decrement variable");
+  emitter.emitInstruction ("movl", node->variable->asmReference + ", %eax", "pass result");
 }
 
 void

@@ -41,6 +41,12 @@ class CodeGeneratorVisitor : public IVisitor
       { RelationalOperatorType::LT , "setl"  },
       { RelationalOperatorType::LTE, "setle" }
     };
+
+  std::map<UnaryOperatorType, std::string> unaryInstruction =
+    {
+      { UnaryOperatorType::INCREMENT, "incl" },
+      { UnaryOperatorType::DECREMENT, "decl" }
+    };
       
   // state variables
   bool inputFunctionReferenced;
