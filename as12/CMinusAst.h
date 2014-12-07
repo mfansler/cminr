@@ -170,6 +170,7 @@ struct DeclarationNode : Node
   string identifier;
 
   int nestLevel;
+  int offset;
 
   ValueType evalType;
 };

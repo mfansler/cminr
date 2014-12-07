@@ -33,7 +33,7 @@ CodeGeneratorVisitor::CodeGeneratorVisitor (std::ofstream &strm)
   : emitter (strm)
   , inputFunctionReferenced (false)
   , outputFunctionReferenced (false)
-  , retrieveVariableAddress (false)
+  , currentOffset (0)
 {}
 
 CodeGeneratorVisitor::~CodeGeneratorVisitor () {}
@@ -134,10 +134,12 @@ CodeGeneratorVisitor::visit (DeclarationNode* node) {}
 
 void
 CodeGeneratorVisitor::visit (FunctionDeclarationNode* node)
-{  
+{
+  int prevOffset = currentOffset;
+  currentOffset = 4;
   for (ParameterNode* p : node->parameters)
     p->accept (this);
-
+  
   emitter.emitSeparator ();
   emitter.emitFunctionDeclaration (node->identifier);
   emitter.emitLabel (node->identifier);
@@ -148,6 +150,8 @@ CodeGeneratorVisitor::visit (FunctionDeclarationNode* node)
 
   emitter.emitInstruction ("leave");
   emitter.emitInstruction ("ret");
+
+  currentOffset = prevOffset;
 }
 
 void
@@ -165,7 +169,9 @@ CodeGeneratorVisitor::visit (VariableDeclarationNode* node)
   }
   else
   {
-    emitter.emitComment ("local var");
+    emitter.emitInstruction ("subl", "$4, %esp", "allocate local variable " + node->identifier);
+    currentOffset += 4;
+    node->offset = currentOffset;
   }
 }
 
@@ -184,15 +190,21 @@ CodeGeneratorVisitor::visit (ArrayDeclarationNode* node)
   }
   else
   {
-    emitter.emitComment ("local array");
+    emitter.emitInstruction ("subl", "$" + to_string (4*node->size) + ", %esp",
+			     "allocate local array " + node->identifier);
+    currentOffset += 4 * node->size;
+    node->offset = currentOffset;
   }
 }
 
 void
 CodeGeneratorVisitor::visit (ParameterNode* node)
 {
-  if (node->isArray)
-    emitter.emitComment ("array");
+  currentOffset += 4;
+  node->offset = currentOffset;
+  
+  //if (node->isArray)
+  //  emitter.emitComment ("array");
 }
 
 void
@@ -203,10 +215,16 @@ CodeGeneratorVisitor::visit (StatementNode* node)
 void
 CodeGeneratorVisitor::visit (CompoundStatementNode* node)
 {
+  int prevOffset = currentOffset;
+  currentOffset = 0;
   for (auto l : node->localDeclarations)
     l->accept (this);
   for (auto s : node->statements)
     s->accept (this);
+
+  emitter.emitInstruction ("addl", "$" + to_string (currentOffset) + ", %esp",
+			   "deallocate local variables");
+  currentOffset = prevOffset;
 }
 
 void
@@ -365,8 +383,8 @@ CodeGeneratorVisitor::visit (VariableExpressionNode* node)
   }
   else
   {
-    node->asmReference = "";
-    emitter.emitComment ("local variable");
+    node->asmReference = "-" + to_string (node->declaration->offset) + "(%ebp)";
+    emitter.emitInstruction ("movl", node->asmReference + ", %eax", "local variable");
   }
 }
 
