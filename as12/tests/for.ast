@@ -1,0 +1,20 @@
+Program Node
+  Function: main: Void type
+    CompoundStatement
+      VariableDeclaration: x: Int type
+      For
+        Assignment
+          Variable: x: Int type
+          Integer: 0: Int type
+        RelationalExpression: <
+          Left:
+            Variable: x: Int type
+          Right:
+            Integer: 10: Int type
+        UnaryExpression: ++
+          Variable: x: Int type
+        CompoundStatement
+          ExpressionStatement
+            FunctionCall: output: Void type
+              Arguments:
+                Variable: x: Int type

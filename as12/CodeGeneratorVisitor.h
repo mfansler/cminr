@@ -52,6 +52,7 @@ class CodeGeneratorVisitor : public IVisitor
   bool inputFunctionReferenced;
   bool outputFunctionReferenced;
   int currentOffset;
+  int labelCounter;
   
   // global method emitters
   void

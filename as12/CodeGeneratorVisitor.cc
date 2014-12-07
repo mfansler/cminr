@@ -34,6 +34,7 @@ CodeGeneratorVisitor::CodeGeneratorVisitor (std::ofstream &strm)
   , inputFunctionReferenced (false)
   , outputFunctionReferenced (false)
   , currentOffset (0)
+  , labelCounter (0)
 {}
 
 CodeGeneratorVisitor::~CodeGeneratorVisitor () {}
@@ -231,25 +232,64 @@ void
 CodeGeneratorVisitor::visit (IfStatementNode* node)
 {
   node->conditionalExpression->accept (this);
+  
+  emitter.emitInstruction ("cmpl", "$0, %eax", "test condition");
+  emitter.emitInstruction ("je", ".L" + to_string (labelCounter));
+
+  // process THEN body
   node->thenStatement->accept (this);
+
+  // process ELSE body
   if (node->elseStatement != nullptr)
+  { 
+    emitter.emitInstruction ("jmp", ".L" + to_string (labelCounter + 1));
+    emitter.emitLabel (".L" + to_string (labelCounter++));
     node->elseStatement->accept (this);
+  }
+  
+  // emit END label
+  emitter.emitLabel (".L" + to_string (labelCounter++));
 }
 
 void
 CodeGeneratorVisitor::visit (WhileStatementNode* node)
 {
+  // WHILE label
+  emitter.emitLabel (".L" + to_string (labelCounter));
+  
   node->conditionalExpression->accept (this);
+  emitter.emitInstruction ("cmpl", "$0, %eax", "test condition");
+  emitter.emitInstruction ("je", ".L" + to_string (labelCounter + 1));
+
   node->body->accept (this);
+
+  // jump back to WHILE label
+  emitter.emitInstruction ("jmp", ".L" + to_string (labelCounter++));
+
+  // END label
+  emitter.emitLabel (".L" + to_string (labelCounter++));  
 }
 
 void
 CodeGeneratorVisitor::visit (ForStatementNode* node)
 {
   node->initializer->accept (this);
+
+  // FOR label
+  emitter.emitLabel (".L" + to_string (labelCounter));
+
   node->condition->accept (this);
-  node->updater->accept (this);
+  emitter.emitInstruction ("cmpl", "$0, %eax", "test condition");
+  emitter.emitInstruction ("je", ".L" + to_string (labelCounter + 1));
+  
   node->body->accept (this);
+  node->updater->accept (this);
+
+  // jump back to FOR label
+  emitter.emitInstruction ("jmp", ".L" + to_string (labelCounter++));
+
+  // END label
+  emitter.emitLabel (".L" + to_string (labelCounter++));    
 }
 
 void
