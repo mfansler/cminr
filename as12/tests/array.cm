@@ -1,0 +1,28 @@
+int x[10];
+
+void
+main (void)
+{
+  int i;
+  int y[10];
+
+  for (i = 0; i < 10; ++i)
+  {
+    x[i] = i;
+  }
+
+  for (i = 0; i < 10; ++i)
+  {
+    output (x[i]);
+  }
+
+  for (i = 0; i < 10; ++i)
+  {
+    y[i] = x[i] * x[i];
+  }
+
+  for (i = 0; i < 10; ++i)
+  {
+    output (y[i]);
+  }
+}

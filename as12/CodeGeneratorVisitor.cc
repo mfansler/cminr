@@ -430,9 +430,18 @@ CodeGeneratorVisitor::visit (SubscriptExpressionNode* node)
   
   if (node->declaration->nestLevel == 0)
   {
-    
+    node->asmReference = node->identifier + "(,%ebx,4)";
+    emitter.emitInstruction ("movl", node->asmReference +", %eax",
+			     "load global variable");
   }
-  node->asmReference = "";
+  else
+  {
+    emitter.emitInstruction ("movl", "%ebp, %eax");
+    emitter.emitInstruction ("subl", "$" + to_string (node->declaration->offset) + ", %eax");
+    emitter.emitInstruction ("leal", "(%eax,%ebx,4), %ebx", "compute address");
+    node->asmReference = "(%ebx)";
+    emitter.emitInstruction ("movl", node->asmReference + ", %eax", "load value into EAX");
+  }
 }
 
 void

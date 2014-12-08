@@ -30,7 +30,7 @@ main:
 	.cfi_offset 5, -8
 	movl	%esp, %ebp
 	.cfi_def_cfa_register 5
-	subl	$16, %esp
+	subl	$48, %esp
 	movl	$0, z
 	movl	z, %eax
 	movl	$5, a(,%eax,4)
@@ -40,6 +40,7 @@ main:
 	movl	-4(%ebp), %eax
 	addl	%eax, %eax
 	movl	%eax, y
+	movl	$7, -16(%ebp)
 	movl	z, %eax
 	leave
 	.cfi_restore 5

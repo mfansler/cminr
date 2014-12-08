@@ -1,0 +1,86 @@
+Program Node
+  Variable: x[10]: Int type
+  Function: main: Void type
+    CompoundStatement
+      VariableDeclaration: i: Int type
+      Variable: y[10]: Int type
+      For
+        Assignment
+          Variable: i: Int type
+          Integer: 0: Int type
+        RelationalExpression: <
+          Left:
+            Variable: i: Int type
+          Right:
+            Integer: 10: Int type
+        UnaryExpression: ++
+          Variable: i: Int type
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Subscript: x: Int type
+                Index:
+                  Variable: i: Int type
+              Variable: i: Int type
+      For
+        Assignment
+          Variable: i: Int type
+          Integer: 0: Int type
+        RelationalExpression: <
+          Left:
+            Variable: i: Int type
+          Right:
+            Integer: 10: Int type
+        UnaryExpression: ++
+          Variable: i: Int type
+        CompoundStatement
+          ExpressionStatement
+            FunctionCall: output: Void type
+              Arguments:
+                Subscript: x: Int type
+                  Index:
+                    Variable: i: Int type
+      For
+        Assignment
+          Variable: i: Int type
+          Integer: 0: Int type
+        RelationalExpression: <
+          Left:
+            Variable: i: Int type
+          Right:
+            Integer: 10: Int type
+        UnaryExpression: ++
+          Variable: i: Int type
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Subscript: y: Int type
+                Index:
+                  Variable: i: Int type
+              MultiplicativeExpression: *
+                Left:
+                  Subscript: x: Int type
+                    Index:
+                      Variable: i: Int type
+                Right:
+                  Subscript: x: Int type
+                    Index:
+                      Variable: i: Int type
+      For
+        Assignment
+          Variable: i: Int type
+          Integer: 0: Int type
+        RelationalExpression: <
+          Left:
+            Variable: i: Int type
+          Right:
+            Integer: 10: Int type
+        UnaryExpression: ++
+          Variable: i: Int type
+        CompoundStatement
+          ExpressionStatement
+            FunctionCall: output: Void type
+              Arguments:
+                Subscript: y: Int type
+                  Index:
+                    Variable: i: Int type

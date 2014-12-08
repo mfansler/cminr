@@ -4,6 +4,7 @@ int a[10];
 
 int main () {
   int x;
+  int b[10];
 
   z = 0;
 
@@ -14,6 +15,8 @@ int main () {
   x++;
 
   y = 2 * x;
+
+  b[7] = 7;
 
   return z;
 }
