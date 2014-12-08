@@ -60,6 +60,7 @@ DeclarationNode::DeclarationNode (ValueType t, string id, int row, int col)
   : Node (row, col)
   , valueType (t)
   , identifier (id)
+  , isParameter (false)
 {}
 
 DeclarationNode::~DeclarationNode () {}

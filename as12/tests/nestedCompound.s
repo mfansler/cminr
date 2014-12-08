@@ -10,21 +10,26 @@
           .type     main, @function       # "main" is type function
 main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
-          movl      $1, %eax              # integer literal
-          pushl     %eax                  # push right operand to stack
-          movl      $1, %eax              # integer literal
-          popl      %ebx                  # pop right operand to EBX
-          addl      %ebx, %eax            # evaluate additive expression
+          subl      $4, %esp              # allocate local variable x
+          movl      $13, %eax             # integer literal
+          pushl     %eax                  # save assigning value
+          movl      -4(%ebp), %eax        # local variable
+          popl      -4(%ebp)              # pop value into variable
+          movl      -4(%ebp), %eax        # pass result
+          subl      $4, %esp              # allocate local variable x
+          movl      $57, %eax             # integer literal
+          pushl     %eax                  # save assigning value
+          movl      -8(%ebp), %eax        # local variable
+          popl      -8(%ebp)              # pop value into variable
+          movl      -8(%ebp), %eax        # pass result
+          movl      -8(%ebp), %eax        # local variable
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
-          movl      $1, %eax              # integer literal
-          pushl     %eax                  # push right operand to stack
-          movl      $1, %eax              # integer literal
-          popl      %ebx                  # pop right operand to EBX
-          subl      %ebx, %eax            # evaluate additive expression
+          addl      $4, %esp              # deallocate local variables
+          movl      -4(%ebp), %eax        # local variable
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
-          addl      $0, %esp              # deallocate local variables
+          addl      $4, %esp              # deallocate local variables
           leave                           # 
           ret                             # 
 ################################################################################

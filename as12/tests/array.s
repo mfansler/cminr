@@ -39,7 +39,7 @@ main:                                     #
           pushl     %eax                  # save assigning value
           movl      -4(%ebp), %eax        # local variable
           movl      %eax, %ebx            # store index value in EBX
-          movl      x(,%ebx,4), %eax      # load global variable
+          movl      x(,%ebx,4), %eax      # load value into EAX
           popl      x(,%ebx,4)            # pop value into variable
           movl      x(,%ebx,4), %eax      # pass result
           addl      $0, %esp              # deallocate local variables
@@ -66,7 +66,7 @@ main:                                     #
           je        .L3                   # 
           movl      -4(%ebp), %eax        # local variable
           movl      %eax, %ebx            # store index value in EBX
-          movl      x(,%ebx,4), %eax      # load global variable
+          movl      x(,%ebx,4), %eax      # load value into EAX
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
           addl      $0, %esp              # deallocate local variables
@@ -93,11 +93,11 @@ main:                                     #
           je        .L5                   # 
           movl      -4(%ebp), %eax        # local variable
           movl      %eax, %ebx            # store index value in EBX
-          movl      x(,%ebx,4), %eax      # load global variable
+          movl      x(,%ebx,4), %eax      # load value into EAX
           pushl     %eax                  # push right operand to stack
           movl      -4(%ebp), %eax        # local variable
           movl      %eax, %ebx            # store index value in EBX
-          movl      x(,%ebx,4), %eax      # load global variable
+          movl      x(,%ebx,4), %eax      # load value into EAX
           popl      %ebx                  # restore right operand
           imul      %ebx, %eax            # evaluate multiplication
           pushl     %eax                  # save assigning value

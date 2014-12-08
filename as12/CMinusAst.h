@@ -173,6 +173,8 @@ struct DeclarationNode : Node
   int offset;
 
   ValueType evalType;
+
+  bool isParameter;
 };
 
 struct FunctionDeclarationNode : DeclarationNode

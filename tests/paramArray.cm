@@ -1,0 +1,20 @@
+void
+get (int x[], int pos)
+{
+  output (x[pos]);
+}
+
+void
+main (void)
+{
+  int a[10];
+  int i;
+
+  for (i = 0; i < 10; ++i)
+  {
+    a[i] = i;
+    output (i);
+    output (a[i]);
+    get (a, i);
+  }
+}

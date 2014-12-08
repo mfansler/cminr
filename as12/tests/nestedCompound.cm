@@ -1,0 +1,21 @@
+/*
+  should print
+    57
+    13
+*/
+
+void
+main (void)
+{
+  int x;
+  x = 13;
+
+  {
+    int x;
+    x = 57;
+
+    output (x);
+  }
+
+  output (x);
+}

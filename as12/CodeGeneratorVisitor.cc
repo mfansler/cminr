@@ -33,11 +33,18 @@ CodeGeneratorVisitor::CodeGeneratorVisitor (std::ofstream &strm)
   : emitter (strm)
   , inputFunctionReferenced (false)
   , outputFunctionReferenced (false)
-  , currentOffset (0)
+  , ebpOffset (0)
+  , paramOffset (1)
   , labelCounter (0)
 {}
 
 CodeGeneratorVisitor::~CodeGeneratorVisitor () {}
+
+string
+CodeGeneratorVisitor::createLabel ()
+{
+  return ".L" + to_string (labelCounter++);
+}
 
 void
 CodeGeneratorVisitor::emitInputFunction ()
@@ -136,8 +143,9 @@ CodeGeneratorVisitor::visit (DeclarationNode* node) {}
 void
 CodeGeneratorVisitor::visit (FunctionDeclarationNode* node)
 {
-  int prevOffset = currentOffset;
-  currentOffset = 4;
+  int prevEBPOffset = ebpOffset;
+  
+  paramOffset = 8;
   for (ParameterNode* p : node->parameters)
     p->accept (this);
   
@@ -152,7 +160,7 @@ CodeGeneratorVisitor::visit (FunctionDeclarationNode* node)
   emitter.emitInstruction ("leave");
   emitter.emitInstruction ("ret");
 
-  currentOffset = prevOffset;
+  ebpOffset = prevEBPOffset;
 }
 
 void
@@ -171,8 +179,8 @@ CodeGeneratorVisitor::visit (VariableDeclarationNode* node)
   else
   {
     emitter.emitInstruction ("subl", "$4, %esp", "allocate local variable " + node->identifier);
-    currentOffset += 4;
-    node->offset = currentOffset;
+    ebpOffset += 4;
+    node->offset = ebpOffset;
   }
 }
 
@@ -193,19 +201,17 @@ CodeGeneratorVisitor::visit (ArrayDeclarationNode* node)
   {
     emitter.emitInstruction ("subl", "$" + to_string (4*node->size) + ", %esp",
 			     "allocate local array " + node->identifier);
-    currentOffset += 4 * node->size;
-    node->offset = currentOffset;
+    ebpOffset += 4 * node->size;
+    node->offset = ebpOffset;
   }
 }
 
 void
 CodeGeneratorVisitor::visit (ParameterNode* node)
 {
-  currentOffset += 4;
-  node->offset = currentOffset;
-  
-  //if (node->isArray)
-  //  emitter.emitComment ("array");
+  node->offset = paramOffset;
+  paramOffset += 4;
+  node->isParameter = true;
 }
 
 void
@@ -216,58 +222,67 @@ CodeGeneratorVisitor::visit (StatementNode* node)
 void
 CodeGeneratorVisitor::visit (CompoundStatementNode* node)
 {
-  int prevOffset = currentOffset;
-  currentOffset = 0;
+  int prevOffset = ebpOffset;
+  
   for (auto l : node->localDeclarations)
     l->accept (this);
   for (auto s : node->statements)
     s->accept (this);
 
-  emitter.emitInstruction ("addl", "$" + to_string (currentOffset) + ", %esp",
+  emitter.emitInstruction ("addl", "$" + to_string (ebpOffset - prevOffset) + ", %esp",
 			   "deallocate local variables");
-  currentOffset = prevOffset;
+  ebpOffset = prevOffset;
 }
 
 void
 CodeGeneratorVisitor::visit (IfStatementNode* node)
 {
+  string endThenLabel = createLabel ();
+  string endElseLabel = createLabel ();
+    
   node->conditionalExpression->accept (this);
   
   emitter.emitInstruction ("cmpl", "$0, %eax", "test condition");
-  emitter.emitInstruction ("je", ".L" + to_string (labelCounter));
+  emitter.emitInstruction ("je", endThenLabel);
 
   // process THEN body
   node->thenStatement->accept (this);
 
   // process ELSE body
   if (node->elseStatement != nullptr)
-  { 
-    emitter.emitInstruction ("jmp", ".L" + to_string (labelCounter + 1));
-    emitter.emitLabel (".L" + to_string (labelCounter++));
+  {
+    emitter.emitInstruction ("jmp", endElseLabel);
+    emitter.emitLabel (endThenLabel);
     node->elseStatement->accept (this);
+    emitter.emitLabel (endElseLabel);
   }
-  
-  // emit END label
-  emitter.emitLabel (".L" + to_string (labelCounter++));
+  else
+  {
+    emitter.emitLabel (endThenLabel);
+  }
 }
 
 void
 CodeGeneratorVisitor::visit (WhileStatementNode* node)
 {
+  string beginWhileLabel = createLabel (); 
+  string endWhileLabel = createLabel ();
+
   // WHILE label
-  emitter.emitLabel (".L" + to_string (labelCounter));
+  emitter.emitLabel (beginWhileLabel);
   
   node->conditionalExpression->accept (this);
   emitter.emitInstruction ("cmpl", "$0, %eax", "test condition");
-  emitter.emitInstruction ("je", ".L" + to_string (labelCounter + 1));
+
+  emitter.emitInstruction ("je", endWhileLabel);
 
   node->body->accept (this);
 
   // jump back to WHILE label
-  emitter.emitInstruction ("jmp", ".L" + to_string (labelCounter++));
+  emitter.emitInstruction ("jmp", beginWhileLabel);
 
   // END label
-  emitter.emitLabel (".L" + to_string (labelCounter++));  
+  emitter.emitLabel (endWhileLabel);
 }
 
 void
@@ -275,21 +290,25 @@ CodeGeneratorVisitor::visit (ForStatementNode* node)
 {
   node->initializer->accept (this);
 
+  string beginForLabel = createLabel ();
+  string endForLabel = createLabel ();
+  
   // FOR label
-  emitter.emitLabel (".L" + to_string (labelCounter));
+  emitter.emitLabel (beginForLabel);
 
   node->condition->accept (this);
   emitter.emitInstruction ("cmpl", "$0, %eax", "test condition");
-  emitter.emitInstruction ("je", ".L" + to_string (labelCounter + 1));
+  
+  emitter.emitInstruction ("je", endForLabel);
   
   node->body->accept (this);
   node->updater->accept (this);
 
   // jump back to FOR label
-  emitter.emitInstruction ("jmp", ".L" + to_string (labelCounter++));
+  emitter.emitInstruction ("jmp", beginForLabel);
 
   // END label
-  emitter.emitLabel (".L" + to_string (labelCounter++));    
+  emitter.emitLabel (endForLabel);    
 }
 
 void
@@ -409,17 +428,18 @@ CodeGeneratorVisitor::visit (ReferenceNode* node)
 void
 CodeGeneratorVisitor::visit (VariableExpressionNode* node)
 {
-  if (node->declaration->nestLevel == 0)
+  if (node->declaration->isParameter)
   {
-    emitter.emitInstruction ("movl", node->identifier + ", %eax",
-			     "load global variable value");
+    node->asmReference = to_string (node->declaration->offset) + "(%ebp)";
+  }
+  else if (node->declaration->nestLevel == 0)
+  {
     node->asmReference = node->identifier;
   }
   else
-  {
     node->asmReference = "-" + to_string (node->declaration->offset) + "(%ebp)";
-    emitter.emitInstruction ("movl", node->asmReference + ", %eax", "local variable");
-  }
+  
+  emitter.emitInstruction ("movl", node->asmReference + ", %eax", "variable expression");
 }
 
 void
@@ -427,12 +447,17 @@ CodeGeneratorVisitor::visit (SubscriptExpressionNode* node)
 {
   node->index->accept (this);
   emitter.emitInstruction ("movl", "%eax, %ebx", "store index value in EBX");
-  
-  if (node->declaration->nestLevel == 0)
+
+  if (node->declaration->isParameter)
+  {
+    emitter.emitInstruction ("movl", "%ebp, %eax");
+    emitter.emitInstruction ("addl", "$" + to_string (node->declaration->offset) + ", %eax");
+    emitter.emitInstruction ("leal", "(%eax,%ebx,4), %ebx", "compute address");
+    node->asmReference = "(%ebx)";
+  }
+  else if (node->declaration->nestLevel == 0)
   {
     node->asmReference = node->identifier + "(,%ebx,4)";
-    emitter.emitInstruction ("movl", node->asmReference +", %eax",
-			     "load global variable");
   }
   else
   {
@@ -440,8 +465,9 @@ CodeGeneratorVisitor::visit (SubscriptExpressionNode* node)
     emitter.emitInstruction ("subl", "$" + to_string (node->declaration->offset) + ", %eax");
     emitter.emitInstruction ("leal", "(%eax,%ebx,4), %ebx", "compute address");
     node->asmReference = "(%ebx)";
-    emitter.emitInstruction ("movl", node->asmReference + ", %eax", "load value into EAX");
   }
+
+  emitter.emitInstruction ("movl", node->asmReference + ", %eax", "load value into EAX");
 }
 
 void

@@ -1,0 +1,52 @@
+Program Node
+  Function: triangularNumber: Int type
+    Parameter: x: Int type
+    CompoundStatement
+      If
+        RelationalExpression: <
+          Left:
+            Variable: x: Int type
+          Right:
+            Integer: 1: Int type
+        CompoundStatement
+          Return
+            Integer: 0: Int type
+        CompoundStatement
+          Return
+            AdditiveExpression: +
+              Left:
+                Variable: x: Int type
+              Right:
+                FunctionCall: triangularNumber: Int type
+                  Arguments:
+                    AdditiveExpression: -
+                      Left:
+                        Variable: x: Int type
+                      Right:
+                        Integer: 1: Int type
+  Function: main: Void type
+    CompoundStatement
+      VariableDeclaration: n: Int type
+      VariableDeclaration: i: Int type
+      ExpressionStatement
+        Assignment
+          Variable: n: Int type
+          FunctionCall: input: Int type ()
+      For
+        Assignment
+          Variable: i: Int type
+          Integer: 1: Int type
+        RelationalExpression: <=
+          Left:
+            Variable: i: Int type
+          Right:
+            Variable: n: Int type
+        UnaryExpression: ++
+          Variable: i: Int type
+        CompoundStatement
+          ExpressionStatement
+            FunctionCall: output: Void type
+              Arguments:
+                FunctionCall: triangularNumber: Int type
+                  Arguments:
+                    Variable: i: Int type

@@ -1,7 +1,9 @@
 ################################################################################
                                           # C- Compiled to IA-32 Code
-                                          # 
                                           # Compiler v. 0.1.0
+################################################################################
+                                          # Global Variables
+                                          # 
 ################################################################################
 ################################################################################
 .globl main
@@ -19,7 +21,8 @@ main:                                     #
           pushl     %eax                  # push right operand to stack
           movl      $10, %eax             # integer literal
           popl      %ebx                  # restore divisor
-          movl      $0, %edx              # initialize EDX to 0
+          cdq                             # change Double EAX to Quad EDX:EAX
+                                          # see: http://stackoverflow.com/a/19853558
           idivl     %ebx                  # divide EDX:EAX by EBX
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
@@ -27,29 +30,14 @@ main:                                     #
           pushl     %eax                  # push right operand to stack
           movl      $355, %eax            # integer literal
           popl      %ebx                  # restore divisor
-          movl      $0, %edx              # initialize EDX to 0
+          cdq                             # change Double EAX to Quad EDX:EAX
+                                          # see: http://stackoverflow.com/a/19853558
           idivl     %ebx                  # divide EDX:EAX by EBX
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
+          addl      $0, %esp              # deallocate local variables
           leave                           # 
           ret                             # 
-################################################################################
-                                          # Conversion string
-          .section  .rodata               # 
-.inStr:   .string   "%d"                  
-################################################################################
-                                          # Input Routine
-.globl input
-          .type     input, @function      # "input" is type function
-input:                                    # 
-          enter     $0, $0                # save stack & frame ptrs
-          subl      $4, %esp              # create slot for result
-          pushl     %esp                  # push slot's address
-          pushl     $.inStr               # push conversion spec
-          call      scanf                 # read an integer
-          movl      8(%esp), %eax         # move int to %eax
-          leave                           # reset stack & frame pointers
-          ret                             # return to caller
 ################################################################################
                                           # Conversion string
           .section  .rodata               # 

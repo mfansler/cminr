@@ -1,7 +1,9 @@
 ################################################################################
                                           # C- Compiled to IA-32 Code
-                                          # 
                                           # Compiler v. 0.1.0
+################################################################################
+                                          # Global Variables
+                                          # 
 ################################################################################
 ################################################################################
 .globl main
@@ -9,12 +11,13 @@
 main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
           call      input                 # invoke function
-          pushl     %eax                  # push left operand to stack
+          pushl     %eax                  # push right operand to stack
           call      input                 # invoke function
-          popl      %ebx                  # pop left operand to EBX
+          popl      %ebx                  # pop right operand to EBX
           addl      %ebx, %eax            # evaluate additive expression
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
+          addl      $0, %esp              # deallocate local variables
           leave                           # 
           ret                             # 
 ################################################################################
