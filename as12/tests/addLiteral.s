@@ -1,5 +1,5 @@
 ################################################################################
-                                          # C- Compiled to IA-32 Code
+                                          # C- Compiled to IA-32 Assembly Instructions
                                           # Compiler v. 0.1.0
 ################################################################################
                                           # Global Variables
@@ -10,25 +10,27 @@
           .type     main, @function       # "main" is type function
 main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
-                                          # {-> Begin coumpound statement
+                                          # {-> Begin compound statement
+                                          # Additive expression: begin evaluating rhs
           movl      $1, %eax              # integer literal
-          pushl     %eax                  # push right operand to stack
+          pushl     %eax                  # save rhs value while computing lhs
           movl      $1, %eax              # integer literal
-          popl      %ebx                  # pop right operand to EBX
+          popl      %ebx                  # restore rhs operand
           addl      %ebx, %eax            # evaluate additive expression
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
+                                          # Additive expression: begin evaluating rhs
           movl      $1, %eax              # integer literal
-          pushl     %eax                  # push right operand to stack
+          pushl     %eax                  # save rhs value while computing lhs
           movl      $1, %eax              # integer literal
-          popl      %ebx                  # pop right operand to EBX
+          popl      %ebx                  # restore rhs operand
           subl      %ebx, %eax            # evaluate additive expression
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
           addl      $0, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
+                                          # }<- End compound statement
           leave                           # 
           ret                             # 
 ################################################################################

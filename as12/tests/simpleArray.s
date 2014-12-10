@@ -1,5 +1,5 @@
 ################################################################################
-                                          # C- Compiled to IA-32 Code
+                                          # C- Compiled to IA-32 Assembly Instructions
                                           # Compiler v. 0.1.0
 ################################################################################
                                           # Global Variables
@@ -17,7 +17,7 @@ a:                                        #
           .type     printThird, @function # "printThird" is type function
 printThird:                               # 
           enter     $0, $0                # save stack & frame ptrs
-                                          # {-> Begin coumpound statement
+                                          # {-> Begin compound statement
           movl      $3, %eax              # integer literal
           movl      %eax, %ebx            # store index value in EBX
           movl      %ebp, %eax            # 
@@ -29,7 +29,7 @@ printThird:                               #
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
           addl      $0, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
+                                          # }<- End compound statement
           leave                           # 
           ret                             # 
 ################################################################################
@@ -37,20 +37,21 @@ printThird:                               #
           .type     main, @function       # "main" is type function
 main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
-                                          # {-> Begin coumpound statement
+                                          # {-> Begin compound statement
+                                          # Assignment: begin evaluating rhs
           movl      $17, %eax             # integer literal
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      $3, %eax              # integer literal
           movl      %eax, %ebx            # store index value in EBX
           movl      a(,%ebx,4), %eax      # load value into EAX
-          popl      a(,%ebx,4)            # pop value into variable
-          movl      a(,%ebx,4), %eax      # pass result
+          popl      a(,%ebx,4)            # assign rhs value to variable
+          movl      a(,%ebx,4), %eax      # place evaluated value in result
           movl      $a, %eax              # load global value
           pushl     %eax                  # push function argument onto stack
           call      printThird            # invoke function
           addl      $4, %esp              # remove arguments from stack
           addl      $0, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
+                                          # }<- End compound statement
           leave                           # 
           ret                             # 
 ################################################################################

@@ -1,5 +1,5 @@
 ################################################################################
-                                          # C- Compiled to IA-32 Code
+                                          # C- Compiled to IA-32 Assembly Instructions
                                           # Compiler v. 0.1.0
 ################################################################################
                                           # Global Variables
@@ -10,47 +10,52 @@
           .type     main, @function       # "main" is type function
 main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
-                                          # {-> Begin coumpound statement
+                                          # {-> Begin compound statement
           subl      $4, %esp              # allocate local variable x
           subl      $4, %esp              # allocate local variable y
+                                          # Assignment: begin evaluating rhs
           call      input                 # invoke function
           addl      $0, %esp              # remove arguments from stack
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      -4(%ebp), %eax        # load local variable value
-          popl      -4(%ebp)              # pop value into variable
-          movl      -4(%ebp), %eax        # pass result
+          popl      -4(%ebp)              # assign rhs value to variable
+          movl      -4(%ebp), %eax        # place evaluated value in result
+                                          # Assignment: begin evaluating rhs
           call      input                 # invoke function
           addl      $0, %esp              # remove arguments from stack
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      -8(%ebp), %eax        # load local variable value
-          popl      -8(%ebp)              # pop value into variable
-          movl      -8(%ebp), %eax        # pass result
+          popl      -8(%ebp)              # assign rhs value to variable
+          movl      -8(%ebp), %eax        # place evaluated value in result
+                                          # Additive expression: begin evaluating rhs
           movl      -8(%ebp), %eax        # load local variable value
-          pushl     %eax                  # push right operand to stack
+          pushl     %eax                  # save rhs value while computing lhs
           movl      -4(%ebp), %eax        # load local variable value
-          popl      %ebx                  # pop right operand to EBX
+          popl      %ebx                  # restore rhs operand
           addl      %ebx, %eax            # evaluate additive expression
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
+                                          # Multiplicative expression: begin evaluating rhs
           movl      -8(%ebp), %eax        # load local variable value
-          pushl     %eax                  # push right operand to stack
+          pushl     %eax                  # save rhs while computing lhs
           movl      -4(%ebp), %eax        # load local variable value
           popl      %ebx                  # restore right operand
           imul      %ebx, %eax            # evaluate multiplication
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
+                                          # Additive expression: begin evaluating rhs
           movl      -4(%ebp), %eax        # load local variable value
-          pushl     %eax                  # push right operand to stack
+          pushl     %eax                  # save rhs value while computing lhs
           movl      -8(%ebp), %eax        # load local variable value
-          popl      %ebx                  # pop right operand to EBX
+          popl      %ebx                  # restore rhs operand
           subl      %ebx, %eax            # evaluate additive expression
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
           addl      $8, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
+                                          # }<- End compound statement
           leave                           # 
           ret                             # 
 ################################################################################

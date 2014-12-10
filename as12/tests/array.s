@@ -1,5 +1,5 @@
 ################################################################################
-                                          # C- Compiled to IA-32 Code
+                                          # C- Compiled to IA-32 Assembly Instructions
                                           # Compiler v. 0.1.0
 ################################################################################
                                           # Global Variables
@@ -17,58 +17,66 @@ x:                                        #
           .type     main, @function       # "main" is type function
 main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
-                                          # {-> Begin coumpound statement
+                                          # {-> Begin compound statement
           subl      $4, %esp              # allocate local variable i
           subl      $40, %esp             # allocate local array y
+                                          # FOR initialization
+                                          # Assignment: begin evaluating rhs
           movl      $0, %eax              # integer literal
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      -4(%ebp), %eax        # load local variable value
-          popl      -4(%ebp)              # pop value into variable
-          movl      -4(%ebp), %eax        # pass result
-.L0:                                      # 
-                                          # relational expression
+          popl      -4(%ebp)              # assign rhs value to variable
+          movl      -4(%ebp), %eax        # place evaluated value in result
+.L0:                                      # begin FOR loop
+                                          # relational expression: begin evaluating lhs
           movl      -4(%ebp), %eax        # load local variable value
-          pushl     %eax                  # stash left operand
+          pushl     %eax                  # save lhs while computing rhs
           movl      $10, %eax             # integer literal
-          popl      %ebx                  # restore left operand
+          popl      %ebx                  # restore lhs operand
           cmpl      %eax, %ebx            # comparision
           setl      %al                   # relation
-          movzbl    %al,%eax              # return result
-          cmpl      $0, %eax              # test condition
+          movzbl    %al,%eax              # place evaluated value in result
+          cmpl      $0, %eax              # FOR condition
           je        .L1                   # 
-                                          # {-> Begin coumpound statement
+                                          # begin FOR body
+                                          # {-> Begin compound statement
+                                          # Assignment: begin evaluating rhs
           movl      -4(%ebp), %eax        # load local variable value
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      -4(%ebp), %eax        # load local variable value
           movl      %eax, %ebx            # store index value in EBX
           movl      x(,%ebx,4), %eax      # load value into EAX
-          popl      x(,%ebx,4)            # pop value into variable
-          movl      x(,%ebx,4), %eax      # pass result
+          popl      x(,%ebx,4)            # assign rhs value to variable
+          movl      x(,%ebx,4), %eax      # place evaluated value in result
           addl      $0, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
-                                          # end for body
+                                          # }<- End compound statement
+                                          # end FOR body
+                                          # unary operation
           movl      -4(%ebp), %eax        # load local variable value
           incl      -4(%ebp)              # increment/decrement variable
           movl      -4(%ebp), %eax        # pass result
           jmp       .L0                   # return to FOR begin
-.L1:                                      # 
+.L1:                                      # exit FOR loop
+                                          # FOR initialization
+                                          # Assignment: begin evaluating rhs
           movl      $0, %eax              # integer literal
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      -4(%ebp), %eax        # load local variable value
-          popl      -4(%ebp)              # pop value into variable
-          movl      -4(%ebp), %eax        # pass result
-.L2:                                      # 
-                                          # relational expression
+          popl      -4(%ebp)              # assign rhs value to variable
+          movl      -4(%ebp), %eax        # place evaluated value in result
+.L2:                                      # begin FOR loop
+                                          # relational expression: begin evaluating lhs
           movl      -4(%ebp), %eax        # load local variable value
-          pushl     %eax                  # stash left operand
+          pushl     %eax                  # save lhs while computing rhs
           movl      $10, %eax             # integer literal
-          popl      %ebx                  # restore left operand
+          popl      %ebx                  # restore lhs operand
           cmpl      %eax, %ebx            # comparision
           setl      %al                   # relation
-          movzbl    %al,%eax              # return result
-          cmpl      $0, %eax              # test condition
+          movzbl    %al,%eax              # place evaluated value in result
+          cmpl      $0, %eax              # FOR condition
           je        .L3                   # 
-                                          # {-> Begin coumpound statement
+                                          # begin FOR body
+                                          # {-> Begin compound statement
           movl      -4(%ebp), %eax        # load local variable value
           movl      %eax, %ebx            # store index value in EBX
           movl      x(,%ebx,4), %eax      # load value into EAX
@@ -76,73 +84,83 @@ main:                                     #
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
           addl      $0, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
-                                          # end for body
+                                          # }<- End compound statement
+                                          # end FOR body
+                                          # unary operation
           movl      -4(%ebp), %eax        # load local variable value
           incl      -4(%ebp)              # increment/decrement variable
           movl      -4(%ebp), %eax        # pass result
           jmp       .L2                   # return to FOR begin
-.L3:                                      # 
+.L3:                                      # exit FOR loop
+                                          # FOR initialization
+                                          # Assignment: begin evaluating rhs
           movl      $0, %eax              # integer literal
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      -4(%ebp), %eax        # load local variable value
-          popl      -4(%ebp)              # pop value into variable
-          movl      -4(%ebp), %eax        # pass result
-.L4:                                      # 
-                                          # relational expression
+          popl      -4(%ebp)              # assign rhs value to variable
+          movl      -4(%ebp), %eax        # place evaluated value in result
+.L4:                                      # begin FOR loop
+                                          # relational expression: begin evaluating lhs
           movl      -4(%ebp), %eax        # load local variable value
-          pushl     %eax                  # stash left operand
+          pushl     %eax                  # save lhs while computing rhs
           movl      $10, %eax             # integer literal
-          popl      %ebx                  # restore left operand
+          popl      %ebx                  # restore lhs operand
           cmpl      %eax, %ebx            # comparision
           setl      %al                   # relation
-          movzbl    %al,%eax              # return result
-          cmpl      $0, %eax              # test condition
+          movzbl    %al,%eax              # place evaluated value in result
+          cmpl      $0, %eax              # FOR condition
           je        .L5                   # 
-                                          # {-> Begin coumpound statement
+                                          # begin FOR body
+                                          # {-> Begin compound statement
+                                          # Assignment: begin evaluating rhs
+                                          # Multiplicative expression: begin evaluating rhs
           movl      -4(%ebp), %eax        # load local variable value
           movl      %eax, %ebx            # store index value in EBX
           movl      x(,%ebx,4), %eax      # load value into EAX
-          pushl     %eax                  # push right operand to stack
+          pushl     %eax                  # save rhs while computing lhs
           movl      -4(%ebp), %eax        # load local variable value
           movl      %eax, %ebx            # store index value in EBX
           movl      x(,%ebx,4), %eax      # load value into EAX
           popl      %ebx                  # restore right operand
           imul      %ebx, %eax            # evaluate multiplication
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      -4(%ebp), %eax        # load local variable value
           movl      %eax, %ebx            # store index value in EBX
           movl      %ebp, %eax            # 
           subl      $44, %eax             # 
           leal      (%eax,%ebx,4), %ebx   # compute address
           movl      (%ebx), %eax          # load value into EAX
-          popl      (%ebx)                # pop value into variable
-          movl      (%ebx), %eax          # pass result
+          popl      (%ebx)                # assign rhs value to variable
+          movl      (%ebx), %eax          # place evaluated value in result
           addl      $0, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
-                                          # end for body
+                                          # }<- End compound statement
+                                          # end FOR body
+                                          # unary operation
           movl      -4(%ebp), %eax        # load local variable value
           incl      -4(%ebp)              # increment/decrement variable
           movl      -4(%ebp), %eax        # pass result
           jmp       .L4                   # return to FOR begin
-.L5:                                      # 
+.L5:                                      # exit FOR loop
+                                          # FOR initialization
+                                          # Assignment: begin evaluating rhs
           movl      $0, %eax              # integer literal
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      -4(%ebp), %eax        # load local variable value
-          popl      -4(%ebp)              # pop value into variable
-          movl      -4(%ebp), %eax        # pass result
-.L6:                                      # 
-                                          # relational expression
+          popl      -4(%ebp)              # assign rhs value to variable
+          movl      -4(%ebp), %eax        # place evaluated value in result
+.L6:                                      # begin FOR loop
+                                          # relational expression: begin evaluating lhs
           movl      -4(%ebp), %eax        # load local variable value
-          pushl     %eax                  # stash left operand
+          pushl     %eax                  # save lhs while computing rhs
           movl      $10, %eax             # integer literal
-          popl      %ebx                  # restore left operand
+          popl      %ebx                  # restore lhs operand
           cmpl      %eax, %ebx            # comparision
           setl      %al                   # relation
-          movzbl    %al,%eax              # return result
-          cmpl      $0, %eax              # test condition
+          movzbl    %al,%eax              # place evaluated value in result
+          cmpl      $0, %eax              # FOR condition
           je        .L7                   # 
-                                          # {-> Begin coumpound statement
+                                          # begin FOR body
+                                          # {-> Begin compound statement
           movl      -4(%ebp), %eax        # load local variable value
           movl      %eax, %ebx            # store index value in EBX
           movl      %ebp, %eax            # 
@@ -153,15 +171,16 @@ main:                                     #
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
           addl      $0, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
-                                          # end for body
+                                          # }<- End compound statement
+                                          # end FOR body
+                                          # unary operation
           movl      -4(%ebp), %eax        # load local variable value
           incl      -4(%ebp)              # increment/decrement variable
           movl      -4(%ebp), %eax        # pass result
           jmp       .L6                   # return to FOR begin
-.L7:                                      # 
+.L7:                                      # exit FOR loop
           addl      $44, %esp             # deallocate local variables
-                                          # }<- End coumpound statement
+                                          # }<- End compound statement
           leave                           # 
           ret                             # 
 ################################################################################

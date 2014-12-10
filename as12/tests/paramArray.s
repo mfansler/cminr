@@ -1,5 +1,5 @@
 ################################################################################
-                                          # C- Compiled to IA-32 Code
+                                          # C- Compiled to IA-32 Assembly Instructions
                                           # Compiler v. 0.1.0
 ################################################################################
                                           # Global Variables
@@ -10,7 +10,7 @@
           .type     get, @function        # "get" is type function
 get:                                      # 
           enter     $0, $0                # save stack & frame ptrs
-                                          # {-> Begin coumpound statement
+                                          # {-> Begin compound statement
           movl      8(%ebp), %eax         # load function parameter value
           movl      %eax, %ebx            # store index value in EBX
           movl      %ebp, %eax            # 
@@ -22,7 +22,7 @@ get:                                      #
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
           addl      $0, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
+                                          # }<- End compound statement
           leave                           # 
           ret                             # 
 ################################################################################
@@ -30,36 +30,40 @@ get:                                      #
           .type     main, @function       # "main" is type function
 main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
-                                          # {-> Begin coumpound statement
+                                          # {-> Begin compound statement
           subl      $40, %esp             # allocate local array a
           subl      $4, %esp              # allocate local variable i
+                                          # FOR initialization
+                                          # Assignment: begin evaluating rhs
           movl      $0, %eax              # integer literal
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      -44(%ebp), %eax       # load local variable value
-          popl      -44(%ebp)             # pop value into variable
-          movl      -44(%ebp), %eax       # pass result
-.L0:                                      # 
-                                          # relational expression
+          popl      -44(%ebp)             # assign rhs value to variable
+          movl      -44(%ebp), %eax       # place evaluated value in result
+.L0:                                      # begin FOR loop
+                                          # relational expression: begin evaluating lhs
           movl      -44(%ebp), %eax       # load local variable value
-          pushl     %eax                  # stash left operand
+          pushl     %eax                  # save lhs while computing rhs
           movl      $10, %eax             # integer literal
-          popl      %ebx                  # restore left operand
+          popl      %ebx                  # restore lhs operand
           cmpl      %eax, %ebx            # comparision
           setl      %al                   # relation
-          movzbl    %al,%eax              # return result
-          cmpl      $0, %eax              # test condition
+          movzbl    %al,%eax              # place evaluated value in result
+          cmpl      $0, %eax              # FOR condition
           je        .L1                   # 
-                                          # {-> Begin coumpound statement
+                                          # begin FOR body
+                                          # {-> Begin compound statement
+                                          # Assignment: begin evaluating rhs
           movl      -44(%ebp), %eax       # load local variable value
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      -44(%ebp), %eax       # load local variable value
           movl      %eax, %ebx            # store index value in EBX
           movl      %ebp, %eax            # 
           subl      $40, %eax             # 
           leal      (%eax,%ebx,4), %ebx   # compute address
           movl      (%ebx), %eax          # load value into EAX
-          popl      (%ebx)                # pop value into variable
-          movl      (%ebx), %eax          # pass result
+          popl      (%ebx)                # assign rhs value to variable
+          movl      (%ebx), %eax          # place evaluated value in result
           movl      -44(%ebp), %eax       # load local variable value
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
@@ -81,15 +85,16 @@ main:                                     #
           call      get                   # invoke function
           addl      $8, %esp              # remove arguments from stack
           addl      $0, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
-                                          # end for body
+                                          # }<- End compound statement
+                                          # end FOR body
+                                          # unary operation
           movl      -44(%ebp), %eax       # load local variable value
           incl      -44(%ebp)             # increment/decrement variable
           movl      -44(%ebp), %eax       # pass result
           jmp       .L0                   # return to FOR begin
-.L1:                                      # 
+.L1:                                      # exit FOR loop
           addl      $44, %esp             # deallocate local variables
-                                          # }<- End coumpound statement
+                                          # }<- End compound statement
           leave                           # 
           ret                             # 
 ################################################################################

@@ -1,5 +1,5 @@
 ################################################################################
-                                          # C- Compiled to IA-32 Code
+                                          # C- Compiled to IA-32 Assembly Instructions
                                           # Compiler v. 0.1.0
 ################################################################################
                                           # Global Variables
@@ -10,38 +10,41 @@
           .type     main, @function       # "main" is type function
 main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
-                                          # {-> Begin coumpound statement
+                                          # {-> Begin compound statement
           subl      $4, %esp              # allocate local variable x
+                                          # Assignment: begin evaluating rhs
           movl      $10, %eax             # integer literal
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      -4(%ebp), %eax        # load local variable value
-          popl      -4(%ebp)              # pop value into variable
-          movl      -4(%ebp), %eax        # pass result
+          popl      -4(%ebp)              # assign rhs value to variable
+          movl      -4(%ebp), %eax        # place evaluated value in result
 .L0:                                      # 
-                                          # relational expression
+                                          # relational expression: begin evaluating lhs
           movl      -4(%ebp), %eax        # load local variable value
-          pushl     %eax                  # stash left operand
+          pushl     %eax                  # save lhs while computing rhs
           movl      $0, %eax              # integer literal
-          popl      %ebx                  # restore left operand
+          popl      %ebx                  # restore lhs operand
           cmpl      %eax, %ebx            # comparision
           setg      %al                   # relation
-          movzbl    %al,%eax              # return result
-          cmpl      $0, %eax              # test condition
+          movzbl    %al,%eax              # place evaluated value in result
+          cmpl      $0, %eax              # WHILE comparison
           je        .L1                   # 
-                                          # {-> Begin coumpound statement
+                                          # {-> begin WHILE body
+                                          # {-> Begin compound statement
           movl      -4(%ebp), %eax        # load local variable value
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
+                                          # unary operation
           movl      -4(%ebp), %eax        # load local variable value
           decl      -4(%ebp)              # increment/decrement variable
           movl      -4(%ebp), %eax        # pass result
           addl      $0, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
-          jmp       .L0                   # 
-.L1:                                      # 
+                                          # }<- End compound statement
+          jmp       .L0                   # }<- end WHILE body
+.L1:                                      # exit WHILE
           addl      $4, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
+                                          # }<- End compound statement
           leave                           # 
           ret                             # 
 ################################################################################

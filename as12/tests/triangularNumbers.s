@@ -1,5 +1,5 @@
 ################################################################################
-                                          # C- Compiled to IA-32 Code
+                                          # C- Compiled to IA-32 Assembly Instructions
                                           # Compiler v. 0.1.0
 ################################################################################
                                           # Global Variables
@@ -10,41 +10,44 @@
           .type     triangularNumber, @function# "triangularNumber" is type function
 triangularNumber:                         # 
           enter     $0, $0                # save stack & frame ptrs
-                                          # {-> Begin coumpound statement
-                                          # relational expression
+                                          # {-> Begin compound statement
+                                          # relational expression: begin evaluating lhs
           movl      8(%ebp), %eax         # load function parameter value
-          pushl     %eax                  # stash left operand
+          pushl     %eax                  # save lhs while computing rhs
           movl      $1, %eax              # integer literal
-          popl      %ebx                  # restore left operand
+          popl      %ebx                  # restore lhs operand
           cmpl      %eax, %ebx            # comparision
           setl      %al                   # relation
-          movzbl    %al,%eax              # return result
-          cmpl      $0, %eax              # test condition
+          movzbl    %al,%eax              # place evaluated value in result
+          cmpl      $0, %eax              # IF comparison
           je        .L0                   # 
-                                          # {-> Begin coumpound statement
+                                          # {-> begin THEN
+                                          # {-> Begin compound statement
           movl      $0, %eax              # integer literal
           addl      $0, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
-          jmp       .L1                   # 
-.L0:                                      # 
-                                          # {-> Begin coumpound statement
+                                          # }<- End compound statement
+          jmp       .L1                   # }<- end THEN
+.L0:                                      # {-> begin ELSE
+                                          # {-> Begin compound statement
+                                          # Additive expression: begin evaluating rhs
+                                          # Additive expression: begin evaluating rhs
           movl      $1, %eax              # integer literal
-          pushl     %eax                  # push right operand to stack
+          pushl     %eax                  # save rhs value while computing lhs
           movl      8(%ebp), %eax         # load function parameter value
-          popl      %ebx                  # pop right operand to EBX
+          popl      %ebx                  # restore rhs operand
           subl      %ebx, %eax            # evaluate additive expression
           pushl     %eax                  # push function argument onto stack
           call      triangularNumber      # invoke function
           addl      $4, %esp              # remove arguments from stack
-          pushl     %eax                  # push right operand to stack
+          pushl     %eax                  # save rhs value while computing lhs
           movl      8(%ebp), %eax         # load function parameter value
-          popl      %ebx                  # pop right operand to EBX
+          popl      %ebx                  # restore rhs operand
           addl      %ebx, %eax            # evaluate additive expression
           addl      $0, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
-.L1:                                      # 
+                                          # }<- End compound statement
+.L1:                                      # }<- end ELSE
           addl      $0, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
+                                          # }<- End compound statement
           leave                           # 
           ret                             # 
 ################################################################################
@@ -52,32 +55,36 @@ triangularNumber:                         #
           .type     main, @function       # "main" is type function
 main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
-                                          # {-> Begin coumpound statement
+                                          # {-> Begin compound statement
           subl      $4, %esp              # allocate local variable n
           subl      $4, %esp              # allocate local variable i
+                                          # Assignment: begin evaluating rhs
           call      input                 # invoke function
           addl      $0, %esp              # remove arguments from stack
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      -4(%ebp), %eax        # load local variable value
-          popl      -4(%ebp)              # pop value into variable
-          movl      -4(%ebp), %eax        # pass result
+          popl      -4(%ebp)              # assign rhs value to variable
+          movl      -4(%ebp), %eax        # place evaluated value in result
+                                          # FOR initialization
+                                          # Assignment: begin evaluating rhs
           movl      $1, %eax              # integer literal
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      -8(%ebp), %eax        # load local variable value
-          popl      -8(%ebp)              # pop value into variable
-          movl      -8(%ebp), %eax        # pass result
-.L2:                                      # 
-                                          # relational expression
+          popl      -8(%ebp)              # assign rhs value to variable
+          movl      -8(%ebp), %eax        # place evaluated value in result
+.L2:                                      # begin FOR loop
+                                          # relational expression: begin evaluating lhs
           movl      -8(%ebp), %eax        # load local variable value
-          pushl     %eax                  # stash left operand
+          pushl     %eax                  # save lhs while computing rhs
           movl      -4(%ebp), %eax        # load local variable value
-          popl      %ebx                  # restore left operand
+          popl      %ebx                  # restore lhs operand
           cmpl      %eax, %ebx            # comparision
           setle     %al                   # relation
-          movzbl    %al,%eax              # return result
-          cmpl      $0, %eax              # test condition
+          movzbl    %al,%eax              # place evaluated value in result
+          cmpl      $0, %eax              # FOR condition
           je        .L3                   # 
-                                          # {-> Begin coumpound statement
+                                          # begin FOR body
+                                          # {-> Begin compound statement
           movl      -8(%ebp), %eax        # load local variable value
           pushl     %eax                  # push function argument onto stack
           call      triangularNumber      # invoke function
@@ -86,15 +93,16 @@ main:                                     #
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
           addl      $0, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
-                                          # end for body
+                                          # }<- End compound statement
+                                          # end FOR body
+                                          # unary operation
           movl      -8(%ebp), %eax        # load local variable value
           incl      -8(%ebp)              # increment/decrement variable
           movl      -8(%ebp), %eax        # pass result
           jmp       .L2                   # return to FOR begin
-.L3:                                      # 
+.L3:                                      # exit FOR loop
           addl      $8, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
+                                          # }<- End compound statement
           leave                           # 
           ret                             # 
 ################################################################################

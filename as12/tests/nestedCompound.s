@@ -1,5 +1,5 @@
 ################################################################################
-                                          # C- Compiled to IA-32 Code
+                                          # C- Compiled to IA-32 Assembly Instructions
                                           # Compiler v. 0.1.0
 ################################################################################
                                           # Global Variables
@@ -10,32 +10,34 @@
           .type     main, @function       # "main" is type function
 main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
-                                          # {-> Begin coumpound statement
+                                          # {-> Begin compound statement
           subl      $4, %esp              # allocate local variable x
+                                          # Assignment: begin evaluating rhs
           movl      $13, %eax             # integer literal
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      -4(%ebp), %eax        # load local variable value
-          popl      -4(%ebp)              # pop value into variable
-          movl      -4(%ebp), %eax        # pass result
-                                          # {-> Begin coumpound statement
+          popl      -4(%ebp)              # assign rhs value to variable
+          movl      -4(%ebp), %eax        # place evaluated value in result
+                                          # {-> Begin compound statement
           subl      $4, %esp              # allocate local variable x
+                                          # Assignment: begin evaluating rhs
           movl      $57, %eax             # integer literal
-          pushl     %eax                  # save assigning value
+          pushl     %eax                  # save evaluated value
           movl      -8(%ebp), %eax        # load local variable value
-          popl      -8(%ebp)              # pop value into variable
-          movl      -8(%ebp), %eax        # pass result
+          popl      -8(%ebp)              # assign rhs value to variable
+          movl      -8(%ebp), %eax        # place evaluated value in result
           movl      -8(%ebp), %eax        # load local variable value
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
           addl      $4, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
+                                          # }<- End compound statement
           movl      -4(%ebp), %eax        # load local variable value
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
           addl      $4, %esp              # deallocate local variables
-                                          # }<- End coumpound statement
+                                          # }<- End compound statement
           leave                           # 
           ret                             # 
 ################################################################################
