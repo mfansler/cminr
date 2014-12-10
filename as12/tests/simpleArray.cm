@@ -1,0 +1,14 @@
+
+void printThird (int x[])
+{
+  output (x[3]);
+}
+
+void main (void)
+{
+  int a[10];
+  
+  a[3] = 17;
+
+  printThird (a);
+}

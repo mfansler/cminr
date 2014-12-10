@@ -10,6 +10,7 @@
           .type     main, @function       # "main" is type function
 main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
+                                          # {-> Begin coumpound statement
           movl      $5, %eax              # integer literal
           pushl     %eax                  # push right operand to stack
           movl      $5, %eax              # integer literal
@@ -17,6 +18,7 @@ main:                                     #
           imul      %ebx, %eax            # evaluate multiplication
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
+          addl      $4, %esp              # remove arguments from stack
           movl      $2, %eax              # integer literal
           pushl     %eax                  # push right operand to stack
           movl      $10, %eax             # integer literal
@@ -26,6 +28,7 @@ main:                                     #
           idivl     %ebx                  # divide EDX:EAX by EBX
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
+          addl      $4, %esp              # remove arguments from stack
           movl      $113, %eax            # integer literal
           pushl     %eax                  # push right operand to stack
           movl      $355, %eax            # integer literal
@@ -35,7 +38,9 @@ main:                                     #
           idivl     %ebx                  # divide EDX:EAX by EBX
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
+          addl      $4, %esp              # remove arguments from stack
           addl      $0, %esp              # deallocate local variables
+                                          # }<- End coumpound statement
           leave                           # 
           ret                             # 
 ################################################################################

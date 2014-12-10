@@ -1,0 +1,111 @@
+Program Node
+  VariableDeclaration: x: Int type
+  Variable: y[10]: Int type
+  Function: outputArray: Void type
+    Parameter: a []: Int type
+    Parameter: size: Int type
+    CompoundStatement
+      VariableDeclaration: i: Int type
+      For
+        Assignment
+          Variable: i: Int type
+          Integer: 0: Int type
+        RelationalExpression: <
+          Left:
+            Variable: i: Int type
+          Right:
+            Variable: size: Int type
+        UnaryExpression: ++
+          Variable: i: Int type
+        CompoundStatement
+          ExpressionStatement
+            FunctionCall: output: Void type
+              Arguments:
+                Subscript: a: Int type
+                  Index:
+                    Variable: i: Int type
+  Function: initArray: Void type
+    Parameter: a []: Int type
+    Parameter: size: Int type
+    CompoundStatement
+      VariableDeclaration: i: Int type
+      For
+        Assignment
+          Variable: i: Int type
+          Integer: 0: Int type
+        RelationalExpression: <
+          Left:
+            Variable: i: Int type
+          Right:
+            Variable: size: Int type
+        UnaryExpression: ++
+          Variable: i: Int type
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Subscript: a: Int type
+                Index:
+                  Variable: i: Int type
+              Variable: i: Int type
+  Function: mutateSquare: Void type
+    Parameter: y: Int type
+    CompoundStatement
+      ExpressionStatement
+        Assignment
+          Variable: y: Int type
+          MultiplicativeExpression: *
+            Left:
+              Variable: y: Int type
+            Right:
+              Variable: y: Int type
+  Function: main: Void type
+    CompoundStatement
+      VariableDeclaration: t: Int type
+      Variable: u[10]: Int type
+      ExpressionStatement
+        Assignment
+          Variable: x: Int type
+          Integer: 4: Int type
+      ExpressionStatement
+        Assignment
+          Variable: t: Int type
+          Integer: 13: Int type
+      ExpressionStatement
+        FunctionCall: output: Void type
+          Arguments:
+            Variable: x: Int type
+      ExpressionStatement
+        FunctionCall: mutateSquare: Void type
+          Arguments:
+            Variable: x: Int type
+      ExpressionStatement
+        FunctionCall: output: Void type
+          Arguments:
+            Variable: x: Int type
+      ExpressionStatement
+        FunctionCall: outputArray: Void type
+          Arguments:
+            Variable: u: Int Array type
+            Integer: 10: Int type
+      ExpressionStatement
+        FunctionCall: initArray: Void type
+          Arguments:
+            Variable: u: Int Array type
+            Integer: 10: Int type
+      ExpressionStatement
+        FunctionCall: outputArray: Void type
+          Arguments:
+            Variable: u: Int Array type
+            Integer: 10: Int type
+      ExpressionStatement
+        FunctionCall: output: Void type
+          Arguments:
+            Variable: t: Int type
+      ExpressionStatement
+        FunctionCall: mutateSquare: Void type
+          Arguments:
+            Variable: t: Int type
+      ExpressionStatement
+        FunctionCall: output: Void type
+          Arguments:
+            Variable: t: Int type

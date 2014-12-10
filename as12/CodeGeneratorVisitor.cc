@@ -188,7 +188,7 @@ void
 CodeGeneratorVisitor::visit (ArrayDeclarationNode* node)
 {
   if (node->nestLevel == 0)
-  {
+  { // Global Declaration
     emitter.emitInstruction (".globl", node->identifier);
     emitter.emitInstruction (".data");
     emitter.emitInstruction (".align", "4");
@@ -222,6 +222,8 @@ CodeGeneratorVisitor::visit (StatementNode* node)
 void
 CodeGeneratorVisitor::visit (CompoundStatementNode* node)
 {
+  emitter.emitComment ("{-> Begin coumpound statement");
+
   int prevOffset = ebpOffset;
   
   for (auto l : node->localDeclarations)
@@ -231,7 +233,9 @@ CodeGeneratorVisitor::visit (CompoundStatementNode* node)
 
   emitter.emitInstruction ("addl", "$" + to_string (ebpOffset - prevOffset) + ", %esp",
 			   "deallocate local variables");
+  
   ebpOffset = prevOffset;
+  emitter.emitComment ("}<- End coumpound statement");
 }
 
 void
@@ -302,10 +306,13 @@ CodeGeneratorVisitor::visit (ForStatementNode* node)
   emitter.emitInstruction ("je", endForLabel);
   
   node->body->accept (this);
+
+  emitter.emitComment ("end for body");
+  
   node->updater->accept (this);
 
   // jump back to FOR label
-  emitter.emitInstruction ("jmp", beginForLabel);
+  emitter.emitInstruction ("jmp", beginForLabel, "return to FOR begin");
 
   // END label
   emitter.emitLabel (endForLabel);    
@@ -431,15 +438,25 @@ CodeGeneratorVisitor::visit (VariableExpressionNode* node)
   if (node->declaration->isParameter)
   {
     node->asmReference = to_string (node->declaration->offset) + "(%ebp)";
+    emitter.emitInstruction ("movl", node->asmReference + ", %eax", "load function parameter value");
   }
   else if (node->declaration->nestLevel == 0)
   {
     node->asmReference = node->identifier;
+    emitter.emitInstruction ("movl", node->asmReference + ", %eax", "load global value");
   }
   else
+  {
     node->asmReference = "-" + to_string (node->declaration->offset) + "(%ebp)";
+    if (node->evalType == ValueType::INT_ARRAY)
+    {
+      emitter.emitInstruction ("movl", "%ebp, %eax");
+      emitter.emitInstruction ("subl", "$" + to_string (node->declaration->offset) + ", %eax", "load array address");
+    }
+    else 
+      emitter.emitInstruction ("movl", node->asmReference + ", %eax", "load variable value");
+  }
   
-  emitter.emitInstruction ("movl", node->asmReference + ", %eax", "variable expression");
 }
 
 void
@@ -452,6 +469,7 @@ CodeGeneratorVisitor::visit (SubscriptExpressionNode* node)
   {
     emitter.emitInstruction ("movl", "%ebp, %eax");
     emitter.emitInstruction ("addl", "$" + to_string (node->declaration->offset) + ", %eax");
+    emitter.emitInstruction ("movl", "(%eax), %eax"); 
     emitter.emitInstruction ("leal", "(%eax,%ebx,4), %ebx", "compute address");
     node->asmReference = "(%ebx)";
   }
@@ -489,4 +507,5 @@ CodeGeneratorVisitor::visit (CallExpressionNode* node)
 
   emitter.emitInstruction ("call", node->declaration->identifier,
 			   "invoke function");
+  emitter.emitInstruction ("addl", "$" + to_string (4*node->arguments.size ()) + ", %esp", "remove arguments from stack");
 }

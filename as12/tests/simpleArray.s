@@ -4,31 +4,20 @@
 ################################################################################
                                           # Global Variables
                                           # 
-          .globl    x                     # 
-          .data                           # 
-          .align    4                     # 
-          .type     x, @object            # 
-          .size     x, 4                  # 
-x:                                        # 
-          .zero     4                     # 
 ################################################################################
 ################################################################################
-.globl main
-          .type     main, @function       # "main" is type function
-main:                                     # 
+.globl printThird
+          .type     printThird, @function # "printThird" is type function
+printThird:                               # 
           enter     $0, $0                # save stack & frame ptrs
                                           # {-> Begin coumpound statement
-          call      input                 # invoke function
-          addl      $0, %esp              # remove arguments from stack
-          pushl     %eax                  # save assigning value
-          movl      x, %eax               # load global value
-          popl      x                     # pop value into variable
-          movl      x, %eax               # pass result
-          movl      x, %eax               # load global value
-          pushl     %eax                  # push right operand to stack
-          movl      x, %eax               # load global value
-          popl      %ebx                  # restore right operand
-          imul      %ebx, %eax            # evaluate multiplication
+          movl      $3, %eax              # integer literal
+          movl      %eax, %ebx            # store index value in EBX
+          movl      %ebp, %eax            # 
+          addl      $8, %eax              # 
+          movl      (%eax), %eax          # 
+          leal      (%eax,%ebx,4), %ebx   # compute address
+          movl      (%ebx), %eax          # load value into EAX
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
@@ -37,22 +26,31 @@ main:                                     #
           leave                           # 
           ret                             # 
 ################################################################################
-                                          # Conversion string
-          .section  .rodata               # 
-.inStr:   .string   "%d"                  
-################################################################################
-                                          # Input Routine
-.globl input
-          .type     input, @function      # "input" is type function
-input:                                    # 
+.globl main
+          .type     main, @function       # "main" is type function
+main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
-          subl      $4, %esp              # create slot for result
-          pushl     %esp                  # push slot's address
-          pushl     $.inStr               # push conversion spec
-          call      scanf                 # read an integer
-          movl      8(%esp), %eax         # move int to %eax
-          leave                           # reset stack & frame pointers
-          ret                             # return to caller
+                                          # {-> Begin coumpound statement
+          subl      $40, %esp             # allocate local array a
+          movl      $17, %eax             # integer literal
+          pushl     %eax                  # save assigning value
+          movl      $3, %eax              # integer literal
+          movl      %eax, %ebx            # store index value in EBX
+          movl      %ebp, %eax            # 
+          subl      $40, %eax             # 
+          leal      (%eax,%ebx,4), %ebx   # compute address
+          movl      (%ebx), %eax          # load value into EAX
+          popl      (%ebx)                # pop value into variable
+          movl      (%ebx), %eax          # pass result
+          movl      %ebp, %eax            # 
+          subl      $40, %eax             # load array address
+          pushl     %eax                  # push function argument onto stack
+          call      printThird            # invoke function
+          addl      $4, %esp              # remove arguments from stack
+          addl      $40, %esp             # deallocate local variables
+                                          # }<- End coumpound statement
+          leave                           # 
+          ret                             # 
 ################################################################################
                                           # Conversion string
           .section  .rodata               # 

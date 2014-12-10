@@ -1,0 +1,23 @@
+Program Node
+  Function: printThird: Void type
+    Parameter: x []: Int type
+    CompoundStatement
+      ExpressionStatement
+        FunctionCall: output: Void type
+          Arguments:
+            Subscript: x: Int type
+              Index:
+                Integer: 3: Int type
+  Function: main: Void type
+    CompoundStatement
+      Variable: a[10]: Int type
+      ExpressionStatement
+        Assignment
+          Subscript: a: Int type
+            Index:
+              Integer: 3: Int type
+          Integer: 17: Int type
+      ExpressionStatement
+        FunctionCall: printThird: Void type
+          Arguments:
+            Variable: a: Int Array type

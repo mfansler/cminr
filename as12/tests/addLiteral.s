@@ -10,6 +10,7 @@
           .type     main, @function       # "main" is type function
 main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
+                                          # {-> Begin coumpound statement
           movl      $1, %eax              # integer literal
           pushl     %eax                  # push right operand to stack
           movl      $1, %eax              # integer literal
@@ -17,6 +18,7 @@ main:                                     #
           addl      %ebx, %eax            # evaluate additive expression
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
+          addl      $4, %esp              # remove arguments from stack
           movl      $1, %eax              # integer literal
           pushl     %eax                  # push right operand to stack
           movl      $1, %eax              # integer literal
@@ -24,7 +26,9 @@ main:                                     #
           subl      %ebx, %eax            # evaluate additive expression
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
+          addl      $4, %esp              # remove arguments from stack
           addl      $0, %esp              # deallocate local variables
+                                          # }<- End coumpound statement
           leave                           # 
           ret                             # 
 ################################################################################

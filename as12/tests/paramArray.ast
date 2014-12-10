@@ -1,0 +1,48 @@
+Program Node
+  Function: get: Void type
+    Parameter: pos: Int type
+    Parameter: x []: Int type
+    CompoundStatement
+      ExpressionStatement
+        FunctionCall: output: Void type
+          Arguments:
+            Subscript: x: Int type
+              Index:
+                Variable: pos: Int type
+  Function: main: Void type
+    CompoundStatement
+      Variable: a[10]: Int type
+      VariableDeclaration: i: Int type
+      For
+        Assignment
+          Variable: i: Int type
+          Integer: 0: Int type
+        RelationalExpression: <
+          Left:
+            Variable: i: Int type
+          Right:
+            Integer: 10: Int type
+        UnaryExpression: ++
+          Variable: i: Int type
+        CompoundStatement
+          ExpressionStatement
+            Assignment
+              Subscript: a: Int type
+                Index:
+                  Variable: i: Int type
+              Variable: i: Int type
+          ExpressionStatement
+            FunctionCall: output: Void type
+              Arguments:
+                Variable: i: Int type
+          ExpressionStatement
+            FunctionCall: output: Void type
+              Arguments:
+                Subscript: a: Int type
+                  Index:
+                    Variable: i: Int type
+          ExpressionStatement
+            FunctionCall: get: Void type
+              Arguments:
+                Variable: i: Int type
+                Variable: a: Int Array type

@@ -1,0 +1,60 @@
+int x;
+int y[10];
+
+void
+outputArray (int a[], int size)
+{
+  int i;
+
+  for (i = 0; i < size; ++i)
+  {
+    output (a[i]);
+  }
+}
+
+void
+initArray (int a[], int size)
+{
+  int i;
+
+  for (i = 0; i < size; ++i)
+  {
+    a[i] = i;
+  }
+}
+
+void
+mutateSquare (int y)
+{
+  y = y * y;
+}
+
+void
+main (void)
+{
+  int t;
+  int u[10];
+
+  x = 4;
+  t = 13;
+
+  /* Global */
+/*  outputArray (y, 10);
+  initArray (y, 10);
+  outputArray (y, 10);
+*/
+  output (x);
+  mutateSquare (x);
+  output (x);
+
+  /* Local */
+  outputArray (u, 10);
+  initArray (u, 10);
+  outputArray (u, 10);
+
+
+  output (t);
+  mutateSquare (t);
+  output (t);
+
+}
