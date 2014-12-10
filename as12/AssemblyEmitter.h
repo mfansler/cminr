@@ -27,20 +27,23 @@ using std::string;
 class AssemblyEmitter
 {
   std::ofstream &outFile;
+  int labelCounter;
 
 public:
 
   AssemblyEmitter (std::ofstream &strm);
   ~AssemblyEmitter ();
 
+  // utility
+  string
+  createUniqueLabel ();
+
+  // generic emission methods
   void
   emitComment (const string& comment);
 
   void
   emitComment (std::initializer_list<string> comments);
-
-  void
-  emitSeparator (int numDividers = 1);
 
   void
   emitLabel (const string& label, const string& comment = "");
@@ -52,10 +55,22 @@ public:
   void
   emitFunctionDeclaration (const string& name);
 
-  void emitEnter (const string& a = "0", const string& b = "0");
+  void
+  emitEnter (const string& a = "0", const string& b = "0");
 
-  void emitConstDeclaration (const string& name, const string& type,
-			     const string& value);
+  void
+  emitConstDeclaration (const string& name, const string& type,
+			const string& value);
+
+  // concrete emission methods
+  void
+  emitSeparator (int numDividers = 1);
+
+  void
+  emitInputFunction ();
+
+  void
+  emitOutputFunction ();
 
 };
   

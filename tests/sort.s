@@ -259,7 +259,7 @@ main:                                     #
           pushl     %eax                  # push function argument onto stack
           movl      $0, %eax              # integer literal
           pushl     %eax                  # push function argument onto stack
-          movl      x, %eax               # load global value
+          movl      $x, %eax              # load global value
           pushl     %eax                  # push function argument onto stack
           call      sort                  # invoke function
           addl      $12, %esp             # remove arguments from stack

@@ -39,10 +39,10 @@ main (void)
   t = 13;
 
   /* Global */
-/*  outputArray (y, 10);
+  outputArray (y, 10);
   initArray (y, 10);
   outputArray (y, 10);
-*/
+
   output (x);
   mutateSquare (x);
   output (x);

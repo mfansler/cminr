@@ -1,3 +1,5 @@
+int a[10];
+
 void
 square (int* x, int size)
 {
@@ -12,7 +14,6 @@ square (int* x, int size)
 int
 main ()
 {
-  int a[10];
   int i;
 
   for (i = 0; i < 10; ++i)

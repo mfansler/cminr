@@ -1,4 +1,5 @@
 Program Node
+  Variable: a[10]: Int type
   Function: printThird: Void type
     Parameter: x []: Int type
     CompoundStatement
@@ -10,7 +11,6 @@ Program Node
                 Integer: 3: Int type
   Function: main: Void type
     CompoundStatement
-      Variable: a[10]: Int type
       ExpressionStatement
         Assignment
           Subscript: a: Int type

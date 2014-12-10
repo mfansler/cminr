@@ -35,69 +35,9 @@ CodeGeneratorVisitor::CodeGeneratorVisitor (std::ofstream &strm)
   , outputFunctionReferenced (false)
   , ebpOffset (0)
   , paramOffset (1)
-  , labelCounter (0)
 {}
 
 CodeGeneratorVisitor::~CodeGeneratorVisitor () {}
-
-string
-CodeGeneratorVisitor::createLabel ()
-{
-  return ".L" + to_string (labelCounter++);
-}
-
-void
-CodeGeneratorVisitor::emitInputFunction ()
-{
-  emitter.emitSeparator ();
-
-  emitter.emitComment ("Conversion string");
-  emitter.emitInstruction (".section", ".rodata");
-  emitter.emitConstDeclaration (".inStr", ".string", "\"%d\"");
-  
-  emitter.emitSeparator ();
-  
-  emitter.emitComment ("Input Routine");
-  emitter.emitFunctionDeclaration ("input");
-  emitter.emitLabel ("input");
-
-  emitter.emitEnter ();
-
-  emitter.emitInstruction ("subl", "$4, %esp", "create slot for result");
-  emitter.emitInstruction ("pushl", "%esp", "push slot's address");
-  emitter.emitInstruction ("pushl", "$.inStr", "push conversion spec");
-  emitter.emitInstruction ("call", "scanf", "read an integer");
-  emitter.emitInstruction ("movl", "8(%esp), %eax", "move int to %eax");
-
-  emitter.emitInstruction ("leave", "", "reset stack & frame pointers");
-  emitter.emitInstruction ("ret", "", "return to caller");
-}
-
-void
-CodeGeneratorVisitor::emitOutputFunction ()
-{
-  emitter.emitSeparator ();
-
-  emitter.emitComment ("Conversion string");
-  emitter.emitInstruction (".section", ".rodata");
-  emitter.emitConstDeclaration (".outStr", ".string", "\"%d\\n\"");
-  
-  emitter.emitSeparator ();
-
-  emitter.emitComment ("Output Routine");
-  emitter.emitFunctionDeclaration ("output");
-
-  emitter.emitLabel ("output");
-
-  emitter.emitEnter ();
-
-  emitter.emitInstruction ("pushl", "8(%ebp)", "retrieve the integer to output");
-  emitter.emitInstruction ("pushl", "$.outStr", "push conversion spec");
-  emitter.emitInstruction ("call", "printf", "call printf");
-  
-  emitter.emitInstruction ("leave", "", "reset stack & frame pointers");
-  emitter.emitInstruction ("ret", "", "return to caller");
-}
 
 void
 CodeGeneratorVisitor::visit (ProgramNode* node)
@@ -131,10 +71,10 @@ CodeGeneratorVisitor::visit (ProgramNode* node)
 
   // emit extern functions as needed
   if (inputFunctionReferenced)
-    emitInputFunction ();
+    emitter.emitInputFunction ();
   
   if (outputFunctionReferenced)
-    emitOutputFunction ();
+    emitter.emitOutputFunction ();
 }
   
 void
@@ -241,8 +181,8 @@ CodeGeneratorVisitor::visit (CompoundStatementNode* node)
 void
 CodeGeneratorVisitor::visit (IfStatementNode* node)
 {
-  string endThenLabel = createLabel ();
-  string endElseLabel = createLabel ();
+  string endThenLabel = emitter.createUniqueLabel ();
+  string endElseLabel = emitter.createUniqueLabel ();
     
   node->conditionalExpression->accept (this);
   
@@ -269,8 +209,8 @@ CodeGeneratorVisitor::visit (IfStatementNode* node)
 void
 CodeGeneratorVisitor::visit (WhileStatementNode* node)
 {
-  string beginWhileLabel = createLabel (); 
-  string endWhileLabel = createLabel ();
+  string beginWhileLabel = emitter.createUniqueLabel (); 
+  string endWhileLabel = emitter.createUniqueLabel ();
 
   // WHILE label
   emitter.emitLabel (beginWhileLabel);
@@ -294,8 +234,8 @@ CodeGeneratorVisitor::visit (ForStatementNode* node)
 {
   node->initializer->accept (this);
 
-  string beginForLabel = createLabel ();
-  string endForLabel = createLabel ();
+  string beginForLabel = emitter.createUniqueLabel ();
+  string endForLabel = emitter.createUniqueLabel ();
   
   // FOR label
   emitter.emitLabel (beginForLabel);
@@ -436,25 +376,31 @@ void
 CodeGeneratorVisitor::visit (VariableExpressionNode* node)
 {
   if (node->declaration->isParameter)
-  {
+  { // variable is a parameter
     node->asmReference = to_string (node->declaration->offset) + "(%ebp)";
     emitter.emitInstruction ("movl", node->asmReference + ", %eax", "load function parameter value");
   }
   else if (node->declaration->nestLevel == 0)
-  {
-    node->asmReference = node->identifier;
+  { // variable is a global
+    
+    // if array, pass address
+    if (node->evalType == ValueType::INT_ARRAY)
+      node->asmReference = "$" + node->identifier;
+    else
+      node->asmReference = node->identifier;
+    
     emitter.emitInstruction ("movl", node->asmReference + ", %eax", "load global value");
   }
   else
-  {
+  { // local variable
     node->asmReference = "-" + to_string (node->declaration->offset) + "(%ebp)";
     if (node->evalType == ValueType::INT_ARRAY)
     {
-      emitter.emitInstruction ("movl", "%ebp, %eax");
+      emitter.emitInstruction ("movl", "%ebp, %eax", "prepare to compute array address");
       emitter.emitInstruction ("subl", "$" + to_string (node->declaration->offset) + ", %eax", "load array address");
     }
     else 
-      emitter.emitInstruction ("movl", node->asmReference + ", %eax", "load variable value");
+      emitter.emitInstruction ("movl", node->asmReference + ", %eax", "load local variable value");
   }
   
 }
@@ -507,5 +453,6 @@ CodeGeneratorVisitor::visit (CallExpressionNode* node)
 
   emitter.emitInstruction ("call", node->declaration->identifier,
 			   "invoke function");
-  emitter.emitInstruction ("addl", "$" + to_string (4*node->arguments.size ()) + ", %esp", "remove arguments from stack");
+  emitter.emitInstruction ("addl", "$" + to_string (4*node->arguments.size ()) +
+			   ", %esp", "remove arguments from stack");
 }

@@ -14,23 +14,23 @@ main:                                     #
           subl      $4, %esp              # allocate local variable x
           movl      $13, %eax             # integer literal
           pushl     %eax                  # save assigning value
-          movl      -4(%ebp), %eax        # load variable value
+          movl      -4(%ebp), %eax        # load local variable value
           popl      -4(%ebp)              # pop value into variable
           movl      -4(%ebp), %eax        # pass result
                                           # {-> Begin coumpound statement
           subl      $4, %esp              # allocate local variable x
           movl      $57, %eax             # integer literal
           pushl     %eax                  # save assigning value
-          movl      -8(%ebp), %eax        # load variable value
+          movl      -8(%ebp), %eax        # load local variable value
           popl      -8(%ebp)              # pop value into variable
           movl      -8(%ebp), %eax        # pass result
-          movl      -8(%ebp), %eax        # load variable value
+          movl      -8(%ebp), %eax        # load local variable value
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
           addl      $4, %esp              # deallocate local variables
                                           # }<- End coumpound statement
-          movl      -4(%ebp), %eax        # load variable value
+          movl      -4(%ebp), %eax        # load local variable value
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack

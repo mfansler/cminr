@@ -1,3 +1,4 @@
+int a[10];
 
 void printThird (int x[])
 {
@@ -6,7 +7,7 @@ void printThird (int x[])
 
 void main (void)
 {
-  int a[10];
+  /*int a[10];*/
   
   a[3] = 17;
 

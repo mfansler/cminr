@@ -4,6 +4,13 @@
 ################################################################################
                                           # Global Variables
                                           # 
+          .globl    a                     # 
+          .data                           # 
+          .align    4                     # 
+          .type     a, @object            # 
+          .size     a, 40                 # 
+a:                                        # 
+          .zero     40                    # initialize to zero
 ################################################################################
 ################################################################################
 .globl printThird
@@ -31,23 +38,18 @@ printThird:                               #
 main:                                     # 
           enter     $0, $0                # save stack & frame ptrs
                                           # {-> Begin coumpound statement
-          subl      $40, %esp             # allocate local array a
           movl      $17, %eax             # integer literal
           pushl     %eax                  # save assigning value
           movl      $3, %eax              # integer literal
           movl      %eax, %ebx            # store index value in EBX
-          movl      %ebp, %eax            # 
-          subl      $40, %eax             # 
-          leal      (%eax,%ebx,4), %ebx   # compute address
-          movl      (%ebx), %eax          # load value into EAX
-          popl      (%ebx)                # pop value into variable
-          movl      (%ebx), %eax          # pass result
-          movl      %ebp, %eax            # 
-          subl      $40, %eax             # load array address
+          movl      a(,%ebx,4), %eax      # load value into EAX
+          popl      a(,%ebx,4)            # pop value into variable
+          movl      a(,%ebx,4), %eax      # pass result
+          movl      $a, %eax              # load global value
           pushl     %eax                  # push function argument onto stack
           call      printThird            # invoke function
           addl      $4, %esp              # remove arguments from stack
-          addl      $40, %esp             # deallocate local variables
+          addl      $0, %esp              # deallocate local variables
                                           # }<- End coumpound statement
           leave                           # 
           ret                             # 

@@ -28,12 +28,12 @@ outputArray:                              #
           subl      $4, %esp              # allocate local variable i
           movl      $0, %eax              # integer literal
           pushl     %eax                  # save assigning value
-          movl      -4(%ebp), %eax        # load variable value
+          movl      -4(%ebp), %eax        # load local variable value
           popl      -4(%ebp)              # pop value into variable
           movl      -4(%ebp), %eax        # pass result
 .L0:                                      # 
                                           # relational expression
-          movl      -4(%ebp), %eax        # load variable value
+          movl      -4(%ebp), %eax        # load local variable value
           pushl     %eax                  # stash left operand
           movl      12(%ebp), %eax        # load function parameter value
           popl      %ebx                  # restore left operand
@@ -43,7 +43,7 @@ outputArray:                              #
           cmpl      $0, %eax              # test condition
           je        .L1                   # 
                                           # {-> Begin coumpound statement
-          movl      -4(%ebp), %eax        # load variable value
+          movl      -4(%ebp), %eax        # load local variable value
           movl      %eax, %ebx            # store index value in EBX
           movl      %ebp, %eax            # 
           addl      $8, %eax              # 
@@ -56,7 +56,7 @@ outputArray:                              #
           addl      $0, %esp              # deallocate local variables
                                           # }<- End coumpound statement
                                           # end for body
-          movl      -4(%ebp), %eax        # load variable value
+          movl      -4(%ebp), %eax        # load local variable value
           incl      -4(%ebp)              # increment/decrement variable
           movl      -4(%ebp), %eax        # pass result
           jmp       .L0                   # return to FOR begin
@@ -74,12 +74,12 @@ initArray:                                #
           subl      $4, %esp              # allocate local variable i
           movl      $0, %eax              # integer literal
           pushl     %eax                  # save assigning value
-          movl      -4(%ebp), %eax        # load variable value
+          movl      -4(%ebp), %eax        # load local variable value
           popl      -4(%ebp)              # pop value into variable
           movl      -4(%ebp), %eax        # pass result
 .L2:                                      # 
                                           # relational expression
-          movl      -4(%ebp), %eax        # load variable value
+          movl      -4(%ebp), %eax        # load local variable value
           pushl     %eax                  # stash left operand
           movl      12(%ebp), %eax        # load function parameter value
           popl      %ebx                  # restore left operand
@@ -89,9 +89,9 @@ initArray:                                #
           cmpl      $0, %eax              # test condition
           je        .L3                   # 
                                           # {-> Begin coumpound statement
-          movl      -4(%ebp), %eax        # load variable value
+          movl      -4(%ebp), %eax        # load local variable value
           pushl     %eax                  # save assigning value
-          movl      -4(%ebp), %eax        # load variable value
+          movl      -4(%ebp), %eax        # load local variable value
           movl      %eax, %ebx            # store index value in EBX
           movl      %ebp, %eax            # 
           addl      $8, %eax              # 
@@ -103,7 +103,7 @@ initArray:                                #
           addl      $0, %esp              # deallocate local variables
                                           # }<- End coumpound statement
                                           # end for body
-          movl      -4(%ebp), %eax        # load variable value
+          movl      -4(%ebp), %eax        # load local variable value
           incl      -4(%ebp)              # increment/decrement variable
           movl      -4(%ebp), %eax        # pass result
           jmp       .L2                   # return to FOR begin
@@ -146,9 +146,27 @@ main:                                     #
           movl      x, %eax               # pass result
           movl      $13, %eax             # integer literal
           pushl     %eax                  # save assigning value
-          movl      -4(%ebp), %eax        # load variable value
+          movl      -4(%ebp), %eax        # load local variable value
           popl      -4(%ebp)              # pop value into variable
           movl      -4(%ebp), %eax        # pass result
+          movl      $10, %eax             # integer literal
+          pushl     %eax                  # push function argument onto stack
+          movl      $y, %eax              # load global value
+          pushl     %eax                  # push function argument onto stack
+          call      outputArray           # invoke function
+          addl      $8, %esp              # remove arguments from stack
+          movl      $10, %eax             # integer literal
+          pushl     %eax                  # push function argument onto stack
+          movl      $y, %eax              # load global value
+          pushl     %eax                  # push function argument onto stack
+          call      initArray             # invoke function
+          addl      $8, %esp              # remove arguments from stack
+          movl      $10, %eax             # integer literal
+          pushl     %eax                  # push function argument onto stack
+          movl      $y, %eax              # load global value
+          pushl     %eax                  # push function argument onto stack
+          call      outputArray           # invoke function
+          addl      $8, %esp              # remove arguments from stack
           movl      x, %eax               # load global value
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
@@ -163,34 +181,34 @@ main:                                     #
           addl      $4, %esp              # remove arguments from stack
           movl      $10, %eax             # integer literal
           pushl     %eax                  # push function argument onto stack
-          movl      %ebp, %eax            # 
+          movl      %ebp, %eax            # prepare to compute array address
           subl      $44, %eax             # load array address
           pushl     %eax                  # push function argument onto stack
           call      outputArray           # invoke function
           addl      $8, %esp              # remove arguments from stack
           movl      $10, %eax             # integer literal
           pushl     %eax                  # push function argument onto stack
-          movl      %ebp, %eax            # 
+          movl      %ebp, %eax            # prepare to compute array address
           subl      $44, %eax             # load array address
           pushl     %eax                  # push function argument onto stack
           call      initArray             # invoke function
           addl      $8, %esp              # remove arguments from stack
           movl      $10, %eax             # integer literal
           pushl     %eax                  # push function argument onto stack
-          movl      %ebp, %eax            # 
+          movl      %ebp, %eax            # prepare to compute array address
           subl      $44, %eax             # load array address
           pushl     %eax                  # push function argument onto stack
           call      outputArray           # invoke function
           addl      $8, %esp              # remove arguments from stack
-          movl      -4(%ebp), %eax        # load variable value
+          movl      -4(%ebp), %eax        # load local variable value
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack
-          movl      -4(%ebp), %eax        # load variable value
+          movl      -4(%ebp), %eax        # load local variable value
           pushl     %eax                  # push function argument onto stack
           call      mutateSquare          # invoke function
           addl      $4, %esp              # remove arguments from stack
-          movl      -4(%ebp), %eax        # load variable value
+          movl      -4(%ebp), %eax        # load local variable value
           pushl     %eax                  # push function argument onto stack
           call      output                # invoke function
           addl      $4, %esp              # remove arguments from stack

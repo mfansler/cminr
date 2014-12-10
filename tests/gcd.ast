@@ -6,44 +6,44 @@ Program Node
       If
         RelationalExpression: ==
           Left:
-            Variable: v
+            Variable: v: Int type
           Right:
-            Integer: 0
+            Integer: 0: Int type
         Return
-          Variable: u
+          Variable: u: Int type
         Return
-          FunctionCall: gcd
+          FunctionCall: gcd: Int type
             Arguments:
-              Variable: v
+              Variable: v: Int type
               AdditiveExpression: -
                 Left:
-                  Variable: u
+                  Variable: u: Int type
                 Right:
                   MultiplicativeExpression: *
                     Left:
                       MultiplicativeExpression: /
                         Left:
-                          Variable: u
+                          Variable: u: Int type
                         Right:
-                          Variable: v
+                          Variable: v: Int type
                     Right:
-                      Variable: v
+                      Variable: v: Int type
   Function: main: Void type
     CompoundStatement
       VariableDeclaration: x: Int type
       VariableDeclaration: y: Int type
       ExpressionStatement
         Assignment
-          Variable: x
-          FunctionCall: input()
+          Variable: x: Int type
+          FunctionCall: input: Int type ()
       ExpressionStatement
         Assignment
-          Variable: y
-          FunctionCall: input()
+          Variable: y: Int type
+          FunctionCall: input: Int type ()
       ExpressionStatement
-        FunctionCall: output
+        FunctionCall: output: Void type
           Arguments:
-            FunctionCall: gcd
+            FunctionCall: gcd: Int type
               Arguments:
-                Variable: x
-                Variable: y
+                Variable: x: Int type
+                Variable: y: Int type

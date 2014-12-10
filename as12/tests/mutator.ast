@@ -71,6 +71,21 @@ Program Node
           Variable: t: Int type
           Integer: 13: Int type
       ExpressionStatement
+        FunctionCall: outputArray: Void type
+          Arguments:
+            Variable: y: Int Array type
+            Integer: 10: Int type
+      ExpressionStatement
+        FunctionCall: initArray: Void type
+          Arguments:
+            Variable: y: Int Array type
+            Integer: 10: Int type
+      ExpressionStatement
+        FunctionCall: outputArray: Void type
+          Arguments:
+            Variable: y: Int Array type
+            Integer: 10: Int type
+      ExpressionStatement
         FunctionCall: output: Void type
           Arguments:
             Variable: x: Int type
