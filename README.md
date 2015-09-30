@@ -7,7 +7,7 @@ The final result can be found in the `as12` folder.  The compiler can be built u
     cd as12
     make CMinDriver
 
-Examples can be subsequently be compiled
+Examples can subsequently be compiled
 
     ./CMinDriver ../tests/gcd.cm
 
